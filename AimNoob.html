@@ -576,6 +576,15 @@
   .meta-role{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); width:90px; flex-shrink:0; }
   .meta-wr{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--accent); width:56px; text-align:right; flex-shrink:0; }
   .meta-pr{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); width:64px; text-align:right; flex-shrink:0; }
+  .lb-rank{
+    width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; color:var(--text-dim);
+    background:rgba(255,255,255,0.05); border:1px solid var(--border);
+  }
+  .lb-rank.top1{ background:rgba(245,166,35,0.18); border-color:#f5a623; color:#f5a623; }
+  .lb-rank.top2{ background:rgba(200,200,200,0.14); border-color:#c8c8c8; color:#dcdcdc; }
+  .lb-rank.top3{ background:rgba(224,161,94,0.16); border-color:#e0a15e; color:#e0a15e; }
+  .meta-row.lb-you{ background:rgba(var(--accent-rgb),0.08); box-shadow:inset 2px 0 0 var(--accent); }
   .meta-legend{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin:10px 2px 0; }
 
   .map-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px; }
@@ -694,6 +703,10 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       <span>Профиль</span>
     </button>
+    <button class="side-item" data-view="leaderboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a2 2 0 0 0 2 4M17 6h3a2 2 0 0 1-2 4"/></svg>
+      <span>Лидерборд</span>
+    </button>
     <button class="side-item" data-view="videos">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>
       <span>Видео</span>
@@ -799,6 +812,19 @@
             <button class="account-signout-btn" id="googleSignOutBtn">Выйти</button>
           </div>
         </div>
+        <div class="account-card" id="syncCard" style="display:none;">
+          <div class="account-signed-out" style="width:100%;">
+            <div class="account-copy">
+              <div class="eyebrow">‖ синхронизация</div>
+              <div class="account-title">Данные между устройствами</div>
+              <div class="account-sub" id="syncStatus">ещё не синхронизировалось</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="file-btn" id="syncPushBtn">⬆ Сохранить в облако</button>
+              <button class="file-btn" id="syncPullBtn">⬇ Загрузить с облака</button>
+            </div>
+          </div>
+        </div>
         <div class="profile-card">
           <div class="profile-banner" id="profileBanner"></div>
           <div class="profile-body">
@@ -844,11 +870,25 @@
             </div>
             <div class="stat">
               <div class="stat-label">Лидерборд</div>
-              <div class="stat-value" style="color:var(--text-faint); font-size:13px;">скоро</div>
+              <div class="stat-value accent" id="profileLbRank" style="cursor:pointer; font-size:15px;" data-go-lb="1">открыть →</div>
             </div>
           </div>
         </div>
-        <footer>вход через Google готов — общий лидерборд по сериям уже в разработке</footer>
+        <footer>войди через Google — прогресс синхронизируется между устройствами, а лучшая серия попадает в общий лидерборд</footer>
+      </div>
+    </section>
+
+    <section id="view-leaderboard" class="view">
+      <div class="wrap">
+        <div class="statusbar">
+          <div class="eyebrow">‖ рейтинг</div>
+          <h1>Лидерборд — лучшая серия дней подряд</h1>
+        </div>
+        <div id="lbSignedOutNotice" class="statusbar" style="display:none;">
+          <div style="font-size:13.5px; color:var(--text-dim);">Войди через Google на вкладке «Профиль», чтобы попасть в рейтинг — сейчас ты видишь общий список, но твой результат в нём не участвует.</div>
+        </div>
+        <div class="meta-table" id="lbTable"><div class="meta-row"><div class="meta-name">Загрузка...</div></div></div>
+        <footer>рейтинг считается по лучшей серии подряд отмеченных дней · обновляется в реальном времени</footer>
       </div>
     </section>
 
@@ -2147,6 +2187,8 @@ async function init(){
   document.querySelectorAll('.side-item').forEach(btn=>{
     btn.addEventListener('click', ()=> switchView(btn.getAttribute('data-view')));
   });
+  const lbLink = document.getElementById('profileLbRank');
+  if(lbLink) lbLink.addEventListener('click', ()=> switchView('leaderboard'));
 
   document.getElementById('prevDay').addEventListener('click', ()=>shiftDay(-1));
   document.getElementById('nextDay').addEventListener('click', ()=>shiftDay(1));
@@ -2254,12 +2296,16 @@ async function init(){
 init();
 </script>
 
-<!-- ---------- FIREBASE / GOOGLE AUTH ---------- -->
+<!-- ---------- FIREBASE / GOOGLE AUTH + SYNC + LEADERBOARD ---------- -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, serverTimestamp,
+    collection, query, orderBy, limit, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCEz0hmWOuwXQAgeBuDwffC9vjFyAnHKbU",
@@ -2273,22 +2319,129 @@ init();
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getFirestore(app);
   const provider = new GoogleAuthProvider();
 
-  // Expose globally so future leaderboard code (or the classic script above) can use it.
   window.firebaseApp = app;
   window.firebaseAuth = auth;
+  window.firebaseDb = db;
   window.aimAuth = {
     signIn: () => signInWithPopup(auth, provider).catch(err=>{
       console.error('Google sign-in error', err);
       alert('Не удалось войти через Google: ' + (err.code || err.message));
     }),
-    signOut: () => signOut(auth).catch(err=>console.error('Sign-out error', err)),
+    signOut: () => { stopAutoSync(); return signOut(auth).catch(err=>console.error('Sign-out error', err)); },
   };
+
+  /* ---------- localStorage <-> Firestore snapshot ---------- */
+  function dumpLocalStorage(){
+    const data = {};
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      data[k] = localStorage.getItem(k);
+    }
+    return data;
+  }
+  function restoreLocalStorage(data){
+    if(!data) return;
+    Object.keys(data).forEach(k=>{ try{ localStorage.setItem(k, data[k]); }catch(e){} });
+  }
+  function currentBestStreak(){
+    return Number(localStorage.getItem('meta:beststreak') || 0);
+  }
+  function currentProfile(){
+    try{ return JSON.parse(localStorage.getItem('profile:data') || '{}'); }catch(e){ return {}; }
+  }
+
+  async function pushToCloud(user, {silent=false}={}){
+    const profile = currentProfile();
+    try{
+      await setDoc(doc(db,'users',user.uid), {
+        data: dumpLocalStorage(),
+        updatedAt: serverTimestamp()
+      });
+      await setDoc(doc(db,'leaderboard',user.uid), {
+        nick: profile.nick || user.displayName || 'Игрок',
+        avatar: profile.avatar && profile.avatar.startsWith('data:') ? '' : (profile.avatar || user.photoURL || ''),
+        bestStreak: currentBestStreak(),
+        updatedAt: serverTimestamp()
+      });
+      setSyncStatus('синхронизировано ' + new Date().toLocaleTimeString('ru-RU'));
+    }catch(err){
+      console.error('push to cloud failed', err);
+      if(!silent) alert('Не удалось сохранить в облако: ' + (err.code || err.message));
+      setSyncStatus('ошибка синхронизации');
+    }
+  }
+  async function pullFromCloud(user){
+    try{
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if(snap.exists()){
+        restoreLocalStorage(snap.data().data);
+        return true;
+      }
+      return false;
+    }catch(err){
+      console.error('pull from cloud failed', err);
+      alert('Не удалось загрузить из облака: ' + (err.code || err.message));
+      return false;
+    }
+  }
+
+  function setSyncStatus(text){
+    const el = document.getElementById('syncStatus');
+    if(el) el.textContent = text;
+  }
+
+  let autoSyncTimer = null;
+  function startAutoSync(user){
+    stopAutoSync();
+    autoSyncTimer = setInterval(()=> pushToCloud(user, {silent:true}), 45000);
+    document.addEventListener('visibilitychange', onHideSync);
+    window.addEventListener('beforeunload', onHideSync);
+    function onHideSync(){ if(document.visibilityState==='hidden' || true) pushToCloud(user, {silent:true}); }
+    window._aimOnHideSync = onHideSync;
+  }
+  function stopAutoSync(){
+    if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
+    if(window._aimOnHideSync){
+      document.removeEventListener('visibilitychange', window._aimOnHideSync);
+      window.removeEventListener('beforeunload', window._aimOnHideSync);
+    }
+  }
+
+  async function handleSignedIn(user){
+    const syncCard = document.getElementById('syncCard');
+    if(syncCard) syncCard.style.display = 'flex';
+    setSyncStatus('проверяю облако...');
+    try{
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if(snap.exists()){
+        const wantsCloud = confirm(
+          'Нашёл сохранённые данные в облаке для этого аккаунта.\n\n' +
+          'ОК — загрузить их сюда (данные этого устройства будут заменены).\n' +
+          'Отмена — оставить данные этого устройства и залить их в облако.'
+        );
+        if(wantsCloud){
+          await pullFromCloud(user);
+          alert('Готово! Данные загружены из облака, страница перезагрузится.');
+          location.reload();
+          return;
+        } else {
+          await pushToCloud(user);
+        }
+      } else {
+        await pushToCloud(user);
+      }
+    } finally {
+      startAutoSync(user);
+    }
+  }
 
   function renderAccountUI(user){
     const signedOut = document.getElementById('accountSignedOut');
     const signedIn = document.getElementById('accountSignedIn');
+    const lbNotice = document.getElementById('lbSignedOutNotice');
     if(!signedOut || !signedIn) return;
     if(user){
       signedOut.style.display = 'none';
@@ -2297,9 +2450,8 @@ init();
       document.getElementById('accountUserEmail').textContent = user.email || '';
       const avatarEl = document.getElementById('accountUserAvatar');
       avatarEl.style.backgroundImage = user.photoURL ? `url(${user.photoURL})` : 'none';
+      if(lbNotice) lbNotice.style.display = 'none';
 
-      // Store a lightweight snapshot for the (upcoming) leaderboard feature and for
-      // pre-filling the profile nick/avatar if the person hasn't set their own yet.
       try{
         localStorage.setItem('auth:google', JSON.stringify({
           uid:user.uid, displayName:user.displayName, email:user.email, photoURL:user.photoURL
@@ -2307,7 +2459,7 @@ init();
       }catch(e){}
 
       try{
-        const profile = JSON.parse(localStorage.getItem('profile:data') || '{}');
+        const profile = currentProfile();
         let changed = false;
         if(!profile.nick && user.displayName){ profile.nick = user.displayName; changed = true; }
         if(!profile.avatar && user.photoURL){ profile.avatar = user.photoURL; changed = true; }
@@ -2322,9 +2474,15 @@ init();
           }
         }
       }catch(e){}
+
+      handleSignedIn(user);
     } else {
       signedOut.style.display = 'flex';
       signedIn.style.display = 'none';
+      const syncCard = document.getElementById('syncCard');
+      if(syncCard) syncCard.style.display = 'none';
+      if(lbNotice) lbNotice.style.display = 'block';
+      stopAutoSync();
       try{ localStorage.removeItem('auth:google'); }catch(e){}
     }
     window.dispatchEvent(new CustomEvent('aimauthchanged', {detail:{user}}));
@@ -2335,7 +2493,50 @@ init();
   document.addEventListener('click', (e)=>{
     if(e.target.closest('#googleSignInBtn')) window.aimAuth.signIn();
     if(e.target.closest('#googleSignOutBtn')) window.aimAuth.signOut();
+    if(e.target.closest('#syncPushBtn')){
+      const u = auth.currentUser;
+      if(u){ setSyncStatus('сохраняю...'); pushToCloud(u); }
+    }
+    if(e.target.closest('#syncPullBtn')){
+      const u = auth.currentUser;
+      if(u && confirm('Данные этого устройства будут заменены версией из облака. Продолжить?')){
+        pullFromCloud(u).then(ok=>{ if(ok){ alert('Готово, перезагружаю страницу.'); location.reload(); } });
+      }
+    }
   });
+
+  /* ---------- LIVE LEADERBOARD ---------- */
+  const lbQuery = query(collection(db,'leaderboard'), orderBy('bestStreak','desc'), limit(50));
+  onSnapshot(lbQuery, (snapshot)=>{
+    const el = document.getElementById('lbTable');
+    if(!el) return;
+    const rows = [];
+    let rank = 0;
+    snapshot.forEach(docSnap=>{
+      rank++;
+      const d = docSnap.data();
+      const isYou = auth.currentUser && docSnap.id === auth.currentUser.uid;
+      const rankClass = rank===1 ? 'top1' : rank===2 ? 'top2' : rank===3 ? 'top3' : '';
+      const avatar = d.avatar ? `<img src="${d.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🎯';
+      rows.push(`
+        <div class="meta-row${isYou ? ' lb-you' : ''}">
+          <div class="lb-rank ${rankClass}">${rank}</div>
+          <div class="meta-avatar">${avatar}</div>
+          <div class="meta-name">${(d.nick || 'Игрок')}${isYou ? ' <span style="color:var(--accent); font-size:10px;">(ты)</span>' : ''}</div>
+          <div class="meta-wr">${d.bestStreak || 0} дн.</div>
+        </div>`);
+    });
+    el.innerHTML = rows.length ? rows.join('') : '<div class="meta-row"><div class="meta-name">Пока никто не попал в рейтинг — стань первым!</div></div>';
+  }, (err)=>{
+    console.error('leaderboard listener error', err);
+    const el = document.getElementById('lbTable');
+    if(el) el.innerHTML = '<div class="meta-row"><div class="meta-name">Не удалось загрузить лидерборд (проверь правила доступа Firestore).</div></div>';
+  });
+
+  if(!auth.currentUser){
+    const lbNotice = document.getElementById('lbSignedOutNotice');
+    if(lbNotice) lbNotice.style.display = 'block';
+  }
 </script>
 </body>
 </html>
