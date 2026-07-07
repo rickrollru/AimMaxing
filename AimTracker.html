@@ -108,24 +108,57 @@
     padding:10px 10px 0 10px; border-top:1px solid var(--border); margin-top:6px;
   }
 
-  /* ---------- MOBILE: bottom tab bar (2 rows) ---------- */
+  /* ---------- MOBILE: bottom tab bar (4 primary + "more" sheet) ---------- */
+  .more-trigger{ display:none; }
   @media (max-width:760px){
     .shell{ flex-direction:column; }
     .sidebar{
       width:100%; height:auto; position:fixed; bottom:0; left:0; top:auto;
-      display:grid; grid-template-columns:repeat(3, 1fr); gap:6px 2px;
-      padding:10px 8px 8px; border-right:none; border-top:1px solid var(--border);
-      z-index:50;
+      display:flex; flex-direction:row; align-items:stretch;
+      padding:8px 6px; border-right:none; border-top:1px solid var(--border);
+      z-index:50; gap:2px;
     }
-    .sidebar-brand, .sidebar-foot, .sidebar-spacer{ display:none; }
+    .sidebar-brand, .sidebar-foot{ display:none; }
+    .sidebar-spacer{ display:none; }
     .side-item{
-      flex-direction:column; gap:4px; font-size:10px; padding:8px 4px; border-radius:10px;
-      width:100%;
+      flex:1 1 0; flex-direction:column; gap:4px; font-size:9.5px; padding:8px 4px;
+      border-radius:10px; min-width:0;
     }
     .side-item span{ line-height:1.1; }
     .side-item.active{ box-shadow:none; background:rgba(var(--accent-rgb),0.16); }
-    .content{ padding-bottom:96px !important; }
+    .side-item.mobile-overflow{ display:none; }
+    .more-trigger{ display:flex; }
+    .content{ padding-bottom:82px !important; }
   }
+
+  .more-sheet-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:60;
+    opacity:0; pointer-events:none; transition:opacity .25s ease;
+  }
+  .more-sheet-backdrop.open{ opacity:1; pointer-events:auto; }
+  .more-sheet{
+    position:fixed; left:0; right:0; bottom:0; z-index:61;
+    background:rgba(var(--panel-rgb), 0.97); backdrop-filter:blur(20px);
+    border-top:1px solid var(--border); border-radius:20px 20px 0 0;
+    padding:10px 18px 26px; transform:translateY(100%); transition:transform .28s cubic-bezier(.32,.72,0,1);
+    max-height:70vh; overflow-y:auto;
+  }
+  .more-sheet.open{ transform:translateY(0); }
+  .more-sheet-handle{ width:36px; height:4px; border-radius:2px; background:var(--border); margin:2px auto 14px; }
+  .more-sheet-title{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--text-faint); margin-bottom:12px;
+  }
+  .more-sheet-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; }
+  .more-sheet-item{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    background:transparent; border:1px solid var(--border); border-radius:12px;
+    color:var(--text-dim); font-family:'Inter', sans-serif; font-size:10.5px; font-weight:500;
+    padding:14px 6px; cursor:pointer;
+  }
+  .more-sheet-item svg{ width:19px; height:19px; opacity:0.85; }
+  .more-sheet-item:active{ background:rgba(var(--accent-rgb),0.14); border-color:var(--accent); color:var(--text); }
+  @media (min-width:761px){ .more-sheet, .more-sheet-backdrop{ display:none; } }
 
   .content{ flex:1; min-width:0; padding:32px 30px 60px; }
   @media (max-width:600px){
@@ -383,6 +416,21 @@
     padding:9px 14px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
   }
   .reset-btn:hover{ border-color:#e06c75; color:#e06c75; }
+  .reorder-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:10px 4px; border-bottom:1px solid var(--border);
+  }
+  .reorder-row:last-child{ border-bottom:none; }
+  .reorder-label{ display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--text); }
+  .reorder-label svg{ width:16px; height:16px; opacity:0.7; flex-shrink:0; }
+  .reorder-btns{ display:flex; gap:6px; }
+  .reorder-btn{
+    width:28px; height:28px; border-radius:8px; border:1px solid var(--border);
+    background:transparent; color:var(--text-dim); cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; transition:all .15s ease;
+  }
+  .reorder-btn:hover:not(:disabled){ border-color:var(--accent); color:var(--accent); }
+  .reorder-btn:disabled{ opacity:0.25; cursor:not-allowed; }
 
   footer{
     margin-top:36px; text-align:center; font-family:'IBM Plex Mono', monospace;
@@ -587,13 +635,20 @@
   .meta-row.lb-you{ background:rgba(var(--accent-rgb),0.08); box-shadow:inset 2px 0 0 var(--accent); }
   .meta-legend{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin:10px 2px 0; }
 
-  .map-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px; }
+  .map-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:12px; }
   .map-card{
-    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    background:rgba(var(--panel-rgb), var(--panel-alpha)) center/cover; backdrop-filter:blur(14px); border:1px solid var(--border);
     border-radius:14px; padding:18px 16px; cursor:pointer; transition:all .2s ease; text-align:center;
+    min-height:96px; display:flex; align-items:flex-end; justify-content:center; overflow:hidden;
   }
   .map-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
-  .map-card-name{ font-family:'Sora', sans-serif; font-weight:600; font-size:14px; }
+  .map-card-name{ font-family:'Sora', sans-serif; font-weight:700; font-size:15px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,0.6); }
+
+  .agent-detail-mapbanner{
+    margin:-22px -24px 18px -24px; padding:26px 24px 16px; border-radius:16px 16px 0 0;
+    background-size:cover; background-position:center; display:flex; align-items:flex-end; min-height:90px;
+  }
+  .agent-detail-mapbanner-name{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#fff; opacity:0.9; }
 
   .agent-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr)); gap:10px; }
   .agent-card{
@@ -717,7 +772,11 @@
     </button>
     <button class="side-item" data-view="agents">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
-      <span>Агенты</span>
+      <span>Карты</span>
+    </button>
+    <button class="side-item" data-view="meta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M11 20V4M18 20v-7"/></svg>
+      <span>Мета</span>
     </button>
     <button class="side-item" data-view="timer">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
@@ -739,7 +798,19 @@
       <span>Настройки</span>
     </button>
     <div class="sidebar-foot">AimMaxing · твой трекер прогресса</div>
+
+    <button class="side-item more-trigger" id="moreNavBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
+      <span>Ещё</span>
+    </button>
   </nav>
+
+  <div class="more-sheet-backdrop" id="moreSheetBackdrop"></div>
+  <div class="more-sheet" id="moreSheet">
+    <div class="more-sheet-handle"></div>
+    <div class="more-sheet-title">Разделы</div>
+    <div class="more-sheet-grid" id="moreSheetGrid"></div>
+  </div>
 
   <main class="content">
 
@@ -918,7 +989,7 @@
       </div>
     </section>
 
-    <section id="view-agents" class="view">
+    <section id="view-meta" class="view">
       <div class="wrap">
         <div class="section-label" style="margin-top:0;">Мета — винрейт и пикрейт агентов</div>
         <div class="meta-filters">
@@ -930,16 +1001,18 @@
             <button class="chip" data-role="Sentinel">Страж</button>
           </div>
           <div class="filter-sorts" id="sortFilters">
-            <button class="chip sort-chip active" data-sort="wr-desc">Винрейт ↓</button>
-            <button class="chip sort-chip" data-sort="wr-asc">Винрейт ↑</button>
-            <button class="chip sort-chip" data-sort="pr-desc">Пикрейт ↓</button>
-            <button class="chip sort-chip" data-sort="pr-asc">Пикрейт ↑</button>
+            <button class="chip sort-chip active" data-field="wr" id="sortWrBtn">Винрейт ↓</button>
+            <button class="chip sort-chip" data-field="pr" id="sortPrBtn">Пикрейт ↓</button>
           </div>
         </div>
         <div class="meta-table" id="metaTable"></div>
         <div class="meta-legend" id="metaLegend"></div>
+      </div>
+    </section>
 
-        <div class="section-label">Гайды по картам и агентам</div>
+    <section id="view-agents" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Гайды по картам и агентам</div>
         <div class="crumb" id="agentsCrumb"></div>
         <div id="agentsPane"></div>
       </div>
@@ -1073,6 +1146,12 @@
           </div>
           <div class="settings-divider"></div>
           <button class="reset-btn" id="resetTheme">Сбросить тему по умолчанию</button>
+        </div>
+
+        <div class="section-label">Порядок разделов</div>
+        <div class="settings-panel">
+          <div class="settings-row-desc" style="margin-bottom:6px;">меняй местами стрелками — порядок применится и в боковой панели, и в нижней на телефоне</div>
+          <div id="navOrderList"></div>
         </div>
 
         <div class="section-label">Данные</div>
@@ -1716,11 +1795,40 @@ function agentImgUrl(agent){
   return found ? (found.icon || found.bust || found.portrait) : null;
 }
 
+let MAP_IMAGES = {};
+async function loadMapImages(){
+  try{
+    const cached = localStorage.getItem('maps:imgcache');
+    if(cached){
+      const parsed = JSON.parse(cached);
+      if(parsed && parsed.ts && (Date.now()-parsed.ts < 14*24*3600*1000) && parsed.data){
+        MAP_IMAGES = parsed.data;
+        return;
+      }
+    }
+  }catch(e){}
+  try{
+    const res = await fetch('https://valorant-api.com/v1/maps?language=ru-RU');
+    const json = await res.json();
+    const map = {};
+    (json.data||[]).forEach(m=>{
+      const key = (m.displayName||'').toLowerCase();
+      map[key] = { splash:m.splash, listView:m.listViewIcon, listViewFallback:m.listViewIconTall };
+    });
+    MAP_IMAGES = map;
+    try{ localStorage.setItem('maps:imgcache', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
+  }catch(e){ console.warn('map image fetch failed', e); }
+}
+function mapImgUrl(m){
+  const found = MAP_IMAGES[m.name.toLowerCase()];
+  return found ? (found.splash || found.listView || found.listViewFallback) : null;
+}
+
 /* ---------- META TABLE (AGENT WINRATES) ---------- */
-let metaFilters = { role:'All', sort:'wr-desc' };
+let metaFilters = { role:'All', field:'wr', dir:'desc' };
 function getFilteredSortedAgents(){
   let list = AGENTS.filter(a => metaFilters.role==='All' || a.role===metaFilters.role);
-  const [field, dir] = metaFilters.sort.split('-');
+  const field = metaFilters.field, dir = metaFilters.dir;
   list = [...list].sort((a,b)=>{
     let av, bv;
     if(field==='wr'){ av=a.wr; bv=b.wr; }
@@ -1758,8 +1866,16 @@ function setupMetaFilters(){
   });
   document.getElementById('sortFilters').addEventListener('click', e=>{
     const btn = e.target.closest('.chip'); if(!btn) return;
-    metaFilters.sort = btn.getAttribute('data-sort');
+    const field = btn.getAttribute('data-field');
+    if(metaFilters.field === field){
+      metaFilters.dir = metaFilters.dir === 'desc' ? 'asc' : 'desc';
+    } else {
+      metaFilters.field = field;
+      metaFilters.dir = 'desc';
+    }
     document.querySelectorAll('#sortFilters .chip').forEach(c=>c.classList.toggle('active', c===btn));
+    document.getElementById('sortWrBtn').textContent = 'Винрейт ' + (metaFilters.field==='wr' ? (metaFilters.dir==='desc'?'↓':'↑') : '↓');
+    document.getElementById('sortPrBtn').textContent = 'Пикрейт ' + (metaFilters.field==='pr' ? (metaFilters.dir==='desc'?'↓':'↑') : '↓');
     renderMetaTable();
   });
 }
@@ -1793,10 +1909,13 @@ function renderAgentsPane(){
   renderAgentsCrumb();
   const el = document.getElementById('agentsPane');
   if(agentsView.stage==='maps'){
-    el.innerHTML = `<div class="map-grid">${MAPS.map(m=>`
-      <div class="map-card" data-id="${m.id}">
+    el.innerHTML = `<div class="map-grid">${MAPS.map(m=>{
+      const img = mapImgUrl(m);
+      return `
+      <div class="map-card" data-id="${m.id}" style="${img ? `background-image:linear-gradient(180deg, rgba(11,7,9,0.15), rgba(11,7,9,0.85)), url('${img}'); background-size:cover; background-position:center;` : ''}">
         <div class="map-card-name">${m.name}</div>
-      </div>`).join('')}</div>`;
+      </div>`;
+    }).join('')}</div>`;
     el.querySelectorAll('.map-card').forEach(card=>{
       card.addEventListener('click', ()=>{
         agentsView = {stage:'agents', map: card.getAttribute('data-id'), agent:null};
@@ -1828,11 +1947,13 @@ function renderAgentsPane(){
     const m = MAPS.find(x=>x.id===agentsView.map);
     const s = getAgentMapStat(a, m.id);
     const img = agentImgUrl(a);
+    const mapImg = mapImgUrl(m);
     const q = encodeURIComponent(`${a.name} ${m.name} valorant guide`);
     const delta = s.wr - a.wr;
     const deltaTxt = Math.abs(delta) < 0.05 ? 'как в среднем по игре' : (delta > 0 ? `на ${delta.toFixed(1)} п.п. выше среднего` : `на ${Math.abs(delta).toFixed(1)} п.п. ниже среднего`);
     el.innerHTML = `
       <div class="agent-detail">
+        ${mapImg ? `<div class="agent-detail-mapbanner" style="background-image:linear-gradient(180deg, rgba(11,7,9,0.1), rgba(11,7,9,0.95)), url('${mapImg}');"><div class="agent-detail-mapbanner-name">${m.name}</div></div>` : ''}
         <div class="agent-detail-head">
           <div class="agent-detail-img">${img ? `<img src="${img}" alt="${a.name}">` : ''}</div>
           <div class="meta-tier" style="background:${TIER_COLOR[s.tier]}; width:36px; height:36px; font-size:15px;">${s.tier}</div>
@@ -2132,7 +2253,96 @@ function importData(file){
 function switchView(view){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
-  document.querySelectorAll('.side-item').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===view));
+  document.querySelectorAll('.side-item[data-view]').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===view));
+  const primary = getNavOrder().slice(0,4);
+  document.getElementById('moreNavBtn').classList.toggle('active', !primary.includes(view));
+}
+
+/* ---------- NAV ORDER (reorderable sidebar / bottom bar) ---------- */
+const NAV_LABELS = {
+  home:'Главная', profile:'Профиль', leaderboard:'Лидерборд', agents:'Карты', meta:'Мета',
+  videos:'Видео', kovaak:'Kovaak', timer:'Таймер', playlist:'Плейлист', calendar:'Календарь', settings:'Настройки'
+};
+const DEFAULT_NAV_ORDER = ['home','profile','leaderboard','agents','meta','videos','kovaak','timer','playlist','calendar','settings'];
+
+function getNavOrder(){
+  let order;
+  try{ order = JSON.parse(localStorage.getItem('settings:navOrder')||'null'); }catch(e){ order = null; }
+  if(!Array.isArray(order)) order = [...DEFAULT_NAV_ORDER];
+  order = order.filter(id => DEFAULT_NAV_ORDER.includes(id));
+  DEFAULT_NAV_ORDER.forEach(id=>{ if(!order.includes(id)) order.push(id); });
+  return order;
+}
+function saveNavOrder(order){ try{ localStorage.setItem('settings:navOrder', JSON.stringify(order)); }catch(e){} }
+
+function updateMobileOverflow(){
+  const order = getNavOrder();
+  const primary = order.slice(0,4);
+  const overflow = order.slice(4);
+
+  document.querySelectorAll('.side-item[data-view]').forEach(btn=>{
+    const id = btn.getAttribute('data-view');
+    btn.classList.toggle('mobile-overflow', !primary.includes(id));
+  });
+
+  const grid = document.getElementById('moreSheetGrid');
+  grid.innerHTML = overflow.map(id=>{
+    const src = document.querySelector(`.side-item[data-view="${id}"]`);
+    return src ? `<button class="more-sheet-item" data-view="${id}">${src.innerHTML}</button>` : '';
+  }).join('');
+  grid.querySelectorAll('.more-sheet-item').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      switchView(btn.getAttribute('data-view'));
+      closeMoreSheet();
+    });
+  });
+}
+function openMoreSheet(){
+  document.getElementById('moreSheet').classList.add('open');
+  document.getElementById('moreSheetBackdrop').classList.add('open');
+}
+function closeMoreSheet(){
+  document.getElementById('moreSheet').classList.remove('open');
+  document.getElementById('moreSheetBackdrop').classList.remove('open');
+}
+
+function applyNavOrder(){
+  const order = getNavOrder();
+  const nav = document.querySelector('.sidebar');
+  const spacer = document.querySelector('.sidebar-spacer');
+  order.forEach(id=>{
+    const btn = nav.querySelector(`.side-item[data-view="${id}"]`);
+    if(btn) nav.insertBefore(btn, spacer);
+  });
+  updateMobileOverflow();
+}
+
+function renderNavOrderSettings(){
+  const order = getNavOrder();
+  const el = document.getElementById('navOrderList');
+  el.innerHTML = order.map((id,i) => `
+    <div class="reorder-row">
+      <div class="reorder-label">${NAV_LABELS[id] || id}</div>
+      <div class="reorder-btns">
+        <button class="reorder-btn" data-id="${id}" data-dir="up" ${i===0?'disabled':''}>↑</button>
+        <button class="reorder-btn" data-id="${id}" data-dir="down" ${i===order.length-1?'disabled':''}>↓</button>
+      </div>
+    </div>`).join('');
+
+  el.querySelectorAll('.reorder-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.getAttribute('data-id');
+      const dir = btn.getAttribute('data-dir');
+      const cur = getNavOrder();
+      const idx = cur.indexOf(id);
+      const swapWith = dir==='up' ? idx-1 : idx+1;
+      if(swapWith < 0 || swapWith >= cur.length) return;
+      [cur[idx], cur[swapWith]] = [cur[swapWith], cur[idx]];
+      saveNavOrder(cur);
+      applyNavOrder();
+      renderNavOrderSettings();
+    });
+  });
 }
 
 /* ---------- THEME / SETTINGS ---------- */
@@ -2184,7 +2394,12 @@ async function init(){
   buildPanel(document.getElementById('morningGrid'), 'Утро', morningTasks.length, 'morningList');
   buildPanel(document.getElementById('eveningGrid'), 'Вечер', eveningTasks.length, 'eveningList');
 
-  document.querySelectorAll('.side-item').forEach(btn=>{
+  applyNavOrder();
+  renderNavOrderSettings();
+  document.getElementById('moreNavBtn').addEventListener('click', openMoreSheet);
+  document.getElementById('moreSheetBackdrop').addEventListener('click', closeMoreSheet);
+
+  document.querySelectorAll('.side-item[data-view]').forEach(btn=>{
     btn.addEventListener('click', ()=> switchView(btn.getAttribute('data-view')));
   });
   const lbLink = document.getElementById('profileLbRank');
@@ -2227,6 +2442,7 @@ async function init(){
   renderHeaderStats();
 
   await loadAgentImages();
+  await loadMapImages();
   renderMetaTable();
   setupMetaFilters();
   renderAgentsPane();
