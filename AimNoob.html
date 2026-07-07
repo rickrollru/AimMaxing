@@ -407,6 +407,46 @@
     100%{ transform:translateY(0) rotate(0deg); }
   }
 
+  /* ---------- ACCOUNT / GOOGLE AUTH ---------- */
+  .account-card{
+    border:1px solid var(--border); border-radius:18px;
+    background:rgba(var(--panel-rgb), var(--panel-alpha));
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.25); margin-bottom:14px;
+    padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .account-signed-out{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; width:100%; }
+  .account-copy .eyebrow{ margin-bottom:4px; }
+  .account-copy .account-title{ font-family:'Sora', sans-serif; font-weight:700; font-size:15px; color:var(--text); }
+  .account-copy .account-sub{ font-family:'Inter', sans-serif; font-size:12.5px; color:var(--text-dim); margin-top:3px; }
+  .gsi-btn{
+    display:inline-flex; align-items:center; gap:10px; cursor:pointer;
+    background:#1a1114; border:1px solid rgba(var(--accent-rgb),0.35); border-radius:10px;
+    padding:9px 16px 9px 12px; font-family:'Inter', sans-serif; font-size:13.5px; font-weight:600; color:var(--text);
+    transition:border-color .2s ease, background .2s ease, transform .2s ease; flex-shrink:0;
+  }
+  .gsi-btn:hover{ border-color:rgba(var(--accent-rgb),0.7); background:#241419; transform:translateY(-1px); }
+  .gsi-btn svg{ width:18px; height:18px; flex-shrink:0; }
+  .account-signed-in{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; width:100%; }
+  .account-user{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .account-user-avatar{
+    width:42px; height:42px; border-radius:12px; flex-shrink:0;
+    background:rgba(var(--accent-rgb),0.15) center/cover no-repeat; border:1px solid var(--border);
+  }
+  .account-user-name{ font-family:'Sora', sans-serif; font-weight:600; font-size:14px; color:var(--text); }
+  .account-user-email{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-top:2px; }
+  .account-signout-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--text-faint);
+    padding:8px 12px; cursor:pointer; text-transform:uppercase; transition:all .2s ease; flex-shrink:0;
+  }
+  .account-signout-btn:hover{ border-color:#e06c75; color:#e06c75; }
+  .account-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--accent); background:rgba(var(--accent-rgb),0.14); border:1px solid var(--border);
+    border-radius:6px; padding:2px 7px; margin-left:8px;
+  }
+
   /* ---------- PROFILE ---------- */
   .profile-banner{
     position:relative; width:100%; height:150px; border-radius:18px 18px 0 0;
@@ -736,6 +776,29 @@
 
     <section id="view-profile" class="view">
       <div class="wrap">
+        <div class="account-card" id="accountCard">
+          <div class="account-signed-out" id="accountSignedOut">
+            <div class="account-copy">
+              <div class="eyebrow">‖ аккаунт</div>
+              <div class="account-title">Войди, чтобы попасть в лидерборд</div>
+              <div class="account-sub">Вход через Google — нужен для будущего общего рейтинга по сериям.</div>
+            </div>
+            <button class="gsi-btn" id="googleSignInBtn">
+              <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.36-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+              Войти через Google
+            </button>
+          </div>
+          <div class="account-signed-in" id="accountSignedIn" style="display:none;">
+            <div class="account-user">
+              <div class="account-user-avatar" id="accountUserAvatar"></div>
+              <div>
+                <div class="account-user-name" id="accountUserName">—</div>
+                <div class="account-user-email" id="accountUserEmail">—</div>
+              </div>
+            </div>
+            <button class="account-signout-btn" id="googleSignOutBtn">Выйти</button>
+          </div>
+        </div>
         <div class="profile-card">
           <div class="profile-banner" id="profileBanner"></div>
           <div class="profile-body">
@@ -785,7 +848,7 @@
             </div>
           </div>
         </div>
-        <footer>система аккаунтов и общий лидерборд по сериям — в планах</footer>
+        <footer>вход через Google готов — общий лидерборд по сериям уже в разработке</footer>
       </div>
     </section>
 
@@ -1034,8 +1097,17 @@ const DEFAULT_LOADOUT = [
 ];
 let loadout = loadList('kovaak:list', DEFAULT_LOADOUT);
 
-/* ---------- AGENTS / MAPS META (ориентир на Immortal+ / Radiant, июль 2026 — оценка по данным valking.gg, Tracker.gg и community-тир-листов) ---------- */
+/* ---------- AGENTS / MAPS META (ориентир на Immortal+ / Radiant, патч 12.10–13.00, июль 2026 — оценка по данным op.gg, valking.gg, Tracker.gg и community-тир-листов) ---------- */
 const TIER_COLOR = { S:'#f5a623', A:'#ff4655', B:'#8fd6a0', C:'#a8969a', D:'#e0a15e', F:'#e06c75' };
+/* Тир считается динамически от винрейта (общий ориентир из актуальных тир-листов):
+   S ≥ 53% · A 51.5–53% · B 49.5–51.5% · C 47.5–49.5% · D < 47.5% */
+function tierFromWr(wr){
+  if(wr >= 53) return 'S';
+  if(wr >= 51.5) return 'A';
+  if(wr >= 49.5) return 'B';
+  if(wr >= 47.5) return 'C';
+  return 'D';
+}
 const AGENTS = [
   {id:'clove', name:'Clove', role:'Controller', tier:'S', wr:54.8, pr:15.0},
   {id:'cypher', name:'Cypher', role:'Sentinel', tier:'S', wr:55.3, pr:10.2},
@@ -1092,6 +1164,48 @@ const MAP_TIPS = {
   split:'Вертикальная карта с канатами — контроль мида и вышек решает, много места для флангов через верх.',
   ascent:'Большой мид-корт и механические двери — держи мид под контролем, двери можно намертво закрыть.',
 };
+
+/* ---------- ПОПРАВКА НА КАРТУ ----------
+   У каждой карты своя планировка (кол-во сайтов, длина коридоров, наличие дальних углов),
+   поэтому винрейт/пикрейт агента реально отличается от карты к карте, а не одинаковый везде.
+   Ниже — поправки к базовому винрейту (WR, п.п.) и множитель пикрейта, подобранные по роли
+   агента и характеру карты (open sightlines → дальнобойные дуэлянты/сентинелы; несколько сайтов
+   → сеть контроллеров/инициаторов; тайтовые карты без мида → близкий бой). Summit — новая карта,
+   статистика по ней ещё не накопилась, поэтому поправка нулевая по всем агентам. */
+const MAP_AGENT_DELTA = {
+  ascent:{ // большой мид-корт, механические двери — решает контроль мида
+    sova:1.4, fade:1.2, skye:0.8, killjoy:0.9, chamber:0.7, jett:0.6, clove:0.3,
+    omen:0.4, cypher:0.5, gekko:0.4, viper:-0.3, raze:-0.4, reyna:-0.6, yoru:-0.3
+  },
+  breeze:{ // открытые дальние дистанции — цена дальнобойного оружия и утили
+    chamber:1.8, jett:1.1, viper:1.0, killjoy:0.6, sova:0.5, cypher:-0.4,
+    raze:-1.1, neon:-0.8, reyna:-0.5, phoenix:-0.7, breach:0.3, brimstone:0.4
+  },
+  haven:{ // три сайта — больше территории, ценятся info-агенты и holding-сентинелы
+    killjoy:1.3, cypher:1.2, viper:0.9, fade:1.0, sova:0.8, skye:0.6, chamber:0.3,
+    yoru:-0.6, neon:-0.4, iso:-0.5
+  },
+  lotus:{ // три сайта с вращающимися дверями — инфа важнее урона
+    fade:1.3, sova:1.0, skye:0.9, omen:0.8, viper:0.6, killjoy:0.4,
+    raze:-0.5, jett:-0.3, phoenix:-0.4, yoru:-0.5
+  },
+  split:{ // вертикальная карта, канаты и мид-вышки — простор для дуэлянтов и фланг-контроля
+    raze:1.5, cypher:1.0, sova:0.8, chamber:0.7, killjoy:0.5, brimstone:0.5,
+    viper:-0.9, jett:-0.4, harbor:-0.5
+  },
+  sunset:{ // без классического мида, тайтовые коридоры — ближний бой и контроль дверей
+    raze:1.2, neon:1.0, reyna:0.9, phoenix:0.7, killjoy:0.9, vyse:0.8, cypher:0.6,
+    chamber:-1.0, jett:-0.6, viper:-0.5, skye:-0.3
+  },
+  summit:{}, // новая карта — данных по патчу 13.00 пока недостаточно, поправка 0
+};
+function getAgentMapStat(agent, mapId){
+  const d = (MAP_AGENT_DELTA[mapId] && MAP_AGENT_DELTA[mapId][agent.id]) || 0;
+  const wr = Math.max(40, Math.min(60, agent.wr + d));
+  const prMult = d===0 ? 1 : (1 + d/28); // пикрейт слегка следует за силой агента на карте
+  const pr = agent.pr==null ? null : Math.max(0.2, agent.pr * prMult);
+  return { wr, pr, tier: tierFromWr(wr) };
+}
 const DEFAULT_VIDEOS_RU = [
   {title:'Как пикать правильно в Valorant — виды пиков', sub:'youtube.com/watch?v=0pY12sRWqLI', url:'https://www.youtube.com/watch?v=0pY12sRWqLI'},
   {title:'Нужный гайд на мувмент Valorant', sub:'youtube.com/watch?v=kYJ1njt3vvs', url:'https://www.youtube.com/watch?v=kYJ1njt3vvs'},
@@ -1585,7 +1699,7 @@ function renderMetaTable(){
       return `
       <div class="meta-row">
         <div class="meta-avatar">${img ? `<img src="${img}" alt="${a.name}" loading="lazy">` : '🎯'}</div>
-        <div class="meta-tier" style="background:${TIER_COLOR[a.tier]};">${a.tier}</div>
+        <div class="meta-tier" style="background:${TIER_COLOR[tierFromWr(a.wr)]};">${tierFromWr(a.wr)}</div>
         <div class="meta-name">${a.name}</div>
         <div class="meta-role">${a.role}</div>
         <div class="meta-wr">${a.wr.toFixed(1)}%</div>
@@ -1593,7 +1707,7 @@ function renderMetaTable(){
       </div>`;
     }).join('');
   }
-  document.getElementById('metaLegend').textContent = 'ориентир на ранги Immortal+ / Radiant, оценка по данным valking.gg, Tracker.gg и community тир-листов, июль 2026 — тир, винрейт и пикрейт (частота выбора)';
+  document.getElementById('metaLegend').textContent = 'общий винрейт по всем картам · ориентир на ранги Immortal+ / Radiant, оценка по данным op.gg, valking.gg, Tracker.gg и community тир-листов, июль 2026 — открой конкретную карту в разделе «Карты», чтобы увидеть цифры именно по ней';
 }
 function setupMetaFilters(){
   document.getElementById('roleFilters').addEventListener('click', e=>{
@@ -1650,15 +1764,17 @@ function renderAgentsPane(){
       });
     });
   } else if(agentsView.stage==='agents'){
-    const sorted = [...AGENTS].sort((a,b)=> b.wr - a.wr);
-    el.innerHTML = `<div class="agent-grid">${sorted.map(a=>{
+    const m = MAPS.find(x=>x.id===agentsView.map);
+    const withStats = AGENTS.map(a=>({ a, s:getAgentMapStat(a, m.id) }));
+    const sorted = withStats.sort((x,y)=> y.s.wr - x.s.wr);
+    el.innerHTML = `<div class="agent-grid">${sorted.map(({a,s})=>{
       const img = agentImgUrl(a);
       return `
       <div class="agent-card" data-id="${a.id}">
         <div class="agent-card-img">${img ? `<img src="${img}" alt="${a.name}" loading="lazy">` : '🎯'}</div>
-        <div class="meta-tier" style="background:${TIER_COLOR[a.tier]}; margin:0 auto;">${a.tier}</div>
+        <div class="meta-tier" style="background:${TIER_COLOR[s.tier]}; margin:0 auto;">${s.tier}</div>
         <div class="agent-card-name">${a.name}</div>
-        <div class="agent-card-tier">${a.wr.toFixed(1)}% WR</div>
+        <div class="agent-card-tier">${s.wr.toFixed(1)}% WR на ${m.name}</div>
       </div>`;
     }).join('')}</div>`;
     el.querySelectorAll('.agent-card').forEach(card=>{
@@ -1670,23 +1786,27 @@ function renderAgentsPane(){
   } else if(agentsView.stage==='detail'){
     const a = AGENTS.find(x=>x.id===agentsView.agent);
     const m = MAPS.find(x=>x.id===agentsView.map);
+    const s = getAgentMapStat(a, m.id);
     const img = agentImgUrl(a);
     const q = encodeURIComponent(`${a.name} ${m.name} valorant guide`);
+    const delta = s.wr - a.wr;
+    const deltaTxt = Math.abs(delta) < 0.05 ? 'как в среднем по игре' : (delta > 0 ? `на ${delta.toFixed(1)} п.п. выше среднего` : `на ${Math.abs(delta).toFixed(1)} п.п. ниже среднего`);
     el.innerHTML = `
       <div class="agent-detail">
         <div class="agent-detail-head">
           <div class="agent-detail-img">${img ? `<img src="${img}" alt="${a.name}">` : ''}</div>
-          <div class="meta-tier" style="background:${TIER_COLOR[a.tier]}; width:36px; height:36px; font-size:15px;">${a.tier}</div>
+          <div class="meta-tier" style="background:${TIER_COLOR[s.tier]}; width:36px; height:36px; font-size:15px;">${s.tier}</div>
           <div>
             <div class="agent-detail-title">${a.name} на ${m.name}</div>
             <div class="video-sub">${a.role}</div>
           </div>
         </div>
         <div class="agent-detail-stats">
-          <div><div class="agent-detail-stat-label">Винрейт</div><div class="agent-detail-stat-value">${a.wr.toFixed(1)}%</div></div>
-          <div><div class="agent-detail-stat-label">Пикрейт</div><div class="agent-detail-stat-value">${a.pr!=null ? a.pr.toFixed(1)+'%' : '—'}</div></div>
-          <div><div class="agent-detail-stat-label">Тир</div><div class="agent-detail-stat-value">${a.tier}</div></div>
+          <div><div class="agent-detail-stat-label">Винрейт на карте</div><div class="agent-detail-stat-value">${s.wr.toFixed(1)}%</div></div>
+          <div><div class="agent-detail-stat-label">Пикрейт на карте</div><div class="agent-detail-stat-value">${s.pr!=null ? s.pr.toFixed(1)+'%' : '—'}</div></div>
+          <div><div class="agent-detail-stat-label">Тир на карте</div><div class="agent-detail-stat-value">${s.tier}</div></div>
         </div>
+        <div class="agent-tip">На ${m.name} винрейт ${deltaTxt} (общий по всем картам — ${a.wr.toFixed(1)}%).</div>
         <div class="agent-tip"><strong>Как играть на роли:</strong> ${ROLE_TIPS[a.role] || ROLE_TIPS.Agent}</div>
         <div class="agent-tip"><strong>Особенности карты ${m.name}:</strong> ${MAP_TIPS[m.id]}</div>
         <a class="guide-btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Найти свежий гайд-видео на YouTube</a>
@@ -2132,6 +2252,90 @@ async function init(){
 }
 
 init();
+</script>
+
+<!-- ---------- FIREBASE / GOOGLE AUTH ---------- -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCEz0hmWOuwXQAgeBuDwffC9vjFyAnHKbU",
+    authDomain: "aimnoob.firebaseapp.com",
+    projectId: "aimnoob",
+    storageBucket: "aimnoob.firebasestorage.app",
+    messagingSenderId: "423748955834",
+    appId: "1:423748955834:web:3d178ed72e7d41432cdc83",
+    measurementId: "G-1S7819GM3J"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // Expose globally so future leaderboard code (or the classic script above) can use it.
+  window.firebaseApp = app;
+  window.firebaseAuth = auth;
+  window.aimAuth = {
+    signIn: () => signInWithPopup(auth, provider).catch(err=>{
+      console.error('Google sign-in error', err);
+      alert('Не удалось войти через Google: ' + (err.code || err.message));
+    }),
+    signOut: () => signOut(auth).catch(err=>console.error('Sign-out error', err)),
+  };
+
+  function renderAccountUI(user){
+    const signedOut = document.getElementById('accountSignedOut');
+    const signedIn = document.getElementById('accountSignedIn');
+    if(!signedOut || !signedIn) return;
+    if(user){
+      signedOut.style.display = 'none';
+      signedIn.style.display = 'flex';
+      document.getElementById('accountUserName').textContent = user.displayName || 'Без имени';
+      document.getElementById('accountUserEmail').textContent = user.email || '';
+      const avatarEl = document.getElementById('accountUserAvatar');
+      avatarEl.style.backgroundImage = user.photoURL ? `url(${user.photoURL})` : 'none';
+
+      // Store a lightweight snapshot for the (upcoming) leaderboard feature and for
+      // pre-filling the profile nick/avatar if the person hasn't set their own yet.
+      try{
+        localStorage.setItem('auth:google', JSON.stringify({
+          uid:user.uid, displayName:user.displayName, email:user.email, photoURL:user.photoURL
+        }));
+      }catch(e){}
+
+      try{
+        const profile = JSON.parse(localStorage.getItem('profile:data') || '{}');
+        let changed = false;
+        if(!profile.nick && user.displayName){ profile.nick = user.displayName; changed = true; }
+        if(!profile.avatar && user.photoURL){ profile.avatar = user.photoURL; changed = true; }
+        if(changed){
+          localStorage.setItem('profile:data', JSON.stringify(profile));
+          const nickEl = document.getElementById('profileNick');
+          const avatarPreview = document.getElementById('profileAvatar');
+          if(nickEl && !nickEl.value) nickEl.value = profile.nick || '';
+          if(avatarPreview && profile.avatar){
+            avatarPreview.style.backgroundImage = `url(${profile.avatar})`;
+            avatarPreview.textContent = '';
+          }
+        }
+      }catch(e){}
+    } else {
+      signedOut.style.display = 'flex';
+      signedIn.style.display = 'none';
+      try{ localStorage.removeItem('auth:google'); }catch(e){}
+    }
+    window.dispatchEvent(new CustomEvent('aimauthchanged', {detail:{user}}));
+  }
+
+  onAuthStateChanged(auth, renderAccountUI);
+
+  document.addEventListener('click', (e)=>{
+    if(e.target.closest('#googleSignInBtn')) window.aimAuth.signIn();
+    if(e.target.closest('#googleSignOutBtn')) window.aimAuth.signOut();
+  });
 </script>
 </body>
 </html>
