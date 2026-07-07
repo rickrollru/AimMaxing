@@ -1,2 +1,2 @@
 # AimMaxing
-Valorant better
+Стань лучше в любой игру
