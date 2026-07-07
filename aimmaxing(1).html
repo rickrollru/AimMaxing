@@ -1,0 +1,2137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AimMaxing</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --accent:#ff4655;
+    --accent-rgb:255,70,85;
+    --panel-rgb:26,17,20;
+    --bg-base:#0b0709;
+    --border: rgba(255,70,85,0.18);
+    --text:#f2e9ea;
+    --text-dim:#a8969a;
+    --text-faint:#6e5c60;
+    --blur-amt:24px;
+    --panel-alpha:0.6;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    color:var(--text);
+    font-family:'Inter', sans-serif;
+    min-height:100vh;
+    background:var(--bg-base);
+    overflow-x:hidden;
+    animation: bodyFadeIn .5s ease;
+  }
+  .body-bg{
+    position:fixed; inset:-40px; z-index:-1;
+    background-size:cover; background-position:center;
+    filter:blur(var(--blur-amt));
+    transform:scale(1.08);
+    background-color:var(--bg-base);
+  }
+  .body-bg::after{
+    content:""; position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse 1000px 600px at 20% 0%, rgba(var(--accent-rgb),0.16), transparent 60%),
+      radial-gradient(ellipse 800px 500px at 100% 100%, rgba(var(--accent-rgb),0.10), transparent 55%);
+  }
+  .body-bg::before{
+    content:""; position:absolute; inset:0; opacity:0.35;
+    background-image:
+      linear-gradient(rgba(var(--accent-rgb),0.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(var(--accent-rgb),0.07) 1px, transparent 1px);
+    background-size:46px 46px;
+    animation: gridDrift 26s linear infinite;
+    mask-image: radial-gradient(ellipse 900px 700px at 30% 10%, black, transparent 70%);
+  }
+  @keyframes gridDrift{ from{ background-position:0 0, 0 0; } to{ background-position:120px 160px, 120px 160px; } }
+
+  @keyframes bodyFadeIn{ from{opacity:0;} to{opacity:1;} }
+  @keyframes softFadeIn{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+  @keyframes popIn{ 0%{transform:scale(0.6); opacity:0;} 60%{transform:scale(1.15);} 100%{transform:scale(1); opacity:1;} }
+  @keyframes pulseGlow{ 0%,100%{ box-shadow:0 0 6px 1px rgba(var(--accent-rgb),0.7); } 50%{ box-shadow:0 0 14px 4px rgba(var(--accent-rgb),0.95); } }
+  @keyframes shimmerBar{ 0%{ background-position:-200% 0; } 100%{ background-position:200% 0; } }
+
+  .statusbar, .profile-card, .timer-panel, .playlist-item, .meta-table, .cal-panel, .agent-detail{
+    transition:box-shadow .25s ease, transform .25s ease, border-color .25s ease;
+  }
+  .statusbar:hover, .profile-card:hover, .timer-panel:hover{
+    border-color: rgba(var(--accent-rgb),0.4);
+    box-shadow:0 8px 34px rgba(0,0,0,0.35), 0 0 0 1px rgba(var(--accent-rgb),0.12), 0 0 28px rgba(var(--accent-rgb),0.10);
+  }
+  .playlist-item:hover{ border-color: rgba(var(--accent-rgb),0.45); box-shadow:0 6px 22px rgba(0,0,0,0.3), 0 0 18px rgba(var(--accent-rgb),0.12); transform:translateY(-2px); }
+
+  .shell{ display:flex; min-height:100vh; }
+
+  /* ---------- SIDEBAR (Hyprland-style dock) ---------- */
+  .sidebar{
+    width:220px; flex-shrink:0;
+    background:rgba(var(--panel-rgb), var(--panel-alpha));
+    backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+    border-right:1px solid var(--border);
+    padding:22px 14px;
+    display:flex; flex-direction:column; gap:4px;
+    position:sticky; top:0; height:100vh;
+  }
+  .sidebar-brand{
+    font-family:'Sora', sans-serif; font-weight:800; font-size:15px; letter-spacing:0.5px;
+    color:var(--text); padding:6px 10px 20px 10px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .sidebar-brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); animation:pulseGlow 2.2s ease-in-out infinite; }
+  .side-item{
+    display:flex; align-items:center; gap:12px;
+    background:transparent; border:none; border-radius:12px;
+    color:var(--text-dim); font-family:'Inter', sans-serif; font-size:13.5px; font-weight:500;
+    padding:11px 12px; cursor:pointer; text-align:left; width:100%;
+    transition:background .2s ease, color .2s ease;
+  }
+  .side-item svg{ width:17px; height:17px; flex-shrink:0; opacity:0.85; }
+  .side-item{ transition:background .2s ease, color .2s ease, transform .2s ease; }
+  .side-item:hover{ background:rgba(255,255,255,0.06); color:var(--text); transform:translateX(2px); }
+  .side-item.active{
+    background:rgba(var(--accent-rgb),0.16); color:var(--text);
+    box-shadow:inset 2px 0 0 var(--accent), 0 0 16px rgba(var(--accent-rgb),0.18);
+  }
+  .side-item.active svg{ opacity:1; color:var(--accent); }
+  .sidebar-spacer{ flex:1; }
+  .sidebar-foot{
+    font-family:'IBM Plex Mono', monospace; font-size:9.5px; color:var(--text-faint);
+    padding:10px 10px 0 10px; border-top:1px solid var(--border); margin-top:6px;
+  }
+
+  /* ---------- MOBILE: bottom tab bar (2 rows) ---------- */
+  @media (max-width:760px){
+    .shell{ flex-direction:column; }
+    .sidebar{
+      width:100%; height:auto; position:fixed; bottom:0; left:0; top:auto;
+      display:grid; grid-template-columns:repeat(3, 1fr); gap:6px 2px;
+      padding:10px 8px 8px; border-right:none; border-top:1px solid var(--border);
+      z-index:50;
+    }
+    .sidebar-brand, .sidebar-foot, .sidebar-spacer{ display:none; }
+    .side-item{
+      flex-direction:column; gap:4px; font-size:10px; padding:8px 4px; border-radius:10px;
+      width:100%;
+    }
+    .side-item span{ line-height:1.1; }
+    .side-item.active{ box-shadow:none; background:rgba(var(--accent-rgb),0.16); }
+    .content{ padding-bottom:96px !important; }
+  }
+
+  .content{ flex:1; min-width:0; padding:32px 30px 60px; }
+  @media (max-width:600px){
+    .content{ padding:18px 14px 24px; }
+    h1{ font-size:21px; margin-bottom:16px; }
+    .statusbar{ padding:18px 18px; }
+    .stats-row{ grid-template-columns:repeat(2, 1fr); row-gap:16px; }
+    .stat:nth-child(3){ border-left:none; padding-left:0; }
+    .stat-value, .stat-input{ font-size:16px; }
+  }
+
+  .view{ display:none; animation: softFadeIn .3s ease; }
+  .view.active{ display:block; }
+
+  .wrap{max-width:900px;}
+
+  .statusbar{
+    border:1px solid var(--border); border-radius:18px;
+    background:rgba(var(--panel-rgb), var(--panel-alpha));
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    padding:22px 26px; position:relative; overflow:hidden;
+    box-shadow:0 8px 30px rgba(0,0,0,0.25);
+    margin-bottom:8px;
+  }
+  .statusbar::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, transparent, var(--accent) 50%, transparent);
+    background-size:200% 100%;
+    animation: shimmerBar 3.5s ease-in-out infinite;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:3px; color:var(--accent);
+    text-transform:uppercase; margin-bottom:8px;
+  }
+  h1{
+    font-family:'Sora', sans-serif; font-weight:700; font-size:28px;
+    letter-spacing:-0.5px; margin:0 0 22px 0; color:var(--text); line-height:1.25;
+  }
+  .stats-row{ display:grid; grid-template-columns:repeat(4, 1fr); gap:0; border-top:1px solid var(--border); padding-top:18px; }
+  .stat{ min-width:0; padding:0 18px; border-left:1px solid var(--border); }
+  .stat:first-child{border-left:none; padding-left:0;}
+  .stat-label{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1.5px;
+    color:var(--text-faint); text-transform:uppercase; margin-bottom:8px;
+  }
+  .stat-value{ font-family:'Sora', sans-serif; font-size:20px; font-weight:600; color:var(--text); }
+  .stat-value.accent{color:var(--accent);}
+  .stat-input{
+    font-family:'Sora', sans-serif; font-size:20px; font-weight:600;
+    background:transparent; border:none; border-bottom:1px solid transparent;
+    color:var(--text); width:100%; padding:0 0 2px 0; transition:border-color .2s ease;
+  }
+  .stat-input.accent{color:var(--accent);}
+  .stat-input:focus{outline:none; border-bottom:1px solid var(--accent);}
+  .stat-input::placeholder{color:var(--text-faint);}
+
+  .section-label{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2.5px;
+    text-transform:uppercase; color:var(--text-faint); margin:28px 0 12px 2px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-label::after{ content:""; flex:1; height:1px; background:var(--border); }
+  .section-label.sub{ margin-top:20px; font-size:10px; color:var(--accent); }
+
+  .day-nav{ display:flex; align-items:center; gap:10px; margin:28px 0 12px 2px; flex-wrap:wrap; }
+  .nav-btn{
+    font-family:'IBM Plex Mono', monospace;
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); border:1px solid var(--border); border-radius:10px;
+    color:var(--text-dim); width:30px; height:30px; cursor:pointer; font-size:14px;
+    display:flex; align-items:center; justify-content:center; transition:all .2s ease;
+  }
+  .nav-btn:hover{border-color:var(--accent); color:var(--accent); transform:translateY(-1px);}
+  .day-nav-date{ font-family:'IBM Plex Mono', monospace; font-size:13px; color:var(--accent); min-width:110px; }
+  .today-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1px;
+    background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--text-faint);
+    padding:7px 12px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  .today-btn:hover{border-color:var(--accent); color:var(--accent);}
+  .today-btn.hidden{display:none;}
+  .day-nav::after{ content:""; flex:1; height:1px; background:var(--border); margin-left:4px; }
+
+  .duty-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:720px){ .duty-grid{grid-template-columns:1fr;} }
+
+  .duty-panel{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; overflow:hidden;
+    transition:border-color .2s ease;
+  }
+  .duty-panel:hover{ border-color:rgba(var(--accent-rgb),0.4); }
+  .duty-head{
+    padding:14px 18px; border-bottom:1px solid var(--border);
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .duty-title{ font-family:'Sora', sans-serif; font-size:16px; font-weight:600; }
+  .duty-count{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--text-dim); }
+  .duty-list{padding:6px 0;}
+  .task{
+    display:flex; align-items:flex-start; gap:12px; padding:13px 18px;
+    border-bottom:1px solid var(--border); cursor:pointer; transition:background .2s ease;
+  }
+  .task:last-child{border-bottom:none;}
+  .task:hover{background:rgba(255,255,255,0.04);}
+  .task.done{background:rgba(var(--accent-rgb),0.06);}
+  .task.done .task-name{color:var(--text-dim); text-decoration:line-through; text-decoration-color:var(--text-faint);}
+  .checkbox{
+    width:19px; height:19px; border:1.5px solid var(--text-faint); border-radius:6px; flex-shrink:0;
+    margin-top:2px; position:relative; transition:border-color .2s ease, background .2s ease;
+  }
+  .task.done .checkbox{background:var(--accent); border-color:var(--accent); animation:popIn .3s ease;}
+  .task.done .checkbox::after{
+    content:""; position:absolute; left:5px; top:2px; width:6px; height:10px;
+    border:solid #11111b; border-width:0 2px 2px 0; transform:rotate(40deg);
+  }
+  .task:hover .checkbox{border-color:var(--accent);}
+  .task-body{flex:1;}
+  .task-name{ font-size:14px; font-weight:500; color:var(--text); }
+  .task-meta{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); margin-top:3px; }
+
+  .day-summary{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; padding:16px 18px;
+  }
+  .day-note{
+    width:100%; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:10px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13px; padding:12px 14px; resize:vertical; min-height:70px;
+  }
+  .day-note::placeholder{color:var(--text-faint);}
+  .day-note:focus{outline:none; border-color:var(--accent);}
+
+  .loadout-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:600px){ .loadout-grid{grid-template-columns:1fr;} }
+  .loadout-card{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:14px; padding:14px 16px;
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .loadout-card:hover{ border-color:rgba(var(--accent-rgb),0.5); transform:translateY(-2px); }
+  .loadout-tag{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:2px;
+    color:var(--accent); text-transform:uppercase; margin-bottom:8px;
+  }
+  .loadout-code-row{ display:flex; align-items:center; gap:10px; }
+  .loadout-code{
+    font-family:'IBM Plex Mono', monospace; font-size:12.5px; color:var(--text);
+    background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; padding:8px 10px; flex:1;
+    overflow-x:auto; white-space:nowrap;
+  }
+  .copy-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid rgba(var(--accent-rgb),0.5); border-radius:8px; color:var(--accent);
+    padding:8px 12px; cursor:pointer; text-transform:uppercase; transition:all .2s ease; flex-shrink:0;
+  }
+  .copy-btn:hover{background:var(--accent); color:#11111b;}
+  .copy-btn.copied{background:var(--accent); color:#11111b;}
+
+  .video-list{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; overflow:hidden;
+  }
+  .video-item{
+    display:flex; align-items:center; gap:14px; padding:14px 18px;
+    border-bottom:1px solid var(--border); text-decoration:none; color:inherit; transition:background .2s ease;
+  }
+  .video-item:last-child{border-bottom:none;}
+  .video-item:hover{background:rgba(255,255,255,0.05);}
+  .play-icon{
+    width:28px; height:28px; border:1.5px solid rgba(var(--accent-rgb),0.5); border-radius:9px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; transition:all .2s ease;
+  }
+  .video-item:hover .play-icon{ border-color:var(--accent); }
+  .play-icon::after{
+    content:""; width:0; height:0; border-top:5px solid transparent; border-bottom:5px solid transparent;
+    border-left:8px solid var(--accent); margin-left:2px;
+  }
+  .video-text{flex:1;}
+  .video-title{font-size:13.5px; font-weight:500; color:var(--text);}
+  .video-sub{font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-top:2px;}
+  .video-arrow{color:var(--text-faint); font-size:14px;}
+  .video-lang{
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:1px;
+    border:1px solid var(--border); border-radius:6px; color:var(--text-faint); padding:2px 6px; flex-shrink:0;
+  }
+
+  .cal-panel{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; padding:20px 22px;
+  }
+  .cal-year-nav{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .cal-year-label{ font-family:'Sora', sans-serif; font-weight:700; font-size:20px; color:var(--text); }
+  .cal-hint{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-bottom:14px; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; }
+  @media (min-width:1100px){ .cal-grid{grid-template-columns:repeat(4, 1fr);} }
+  @media (max-width:760px){ .cal-grid{grid-template-columns:repeat(2, 1fr);} }
+  @media (max-width:460px){ .cal-grid{grid-template-columns:1fr;} }
+  .cal-month{ border:1px solid var(--border); border-radius:12px; padding:10px 12px; }
+  .cal-month-title{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1.5px;
+    color:var(--accent); text-transform:uppercase; margin-bottom:8px;
+  }
+  .cal-weekdays{ display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; margin-bottom:3px; }
+  .cal-weekday{ font-family:'IBM Plex Mono', monospace; font-size:8px; color:var(--text-faint); text-align:center; text-transform:uppercase; }
+  .cal-days{ display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; }
+  .cal-day{
+    aspect-ratio:1; position:relative; border:1px solid var(--border); border-radius:6px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--text-dim);
+    transition:border-color .2s ease, transform .15s ease; overflow:hidden;
+  }
+  .cal-day.empty{ border:none; cursor:default; }
+  .cal-day:not(.empty):hover{ border-color:var(--accent); transform:scale(1.12); z-index:2; }
+  .cal-day.today{ border-color:var(--accent); border-style:dashed; }
+  .cal-day.selected{ border-color:var(--accent); border-width:2px; }
+  .cal-day-fill{ position:absolute; inset:0; background:var(--accent); z-index:0; }
+  .cal-day span{ position:relative; z-index:1; }
+  .cal-day.filled span{ color:#11111b; font-weight:600; }
+
+  .legend{
+    display:flex; gap:18px; margin-top:16px; flex-wrap:wrap;
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint);
+  }
+  .legend-item{display:flex; align-items:center; gap:6px;}
+  .legend-swatch{width:10px; height:10px; border-radius:3px; border:1px solid var(--border);}
+
+  /* ---------- SETTINGS ---------- */
+  .settings-panel{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; padding:22px 24px; display:flex; flex-direction:column; gap:20px;
+  }
+  .settings-row{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .settings-row-label{ font-size:13.5px; font-weight:500; color:var(--text); }
+  .settings-row-desc{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-top:3px; }
+  .settings-control{ display:flex; align-items:center; gap:10px; }
+  input[type="color"]{
+    width:40px; height:32px; border:1px solid var(--border); border-radius:8px; background:none; cursor:pointer; padding:2px;
+  }
+  input[type="range"]{ accent-color:var(--accent); width:140px; }
+  .settings-input{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--text);
+    background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; padding:8px 10px; width:220px;
+  }
+  .settings-input::placeholder{color:var(--text-faint);}
+  .file-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid rgba(var(--accent-rgb),0.5); border-radius:8px; color:var(--accent);
+    padding:8px 12px; cursor:pointer; text-transform:uppercase;
+  }
+  .file-btn:hover{ background:var(--accent); color:#11111b; }
+  .settings-divider{ height:1px; background:var(--border); }
+  .reset-btn{
+    align-self:flex-start;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--text-faint);
+    padding:9px 14px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  .reset-btn:hover{ border-color:#e06c75; color:#e06c75; }
+
+  footer{
+    margin-top:36px; text-align:center; font-family:'IBM Plex Mono', monospace;
+    font-size:10px; color:var(--text-faint); letter-spacing:1px;
+  }
+
+  /* ---------- BRAND / CROWN ---------- */
+  .sidebar-brand .crown{ width:16px; height:16px; color:var(--accent); flex-shrink:0; }
+  .sidebar-brand span.brand-text{ font-weight:800; }
+
+  /* ---------- FLOATING BACKGROUND DECOR ---------- */
+  .decor-layer{ position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+  .decor-layer.hidden{ display:none; }
+  .decor-item{
+    position:absolute; color:rgba(var(--accent-rgb),0.10); opacity:0.5;
+    animation: floatY 14s ease-in-out infinite;
+  }
+  .decor-item svg{ width:100%; height:100%; }
+  @keyframes floatY{
+    0%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-26px) rotate(8deg); }
+    100%{ transform:translateY(0) rotate(0deg); }
+  }
+
+  /* ---------- PROFILE ---------- */
+  .profile-banner{
+    position:relative; width:100%; height:150px; border-radius:18px 18px 0 0;
+    background:linear-gradient(120deg, rgba(var(--accent-rgb),0.35), rgba(var(--accent-rgb),0.05));
+    background-size:cover; background-position:center; overflow:hidden;
+  }
+  .profile-card{
+    border:1px solid var(--border); border-radius:18px; overflow:hidden;
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.25); margin-bottom:8px;
+  }
+  .profile-body{ padding:0 26px 24px; position:relative; }
+  .profile-avatar-wrap{ margin-top:-46px; display:flex; align-items:flex-end; gap:18px; flex-wrap:wrap; }
+  .profile-avatar{
+    width:92px; height:92px; border-radius:20px; border:3px solid var(--bg-base);
+    background:rgba(var(--panel-rgb),1) center/cover no-repeat; box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    display:flex; align-items:center; justify-content:center; font-size:34px; color:var(--text-faint); flex-shrink:0;
+  }
+  .profile-name-row{ padding-bottom:6px; }
+  .profile-name-row .stat-input{ font-size:22px; }
+  .profile-upload-row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+  .profile-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+  @media (max-width:640px){ .profile-grid{grid-template-columns:1fr;} }
+  .profile-stats{ display:grid; grid-template-columns:repeat(2,1fr); gap:0; margin-top:20px; border-top:1px solid var(--border); padding-top:16px; }
+  .profile-about{
+    width:100%; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:10px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13px; padding:12px 14px; resize:vertical; min-height:70px;
+  }
+  .profile-about::placeholder{color:var(--text-faint);}
+  .profile-about:focus{outline:none; border-color:var(--accent);}
+  .profile-field-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1.5px; color:var(--text-faint); text-transform:uppercase; margin-bottom:6px; }
+  .profile-input{
+    width:100%; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:10px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13.5px; padding:10px 12px;
+  }
+  .profile-input:focus{outline:none; border-color:var(--accent);}
+
+  /* ---------- EDITABLE TASK CONTROLS ---------- */
+  .task{ position:relative; padding-right:64px; }
+  .task-actions{ position:absolute; right:10px; top:10px; display:flex; gap:4px; opacity:0; transition:opacity .15s ease; }
+  .task:hover .task-actions{ opacity:1; }
+  .icon-btn{
+    width:24px; height:24px; border-radius:7px; border:1px solid var(--border); background:rgba(0,0,0,0.2);
+    color:var(--text-faint); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;
+    flex-shrink:0; transition:all .15s ease;
+  }
+  .icon-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .icon-btn.danger:hover{ border-color:#e06c75; color:#e06c75; }
+  .task-edit-row{ display:flex; flex-direction:column; gap:6px; flex:1; }
+  .task-edit-row input{
+    background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:7px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13px; padding:6px 9px;
+  }
+  .task-edit-row input:focus{ outline:none; border-color:var(--accent); }
+  .add-row{ padding:12px 18px; }
+  .add-inline-btn{
+    width:100%; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px dashed var(--border); border-radius:10px; color:var(--text-faint);
+    padding:9px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  .add-inline-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .add-form{ display:flex; flex-direction:column; gap:8px; }
+  .add-form input{
+    background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:8px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13px; padding:8px 10px;
+  }
+  .add-form input:focus{ outline:none; border-color:var(--accent); }
+  .add-form-btns{ display:flex; gap:8px; }
+  .save-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:var(--accent); border:none; border-radius:8px; color:#11111b;
+    padding:8px 14px; cursor:pointer; text-transform:uppercase;
+  }
+  .cancel-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--text-faint);
+    padding:8px 14px; cursor:pointer; text-transform:uppercase;
+  }
+
+  /* ---------- VIDEO WATCH CHECK ---------- */
+  .video-item{ position:relative; }
+  .video-check{
+    width:20px; height:20px; border:1.5px solid var(--text-faint); border-radius:6px; flex-shrink:0;
+    position:relative; transition:all .2s ease;
+  }
+  .video-check.watched{ background:var(--accent); border-color:var(--accent); }
+  .video-check.watched::after{
+    content:""; position:absolute; left:6px; top:2px; width:5px; height:9px;
+    border:solid #11111b; border-width:0 2px 2px 0; transform:rotate(40deg);
+  }
+  .video-del{ margin-left:2px; }
+
+  /* ---------- AGENTS / MAPS ---------- */
+  .meta-table{ background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+  .meta-filters{ display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; margin:12px 0 14px; }
+  .filter-chips, .filter-sorts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.5px; text-transform:uppercase;
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); border:1px solid var(--border); border-radius:20px;
+    color:var(--text-dim); padding:7px 13px; cursor:pointer; transition:all .2s ease;
+  }
+  .chip:hover{ border-color:var(--accent); color:var(--accent); }
+  .chip.active{ background:var(--accent); border-color:var(--accent); color:#0b0709; font-weight:600; box-shadow:0 0 14px rgba(var(--accent-rgb),0.4); }
+  .meta-avatar{
+    width:34px; height:34px; border-radius:9px; flex-shrink:0; background:rgba(var(--panel-rgb),1) center/cover no-repeat;
+    display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--text-faint); overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .meta-avatar img{ width:100%; height:100%; object-fit:cover; }
+  .agent-card-img{
+    width:100%; aspect-ratio:1; border-radius:10px; margin-bottom:8px; background:rgba(0,0,0,0.3) center/cover no-repeat;
+    display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--text-faint); overflow:hidden;
+  }
+  .agent-card-img img{ width:100%; height:100%; object-fit:cover; object-position:top center; }
+  .agent-detail-img{
+    width:64px; height:64px; border-radius:14px; flex-shrink:0; background:rgba(0,0,0,0.3) center/cover no-repeat; overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .agent-detail-img img{ width:100%; height:100%; object-fit:cover; object-position:top center; }
+  .meta-row{ display:flex; align-items:center; gap:12px; padding:11px 18px; border-bottom:1px solid var(--border); }
+  .meta-row:last-child{ border-bottom:none; }
+  .meta-tier{
+    width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-family:'Sora', sans-serif; font-weight:700; font-size:12px; flex-shrink:0; color:#11111b;
+  }
+  .meta-name{ flex:1; font-size:13.5px; font-weight:500; }
+  .meta-role{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); width:90px; flex-shrink:0; }
+  .meta-wr{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--accent); width:56px; text-align:right; flex-shrink:0; }
+  .meta-pr{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); width:64px; text-align:right; flex-shrink:0; }
+  .meta-legend{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin:10px 2px 0; }
+
+  .map-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px,1fr)); gap:12px; }
+  .map-card{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:14px; padding:18px 16px; cursor:pointer; transition:all .2s ease; text-align:center;
+  }
+  .map-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .map-card-name{ font-family:'Sora', sans-serif; font-weight:600; font-size:14px; }
+
+  .agent-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr)); gap:10px; }
+  .agent-card{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:12px; padding:12px 10px; cursor:pointer; transition:all .2s ease; text-align:center;
+  }
+  .agent-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .agent-card-name{ font-size:12.5px; font-weight:600; margin-top:4px; }
+  .agent-card-tier{ font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--text-faint); }
+
+  .crumb{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); margin-bottom:14px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .crumb button{ background:none; border:none; color:var(--accent); cursor:pointer; font-family:inherit; font-size:inherit; padding:0; }
+  .agent-detail{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:16px; padding:22px 24px;
+  }
+  .agent-detail-head{ display:flex; align-items:center; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+  .agent-detail-title{ font-family:'Sora', sans-serif; font-weight:700; font-size:20px; }
+  .agent-detail-stats{ display:flex; gap:18px; margin:14px 0; flex-wrap:wrap; }
+  .agent-detail-stat-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; }
+  .agent-detail-stat-value{ font-family:'Sora', sans-serif; font-weight:600; font-size:16px; color:var(--accent); }
+  .agent-tip{ font-size:13.5px; line-height:1.6; color:var(--text-dim); margin:14px 0; }
+  .guide-btn{
+    display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:1px;
+    background:rgba(var(--accent-rgb),0.14); border:1px solid rgba(var(--accent-rgb),0.5); border-radius:10px; color:var(--accent);
+    padding:10px 16px; cursor:pointer; text-transform:uppercase; text-decoration:none; transition:all .2s ease;
+  }
+  .guide-btn:hover{ background:var(--accent); color:#11111b; }
+
+  /* ---------- TIMER ---------- */
+  .timer-panel{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:18px; padding:36px 24px; text-align:center;
+  }
+  .timer-display{ font-family:'IBM Plex Mono', monospace; font-size:54px; font-weight:600; color:var(--text); letter-spacing:2px; }
+  .timer-controls{ display:flex; gap:12px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+  .timer-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:1.5px;
+    background:rgba(var(--accent-rgb),0.14); border:1px solid rgba(var(--accent-rgb),0.5); border-radius:10px; color:var(--accent);
+    padding:11px 22px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  .timer-btn:hover{ background:var(--accent); color:#0b0709; transform:translateY(-1px) scale(1.03); box-shadow:0 0 18px rgba(var(--accent-rgb),0.4); }
+  .timer-btn.stop{ border-color:rgba(224,108,117,0.5); color:#e06c75; }
+  .timer-btn.stop:hover{ background:#e06c75; color:#11111b; }
+  .timer-today{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); margin-top:16px; }
+  .session-log{ margin-top:18px; }
+  .session-row{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-dim); padding:8px 4px; border-bottom:1px solid var(--border); }
+  .session-row:last-child{ border-bottom:none; }
+  .clear-sessions-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase;
+    background:transparent; border:1px solid rgba(224,108,117,0.4); border-radius:8px; color:#e06c75;
+    padding:5px 10px; cursor:pointer; transition:all .2s ease; flex-shrink:0;
+  }
+  .clear-sessions-btn:hover{ background:#e06c75; color:#0b0709; box-shadow:0 0 14px rgba(224,108,117,0.4); }
+
+  /* ---------- PLAYLIST ---------- */
+  .playlist-item{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:14px; padding:14px 16px; margin-bottom:10px;
+  }
+  .playlist-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+  .playlist-title{ font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:8px; }
+  .playlist-embed{ margin-top:8px; border-radius:10px; overflow:hidden; }
+  .playlist-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase;
+    background:rgba(var(--accent-rgb),0.16); color:var(--accent); border:1px solid rgba(var(--accent-rgb),0.4);
+    border-radius:6px; padding:2px 6px; flex-shrink:0;
+  }
+  .volume-panel{
+    display:flex; align-items:center; gap:12px;
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:14px; padding:12px 16px; margin-bottom:14px;
+  }
+  .volume-label{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-dim); flex-shrink:0; }
+  .volume-slider{
+    flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg, var(--accent) var(--vol-pct,70%), rgba(255,255,255,0.12) var(--vol-pct,70%));
+    outline:none; cursor:pointer;
+  }
+  .volume-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 10px rgba(var(--accent-rgb),0.7); cursor:pointer;
+  }
+  .volume-slider::-moz-range-thumb{
+    width:15px; height:15px; border-radius:50%; border:none;
+    background:var(--accent); box-shadow:0 0 10px rgba(var(--accent-rgb),0.7); cursor:pointer;
+  }
+  .volume-value{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--accent); width:38px; text-align:right; flex-shrink:0; }
+</style>
+</head>
+<body>
+<div class="body-bg" id="bodyBg"></div>
+<div class="decor-layer" id="decorLayer"></div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <svg class="crown" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8zm2.5 13h13v1.5h-13V21z"/></svg>
+      <span class="brand-text">AimMaxing</span>
+    </div>
+
+    <button class="side-item active" data-view="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+      <span>Главная</span>
+    </button>
+    <button class="side-item" data-view="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Профиль</span>
+    </button>
+    <button class="side-item" data-view="videos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>
+      <span>Видео</span>
+    </button>
+    <button class="side-item" data-view="kovaak">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      <span>Kovaak</span>
+    </button>
+    <button class="side-item" data-view="agents">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+      <span>Агенты</span>
+    </button>
+    <button class="side-item" data-view="timer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
+      <span>Таймер</span>
+    </button>
+    <button class="side-item" data-view="playlist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <span>Плейлист</span>
+    </button>
+    <button class="side-item" data-view="calendar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span>Календарь</span>
+    </button>
+
+    <div class="sidebar-spacer"></div>
+
+    <button class="side-item" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.56V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.56-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.33-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.56 1.7 1.7 0 001.87-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.56 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1z"/></svg>
+      <span>Настройки</span>
+    </button>
+    <div class="sidebar-foot">AimMaxing · твой трекер прогресса</div>
+  </nav>
+
+  <main class="content">
+
+    <section id="view-home" class="view active">
+      <div class="wrap">
+        <div class="statusbar">
+          <div class="eyebrow">‖ личный трекер</div>
+          <h1>AimMaxing</h1>
+          <div class="stats-row">
+            <div class="stat">
+              <div class="stat-label">Текущий ранг</div>
+              <input class="stat-input" id="currentRankInput" placeholder="D1 400RR">
+            </div>
+            <div class="stat">
+              <div class="stat-label">Цель</div>
+              <input class="stat-input accent" id="goalRankInput" placeholder="Ascendant">
+            </div>
+            <div class="stat">
+              <div class="stat-label">День операции</div>
+              <div class="stat-value" id="dayCounter">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Дней подряд</div>
+              <div class="stat-value accent" id="streakCounter">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-nav">
+          <button class="nav-btn" id="prevDay">‹</button>
+          <div class="day-nav-date" id="dayNavDate">—</div>
+          <button class="nav-btn" id="nextDay">›</button>
+          <button class="today-btn hidden" id="jumpToday">Сегодня</button>
+        </div>
+        <div class="duty-grid" id="morningGrid"></div>
+
+        <div class="section-label" style="margin-top:16px;">Вечер — применение</div>
+        <div class="duty-grid" id="eveningGrid"></div>
+
+        <div class="section-label">Как прошёл день</div>
+        <div class="day-summary">
+          <textarea class="day-note" id="dayNote" placeholder="Что чувствуешь по поводу этого дня — эмоции, мысли, что зашло, что нет..."></textarea>
+        </div>
+        <footer>отмечай честно — статистика только для тебя</footer>
+      </div>
+    </section>
+
+    <section id="view-profile" class="view">
+      <div class="wrap">
+        <div class="profile-card">
+          <div class="profile-banner" id="profileBanner"></div>
+          <div class="profile-body">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="profileAvatar">🎯</div>
+              <div class="profile-name-row">
+                <input class="stat-input" id="profileNick" placeholder="Твой ник">
+              </div>
+            </div>
+            <div class="profile-upload-row">
+              <label class="file-btn">Аватар<input type="file" id="avatarFile" accept="image/*" style="display:none;"></label>
+              <label class="file-btn">Баннер<input type="file" id="bannerFile" accept="image/*" style="display:none;"></label>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <div class="profile-field-label">О себе</div>
+                <textarea class="profile-about" id="profileAbout" placeholder="Пара слов о себе, целях, стиле игры..."></textarea>
+              </div>
+              <div>
+                <div class="profile-field-label">Discord</div>
+                <input class="profile-input" id="profileDiscord" placeholder="username#0000">
+                <div class="profile-field-label" style="margin-top:14px;">Дата начала трекинга</div>
+                <input class="profile-input" id="profileStartDate" type="date">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="statusbar">
+          <div class="eyebrow">‖ прогресс</div>
+          <h1>Твоя серия</h1>
+          <div class="stats-row">
+            <div class="stat">
+              <div class="stat-label">Текущая серия</div>
+              <div class="stat-value accent" id="profileStreak">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Лучшая серия</div>
+              <div class="stat-value" id="profileBestStreak">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">День трекинга</div>
+              <div class="stat-value" id="profileDayCounter">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Лидерборд</div>
+              <div class="stat-value" style="color:var(--text-faint); font-size:13px;">скоро</div>
+            </div>
+          </div>
+        </div>
+        <footer>система аккаунтов и общий лидерборд по сериям — в планах</footer>
+      </div>
+    </section>
+
+    <section id="view-videos" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Видео — мувмент (RU)</div>
+        <div class="video-list" id="videoListRuMovement"></div>
+        <div class="section-label sub">Movement (EN)</div>
+        <div class="video-list" id="videoListEnMovement"></div>
+        <div class="section-label sub">Tilt / Mental game (EN)</div>
+        <div class="video-list" id="videoListEnTilt"></div>
+        <div class="section-label sub">Aim / Kovaak routines (EN)</div>
+        <div class="video-list" id="videoListAimKovaak"></div>
+        <div class="section-label sub">Свои видео</div>
+        <div class="video-list" id="videoListCustom"></div>
+        <div class="add-row" style="padding:0; margin-top:10px;"><button class="add-inline-btn" id="addVideoBtn">+ Добавить видео</button></div>
+        <div id="addVideoFormWrap"></div>
+      </div>
+    </section>
+
+    <section id="view-kovaak" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Kovaak — плейлисты</div>
+        <div class="loadout-grid" id="loadoutGrid"></div>
+        <div class="add-row" style="padding:0; margin-top:14px;"><button class="add-inline-btn" id="addKovaakBtn">+ Добавить сценарий</button></div>
+        <div id="addKovaakFormWrap"></div>
+      </div>
+    </section>
+
+    <section id="view-agents" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Мета — винрейт и пикрейт агентов</div>
+        <div class="meta-filters">
+          <div class="filter-chips" id="roleFilters">
+            <button class="chip active" data-role="All">Все роли</button>
+            <button class="chip" data-role="Duelist">Дуэлянт</button>
+            <button class="chip" data-role="Initiator">Инициатор</button>
+            <button class="chip" data-role="Controller">Контроллер</button>
+            <button class="chip" data-role="Sentinel">Страж</button>
+          </div>
+          <div class="filter-sorts" id="sortFilters">
+            <button class="chip sort-chip active" data-sort="wr-desc">Винрейт ↓</button>
+            <button class="chip sort-chip" data-sort="wr-asc">Винрейт ↑</button>
+            <button class="chip sort-chip" data-sort="pr-desc">Пикрейт ↓</button>
+            <button class="chip sort-chip" data-sort="pr-asc">Пикрейт ↑</button>
+          </div>
+        </div>
+        <div class="meta-table" id="metaTable"></div>
+        <div class="meta-legend" id="metaLegend"></div>
+
+        <div class="section-label">Гайды по картам и агентам</div>
+        <div class="crumb" id="agentsCrumb"></div>
+        <div id="agentsPane"></div>
+      </div>
+    </section>
+
+    <section id="view-timer" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Таймер тренировки</div>
+        <div class="timer-panel">
+          <div class="timer-display" id="timerDisplay">00:00:00</div>
+          <div class="timer-controls">
+            <button class="timer-btn" id="timerStartBtn">Старт</button>
+            <button class="timer-btn" id="timerPauseBtn">Пауза</button>
+            <button class="timer-btn stop" id="timerResetBtn">Сброс и сохранить</button>
+          </div>
+          <div class="timer-today" id="timerToday">Сегодня натренировано: 0 мин</div>
+        </div>
+        <div class="section-label sub" style="align-items:center;">
+          <span>Последние сессии</span>
+          <button class="clear-sessions-btn" id="timerClearBtn" title="Очистить историю сессий">Очистить</button>
+        </div>
+        <div class="cal-panel session-log" id="sessionLog"></div>
+      </div>
+    </section>
+
+    <section id="view-playlist" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Плейлист для тренировок</div>
+        <div class="volume-panel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;flex-shrink:0;color:var(--accent);"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a9 9 0 010 12"/></svg>
+          <span class="volume-label">Громкость всех треков</span>
+          <input type="range" min="0" max="100" value="70" id="masterVolume" class="volume-slider">
+          <span class="volume-value" id="masterVolumeValue">70%</span>
+        </div>
+        <div id="playlistList"></div>
+        <button class="add-inline-btn" id="addSongBtn">+ Добавить трек или плейлист (YouTube / SoundCloud)</button>
+        <div id="addSongFormWrap"></div>
+      </div>
+    </section>
+
+    <section id="view-calendar" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Календарь</div>
+        <div class="cal-panel">
+          <div class="cal-year-nav">
+            <button class="nav-btn" id="prevYear">‹</button>
+            <div class="cal-year-label" id="calYearLabel">2026</div>
+            <button class="nav-btn" id="nextYear">›</button>
+          </div>
+          <div class="cal-hint">клик по любому дню — открыть его чек-лист на Главной</div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-swatch" style="background:transparent;"></div> ничего</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:rgba(137,180,250,0.4);"></div> часть пунктов</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#ff4655;"></div> всё выполнено</div>
+            <div class="legend-item"><div class="legend-swatch" style="border-style:dashed; border-color:#ff4655;"></div> сегодня</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-settings" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Настройки — тема</div>
+        <div class="settings-panel">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Акцентный цвет</div>
+              <div class="settings-row-desc">кнопки, галочки, ссылки</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorAccent" value="#ff4655"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Цвет текста</div>
+              <div class="settings-row-desc">основной текст на сайте</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorText" value="#f2e9ea"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Цвет панелей</div>
+              <div class="settings-row-desc">оттенок стеклянных карточек</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorPanel" value="#1a1114"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Базовый фон</div>
+              <div class="settings-row-desc">виден, если нет картинки-обоев</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorBg" value="#0b0709"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Прозрачность панелей</div>
+              <div class="settings-row-desc">чем меньше — тем сильнее видно обои</div>
+            </div>
+            <div class="settings-control"><input type="range" id="panelAlpha" min="20" max="90" value="60"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Размытие обоев</div>
+              <div class="settings-row-desc">эффект матового стекла</div>
+            </div>
+            <div class="settings-control"><input type="range" id="blurAmt" min="0" max="60" value="24"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Обои (фон)</div>
+              <div class="settings-row-desc">своя картинка или ссылка</div>
+            </div>
+            <div class="settings-control">
+              <input type="text" class="settings-input" id="wallpaperUrl" placeholder="https://...jpg">
+              <label class="file-btn">Файл<input type="file" id="wallpaperFile" accept="image/*" style="display:none;"></label>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Плавающий декор на фоне</div>
+              <div class="settings-row-desc">корона / прицел / хедшот-иконки на заднем плане</div>
+            </div>
+            <div class="settings-control"><input type="checkbox" id="decorToggle" checked style="width:20px;height:20px;"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <button class="reset-btn" id="resetTheme">Сбросить тему по умолчанию</button>
+        </div>
+
+        <div class="section-label">Данные</div>
+        <div class="settings-panel">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Экспорт настроек и прогресса</div>
+              <div class="settings-row-desc">сохранить всё в файл .json</div>
+            </div>
+            <div class="settings-control"><button class="file-btn" id="exportBtn" style="cursor:pointer;">Экспорт</button></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Импорт настроек и прогресса</div>
+              <div class="settings-row-desc">восстановить из файла .json</div>
+            </div>
+            <div class="settings-control"><label class="file-btn">Импорт<input type="file" id="importFile" accept="application/json" style="display:none;"></label></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ---------- GENERIC LOCAL-STORAGE LIST STORE ---------- */
+function loadList(key, fallback){
+  try{ const raw = localStorage.getItem(key); if(raw) return JSON.parse(raw); }catch(e){}
+  const copy = JSON.parse(JSON.stringify(fallback));
+  try{ localStorage.setItem(key, JSON.stringify(copy)); }catch(e){}
+  return copy;
+}
+function saveList(key, list){ try{ localStorage.setItem(key, JSON.stringify(list)); }catch(e){ console.error('save error', key, e); } }
+function uid(prefix){ return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+const DEFAULT_MORNING = [
+  {id:'m1', name:'Статики', meta:'20 мин · KovaaKsSwitchingEntryWipe'},
+  {id:'m2', name:'Микра', meta:'20 мин · KovaaKsTrollingDesertsandGasmask'},
+  {id:'m3', name:'Боты — разогрев', meta:'10 мин'},
+  {id:'m4', name:'Паркур', meta:'10–15 мин · чувство мувмента'},
+  {id:'m5', name:'Кастом-лобби — углы', meta:'40–50 мин · приоритет сессии'},
+  {id:'m6', name:'Трекинг', meta:'20 мин · KovaaKsCampingDesertsandRifle'},
+  {id:'m7', name:'Свитчи', meta:'20 мин · KovaaKsWipingBuffedCamper'},
+  {id:'m8', name:'ДМ', meta:'15–20 мин · проверка вместе'},
+];
+const DEFAULT_EVENING = [
+  {id:'e1', name:'Реактивация прицела', meta:'5–10 мин · один короткий трек'},
+  {id:'e2', name:'ДМ', meta:'25–30 мин · 2–3 игры, килл = смена угла'},
+  {id:'e3', name:'Кастом-лобби 1v1 / 2v2', meta:'40–50 мин · пики против живого игрока'},
+  {id:'e4', name:'VOD-ревью', meta:'15 мин · где стоял на месте, где не туда пикнул'},
+];
+let morningTasks = loadList('tasks:morning', DEFAULT_MORNING);
+let eveningTasks = loadList('tasks:evening', DEFAULT_EVENING);
+
+const DEFAULT_LOADOUT = [
+  {id:'k1', tag:'Статики', code:'KovaaKsSwitchingEntryWipe'},
+  {id:'k2', tag:'Трекинг', code:'KovaaKsCampingDesertsandRifle'},
+  {id:'k3', tag:'Микра', code:'KovaaKsTrollingDesertsandGasmask'},
+  {id:'k4', tag:'Свитчи', code:'KovaaKsWipingBuffedCamper'},
+];
+let loadout = loadList('kovaak:list', DEFAULT_LOADOUT);
+
+/* ---------- AGENTS / MAPS META (ориентир на Immortal+ / Radiant, июль 2026 — оценка по данным valking.gg, Tracker.gg и community-тир-листов) ---------- */
+const TIER_COLOR = { S:'#f5a623', A:'#ff4655', B:'#8fd6a0', C:'#a8969a', D:'#e0a15e', F:'#e06c75' };
+const AGENTS = [
+  {id:'clove', name:'Clove', role:'Controller', tier:'S', wr:54.8, pr:15.0},
+  {id:'cypher', name:'Cypher', role:'Sentinel', tier:'S', wr:55.3, pr:10.2},
+  {id:'killjoy', name:'Killjoy', role:'Sentinel', tier:'A', wr:52.6, pr:9.5},
+  {id:'fade', name:'Fade', role:'Initiator', tier:'A', wr:52.3, pr:8.0},
+  {id:'chamber', name:'Chamber', role:'Sentinel', tier:'A', wr:52.1, pr:10.3},
+  {id:'neon', name:'Neon', role:'Duelist', tier:'B', wr:51.6, pr:9.0},
+  {id:'jett', name:'Jett', role:'Duelist', tier:'B', wr:51.4, pr:13.0},
+  {id:'sova', name:'Sova', role:'Initiator', tier:'B', wr:51.2, pr:11.5},
+  {id:'skye', name:'Skye', role:'Initiator', tier:'B', wr:51.0, pr:8.5},
+  {id:'sage', name:'Sage', role:'Sentinel', tier:'B', wr:50.8, pr:4.0},
+  {id:'waylay', name:'Waylay', role:'Duelist', tier:'B', wr:50.6, pr:6.5},
+  {id:'omen', name:'Omen', role:'Controller', tier:'B', wr:50.4, pr:10.2},
+  {id:'raze', name:'Raze', role:'Duelist', tier:'B', wr:50.2, pr:7.0},
+  {id:'astra', name:'Astra', role:'Controller', tier:'C', wr:49.8, pr:3.5},
+  {id:'viper', name:'Viper', role:'Controller', tier:'C', wr:49.6, pr:3.0},
+  {id:'phoenix', name:'Phoenix', role:'Duelist', tier:'C', wr:49.5, pr:2.0},
+  {id:'reyna', name:'Reyna', role:'Duelist', tier:'C', wr:49.4, pr:9.0},
+  {id:'vyse', name:'Vyse', role:'Sentinel', tier:'C', wr:49.2, pr:2.0},
+  {id:'miks', name:'Miks', role:'Controller', tier:'C', wr:49.0, pr:4.5},
+  {id:'deadlock', name:'Deadlock', role:'Sentinel', tier:'C', wr:48.6, pr:1.5},
+  {id:'tejo', name:'Tejo', role:'Initiator', tier:'C', wr:48.4, pr:2.0},
+  {id:'veto', name:'Veto', role:'Sentinel', tier:'C', wr:48.2, pr:2.5},
+  {id:'gekko', name:'Gekko', role:'Initiator', tier:'C', wr:48.0, pr:2.2},
+  {id:'iso', name:'Iso', role:'Duelist', tier:'D', wr:47.6, pr:2.0},
+  {id:'brimstone', name:'Brimstone', role:'Controller', tier:'D', wr:47.2, pr:1.0},
+  {id:'breach', name:'Breach', role:'Initiator', tier:'D', wr:46.8, pr:1.2},
+  {id:'harbor', name:'Harbor', role:'Controller', tier:'D', wr:46.5, pr:1.5},
+  {id:'kayo', name:'KAY/O', role:'Initiator', tier:'D', wr:46.2, pr:2.5},
+  {id:'yoru', name:'Yoru', role:'Duelist', tier:'F', wr:44.8, pr:1.8},
+];
+const ROLE_TIPS = {
+  Duelist:'Твоя задача — открывать раунд и забирать первый фраг. Заходи с утилити впереди себя, не пиши тимейтам ждать тебя — играй с темпом и всегда имей план отхода.',
+  Controller:'Ставь дым до появления на англе, а не после. Держи связь с командой по таймингам смоков и не трать все чарджи в начале раунда.',
+  Initiator:'Собирай информацию перед заходом команды. Твои способности должны открывать англы и убирать утилити соперника, а не наносить урон напрямую.',
+  Sentinel:'Держи фланг и слушай ротации. Расставляй утилити так, чтобы у тебя было время среагировать, а не просто "закрыть" точку.',
+  Agent:'Изучи актуальные способности агента в игре — это недавно добавленный агент, детальный гайд по роли скоро появится.',
+};
+const MAPS = [
+  {id:'summit', name:'Summit'},
+  {id:'sunset', name:'Sunset'},
+  {id:'breeze', name:'Breeze'},
+  {id:'haven', name:'Haven'},
+  {id:'lotus', name:'Lotus'},
+  {id:'split', name:'Split'},
+  {id:'ascent', name:'Ascent'},
+];
+const MAP_TIPS = {
+  summit:'Новая карта в пуле — фокус на контроле мида и ранней информации, пока комьюнити ещё не выучило все углы.',
+  sunset:'Карта без классического мида — бои идут через тайтовые коридоры, важен контроль дверей и быстрые тайминги.',
+  breeze:'Открытые дальние дистанции — цени операторов и утилити для пересечения открытых зон, следи за флангами.',
+  haven:'Три сайта — больше территории для контроля, атакующим важно закрывать лишний сайт информацией.',
+  lotus:'Три сайта с вращающимися дверями — постоянно проверяй двери за спиной, инфа важнее чистого урона.',
+  split:'Вертикальная карта с канатами — контроль мида и вышек решает, много места для флангов через верх.',
+  ascent:'Большой мид-корт и механические двери — держи мид под контролем, двери можно намертво закрыть.',
+};
+const DEFAULT_VIDEOS_RU = [
+  {title:'Как пикать правильно в Valorant — виды пиков', sub:'youtube.com/watch?v=0pY12sRWqLI', url:'https://www.youtube.com/watch?v=0pY12sRWqLI'},
+  {title:'Нужный гайд на мувмент Valorant', sub:'youtube.com/watch?v=kYJ1njt3vvs', url:'https://www.youtube.com/watch?v=kYJ1njt3vvs'},
+  {title:'Мувмент в Валоранте — двигайся как про', sub:'youtube.com/watch?v=GcG9Ymu2qqU', url:'https://www.youtube.com/watch?v=GcG9Ymu2qqU'},
+  {title:'Jiggle & Jump Peek Guide (разбор по кадрам)', sub:'youtube.com/watch?v=0rRXagqocI8', url:'https://www.youtube.com/watch?v=0rRXagqocI8'},
+  {title:'Мувмент в Валоранте — скрытые фишки', sub:'youtube.com/watch?v=jTK0Pup-Tjg', url:'https://www.youtube.com/watch?v=jTK0Pup-Tjg'},
+  {title:'Полный гайд по пикам в Valorant', sub:'youtube.com/watch?v=MlHTlS89vs0', url:'https://www.youtube.com/watch?v=MlHTlS89vs0'},
+  {title:'Как правильно пикать в Valorant', sub:'youtube.com/watch?v=uzPZ6TnaazY', url:'https://www.youtube.com/watch?v=uzPZ6TnaazY'},
+  {title:'Пикай как про / как пикать углы', sub:'youtube.com/watch?v=Bym3O0Hv-JA', url:'https://www.youtube.com/watch?v=Bym3O0Hv-JA'},
+];
+const DEFAULT_VIDEOS_EN_MOVEMENT = [
+  {title:'The ULTIMATE Movement Guide for VALORANT', sub:'youtube.com/watch?v=NzAxzm0UqFQ', url:'https://www.youtube.com/watch?v=NzAxzm0UqFQ'},
+  {title:'Get INSANE Movement (NO BS) — Movement Guide + Routine', sub:'youtube.com/watch?v=tDC2vISCHHA', url:'https://www.youtube.com/watch?v=tDC2vISCHHA'},
+  {title:'The #1 Rule To Master Movement (In-Depth Guide)', sub:'youtube.com/watch?v=Rq0aJBU9CNg', url:'https://www.youtube.com/watch?v=Rq0aJBU9CNg'},
+];
+const DEFAULT_VIDEOS_AIM_KOVAAK = [
+  {title:'Ultimate KOVAAK Training for PERFECT AIM (Hard Radiant Routine)', sub:'youtube.com/watch?v=LqbMQs-8vCA', url:'https://www.youtube.com/watch?v=LqbMQs-8vCA'},
+  {title:"Aim Training Guide By A Kovaak's Voltaic Master Player", sub:'youtube.com/watch?v=JG0T2haMQh0', url:'https://www.youtube.com/watch?v=JG0T2haMQh0'},
+  {title:"NEW Ultimate Kovaak's Training Guide for VALORANT", sub:'youtube.com/watch?v=fSLodvO-qlM', url:'https://www.youtube.com/watch?v=fSLodvO-qlM'},
+  {title:'This Training Routine Will FIX Your Aim', sub:'youtube.com/watch?v=_f_suNanRgU', url:'https://www.youtube.com/watch?v=_f_suNanRgU'},
+  {title:"The Beginner Routine That'll Turn You Pro", sub:'youtube.com/watch?v=t1gVUZVFQHI', url:'https://www.youtube.com/watch?v=t1gVUZVFQHI'},
+];
+const DEFAULT_VIDEOS_EN_TILT = [
+  {title:'How to Avoid Tilt and Improve Your Mental Game', sub:'youtube.com/watch?v=OcZD9FJrZww', url:'https://www.youtube.com/watch?v=OcZD9FJrZww'},
+  {title:'"How Do I Stop Getting Tilted?"', sub:'youtube.com/watch?v=0K0DNYjucu0', url:'https://www.youtube.com/watch?v=0K0DNYjucu0'},
+];
+
+let videosRuMovement = loadList('videos:ru', DEFAULT_VIDEOS_RU);
+let videosEnMovement = loadList('videos:en_movement', DEFAULT_VIDEOS_EN_MOVEMENT);
+let videosAimKovaak = loadList('videos:aim_kovaak', DEFAULT_VIDEOS_AIM_KOVAAK);
+let videosEnTilt = loadList('videos:en_tilt', DEFAULT_VIDEOS_EN_TILT);
+let videosCustom = loadList('videos:custom', []);
+let playlist = loadList('playlist:list', []);
+const watchedVideos = loadList('videos:watched', {});
+function saveWatched(){ saveList('videos:watched', watchedVideos); }
+
+function getStartDate(){
+  let raw = localStorage.getItem('meta:startdate');
+  if(!raw){ raw = todayKey(new Date()); try{ localStorage.setItem('meta:startdate', raw); }catch(e){} }
+  const p = raw.split('-').map(Number);
+  return new Date(p[0], p[1]-1, p[2]);
+}
+let START_DATE = getStartDate();
+
+function todayKey(date){ const d=date||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function daysBetween(a,b){ return Math.round((startOfDay(b).getTime() - startOfDay(a).getTime()) / 86400000); }
+function totalTasks(){ return morningTasks.length + eveningTasks.length; }
+function doneCount(state){ return morningTasks.filter(t=>state[t.id]).length + eveningTasks.filter(t=>state[t.id]).length; }
+function fillPctOf(state){ const d=doneCount(state); return d>0 ? Math.round((d/totalTasks())*100) : 0; }
+function isFull(state){ return doneCount(state) === totalTasks() && totalTasks()>0; }
+
+async function getDayState(key){
+  try{ const raw = localStorage.getItem('day:'+key); if(raw) return JSON.parse(raw); }catch(e){}
+  return {};
+}
+async function setDayState(key, state){
+  try{ localStorage.setItem('day:'+key, JSON.stringify(state)); }catch(e){ console.error('write error', e); }
+}
+async function getMeta(){
+  try{ const raw = localStorage.getItem('meta:ranks'); if(raw) return JSON.parse(raw); }catch(e){}
+  return {current:'', goal:''};
+}
+async function setMeta(meta){
+  try{ localStorage.setItem('meta:ranks', JSON.stringify(meta)); }catch(e){}
+}
+
+const TODAY = startOfDay(new Date());
+const TODAY_KEY = todayKey(TODAY);
+let selectedDate = new Date(TODAY);
+let selectedState = {};
+let calYear = TODAY.getFullYear();
+let yearCache = {};
+
+function taskListKey(list){ return list===morningTasks ? 'tasks:morning' : 'tasks:evening'; }
+
+function renderTasks(containerId, tasks, state){
+  const container = document.getElementById(containerId);
+  container.innerHTML = tasks.map(t => `
+    <div class="task ${state[t.id] ? 'done':''}" data-id="${t.id}">
+      <div class="checkbox"></div>
+      <div class="task-body">
+        <div class="task-name">${t.name}</div>
+        <div class="task-meta">${t.meta}</div>
+      </div>
+      <div class="task-actions">
+        <div class="icon-btn edit-task" title="Изменить">✎</div>
+        <div class="icon-btn danger del-task" title="Удалить">✕</div>
+      </div>
+    </div>
+  `).join('') + `<div class="add-row"><button class="add-inline-btn add-task-btn">+ Добавить задание</button><div class="add-task-form-wrap"></div></div>`;
+
+  container.querySelectorAll('.task').forEach(el=>{
+    el.addEventListener('click', async (ev)=>{
+      if(ev.target.closest('.task-actions')) return;
+      const id = el.getAttribute('data-id');
+      selectedState[id] = !selectedState[id];
+      el.classList.toggle('done', selectedState[id]);
+      const key = todayKey(selectedDate);
+      await setDayState(key, selectedState);
+      yearCache[key] = {...selectedState};
+      updateCounts();
+      renderCalendar();
+      renderStreak();
+    });
+  });
+
+  container.querySelectorAll('.del-task').forEach(btn=>{
+    btn.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      const el = btn.closest('.task');
+      const id = el.getAttribute('data-id');
+      const idx = tasks.findIndex(t=>t.id===id);
+      if(idx>-1){ tasks.splice(idx,1); saveList(taskListKey(tasks), tasks); }
+      renderTasks(containerId, tasks, state);
+      updateCounts();
+    });
+  });
+
+  container.querySelectorAll('.edit-task').forEach(btn=>{
+    btn.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      const el = btn.closest('.task');
+      const id = el.getAttribute('data-id');
+      const t = tasks.find(x=>x.id===id);
+      el.innerHTML = `
+        <div class="task-edit-row">
+          <input class="edit-name" value="${t.name.replace(/"/g,'&quot;')}" placeholder="Название">
+          <input class="edit-meta" value="${t.meta.replace(/"/g,'&quot;')}" placeholder="Описание">
+          <div class="add-form-btns">
+            <button class="save-btn save-task">Сохранить</button>
+            <button class="cancel-btn cancel-task">Отмена</button>
+          </div>
+        </div>`;
+      el.querySelector('.save-task').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        t.name = el.querySelector('.edit-name').value.trim() || t.name;
+        t.meta = el.querySelector('.edit-meta').value.trim();
+        saveList(taskListKey(tasks), tasks);
+        renderTasks(containerId, tasks, state);
+      });
+      el.querySelector('.cancel-task').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        renderTasks(containerId, tasks, state);
+      });
+    });
+  });
+
+  const addBtn = container.querySelector('.add-task-btn');
+  addBtn.addEventListener('click', ()=>{
+    const wrap = container.querySelector('.add-task-form-wrap');
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:8px;">
+        <input class="new-task-name" placeholder="Название задания">
+        <input class="new-task-meta" placeholder="Описание (время, детали)">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-task">Добавить</button>
+          <button class="cancel-btn cancel-add-task">Отмена</button>
+        </div>
+      </div>`;
+    addBtn.style.display='none';
+    wrap.querySelector('.confirm-add-task').addEventListener('click', ()=>{
+      const name = wrap.querySelector('.new-task-name').value.trim();
+      const meta = wrap.querySelector('.new-task-meta').value.trim();
+      if(!name) return;
+      tasks.push({id: uid('t'), name, meta});
+      saveList(taskListKey(tasks), tasks);
+      renderTasks(containerId, tasks, state);
+      updateCounts();
+    });
+    wrap.querySelector('.cancel-add-task').addEventListener('click', ()=>{
+      wrap.innerHTML=''; addBtn.style.display='';
+    });
+  });
+}
+
+function buildPanel(gridEl, title, count, listId){
+  gridEl.innerHTML = `
+    <div class="duty-panel">
+      <div class="duty-head">
+        <div class="duty-title">${title}</div>
+        <div class="duty-count" id="${listId}-count">0/${count}</div>
+      </div>
+      <div class="duty-list" id="${listId}"></div>
+    </div>`;
+}
+
+function updateCounts(){
+  const mDone = morningTasks.filter(t=>selectedState[t.id]).length;
+  const eDone = eveningTasks.filter(t=>selectedState[t.id]).length;
+  document.getElementById('morningList-count').textContent = mDone+'/'+morningTasks.length;
+  document.getElementById('eveningList-count').textContent = eDone+'/'+eveningTasks.length;
+}
+
+function renderLoadout(){
+  const grid = document.getElementById('loadoutGrid');
+  grid.innerHTML = loadout.map((l) => `
+    <div class="loadout-card">
+      <div class="loadout-tag">${l.tag}</div>
+      <div class="loadout-code-row">
+        <div class="loadout-code">${l.code}</div>
+        <button class="copy-btn" data-code="${l.code}">Copy</button>
+        <div class="icon-btn danger del-kovaak" data-id="${l.id}" title="Удалить">✕</div>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const code = btn.getAttribute('data-code');
+      try{
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'Copied'; btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 1400);
+      }catch(e){}
+    });
+  });
+  grid.querySelectorAll('.del-kovaak').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.getAttribute('data-id');
+      loadout = loadout.filter(l=>l.id!==id);
+      saveList('kovaak:list', loadout);
+      renderLoadout();
+    });
+  });
+}
+
+function setupAddKovaak(){
+  const btn = document.getElementById('addKovaakBtn');
+  const wrap = document.getElementById('addKovaakFormWrap');
+  btn.addEventListener('click', ()=>{
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:10px; max-width:420px;">
+        <input class="new-kv-tag" placeholder="Название (напр. Трекинг)">
+        <input class="new-kv-code" placeholder="Код сценария Kovaak">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-kv">Добавить</button>
+          <button class="cancel-btn cancel-add-kv">Отмена</button>
+        </div>
+      </div>`;
+    btn.style.display='none';
+    wrap.querySelector('.confirm-add-kv').addEventListener('click', ()=>{
+      const tag = wrap.querySelector('.new-kv-tag').value.trim();
+      const code = wrap.querySelector('.new-kv-code').value.trim();
+      if(!tag || !code) return;
+      loadout.push({id:uid('k'), tag, code});
+      saveList('kovaak:list', loadout);
+      renderLoadout();
+      wrap.innerHTML=''; btn.style.display='';
+    });
+    wrap.querySelector('.cancel-add-kv').addEventListener('click', ()=>{ wrap.innerHTML=''; btn.style.display=''; });
+  });
+}
+
+const VIDEO_STORE_KEY = {
+  videoListRuMovement:'videos:ru', videoListEnMovement:'videos:en_movement',
+  videoListEnTilt:'videos:en_tilt', videoListAimKovaak:'videos:aim_kovaak', videoListCustom:'videos:custom'
+};
+function renderVideoList(containerId, list, langTag){
+  const el = document.getElementById(containerId);
+  if(list.length===0 && containerId==='videoListCustom'){ el.innerHTML = ''; return; }
+  el.innerHTML = list.map(v => `
+    <div class="video-item" data-url="${v.url}">
+      <div class="video-check ${watchedVideos[v.url] ? 'watched':''}" title="Отметить просмотренным"></div>
+      <a class="video-text" href="${v.url}" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="video-title">${v.title}</div>
+        <div class="video-sub">${v.sub}</div>
+      </a>
+      ${langTag ? `<div class="video-lang">${langTag}</div>` : ''}
+      <div class="icon-btn danger video-del del-video" title="Удалить">✕</div>
+    </div>`).join('');
+  el.querySelectorAll('.video-check').forEach(chk=>{
+    chk.addEventListener('click', ()=>{
+      const url = chk.closest('.video-item').getAttribute('data-url');
+      watchedVideos[url] = !watchedVideos[url];
+      saveWatched();
+      chk.classList.toggle('watched', !!watchedVideos[url]);
+    });
+  });
+  el.querySelectorAll('.del-video').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const url = btn.closest('.video-item').getAttribute('data-url');
+      const idx = list.findIndex(v=>v.url===url);
+      if(idx>-1) list.splice(idx,1);
+      saveList(VIDEO_STORE_KEY[containerId], list);
+      renderVideoList(containerId, list, langTag);
+    });
+  });
+}
+
+function setupAddVideo(){
+  const btn = document.getElementById('addVideoBtn');
+  const wrap = document.getElementById('addVideoFormWrap');
+  btn.addEventListener('click', ()=>{
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:10px; max-width:460px;">
+        <input class="new-vid-title" placeholder="Название видео">
+        <input class="new-vid-url" placeholder="Ссылка (YouTube и т.д.)">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-vid">Добавить</button>
+          <button class="cancel-btn cancel-add-vid">Отмена</button>
+        </div>
+      </div>`;
+    btn.style.display='none';
+    wrap.querySelector('.confirm-add-vid').addEventListener('click', ()=>{
+      const title = wrap.querySelector('.new-vid-title').value.trim();
+      const url = wrap.querySelector('.new-vid-url').value.trim();
+      if(!title || !url) return;
+      let sub = url.replace(/^https?:\/\//,'').replace(/^www\./,'');
+      videosCustom.push({title, url, sub});
+      saveList('videos:custom', videosCustom);
+      renderVideoList('videoListCustom', videosCustom, null);
+      wrap.innerHTML=''; btn.style.display='';
+    });
+    wrap.querySelector('.cancel-add-vid').addEventListener('click', ()=>{ wrap.innerHTML=''; btn.style.display=''; });
+  });
+}
+
+const MONTH_NAMES = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const WEEKDAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+async function loadYearCache(year){
+  yearCache = {};
+  try{
+    const prefix = 'day:'+year+'-';
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith(prefix)){
+        const dateKey = k.replace('day:','');
+        yearCache[dateKey] = await getDayState(dateKey);
+      }
+    }
+  }catch(e){}
+}
+
+function renderCalendar(){
+  document.getElementById('calYearLabel').textContent = calYear;
+  const grid = document.getElementById('calGrid');
+  const selectedKey = todayKey(selectedDate);
+  let html = '';
+  for(let m=0;m<12;m++){
+    const firstDay = new Date(calYear, m, 1);
+    const daysInMonth = new Date(calYear, m+1, 0).getDate();
+    const startOffset = (firstDay.getDay()+6)%7;
+    let cells = '';
+    for(let i=0;i<startOffset;i++){ cells += '<div class="cal-day empty"></div>'; }
+    for(let day=1; day<=daysInMonth; day++){
+      const d = new Date(calYear, m, day);
+      const key = todayKey(d);
+      const state = yearCache[key] || {};
+      const pct = fillPctOf(state);
+      const full = isFull(state);
+      const isToday = key===TODAY_KEY;
+      const isSelected = key===selectedKey;
+      cells += `
+        <div class="cal-day ${isToday?'today':''} ${isSelected?'selected':''} ${full?'filled':''}" data-key="${key}">
+          ${pct>0 ? `<div class="cal-day-fill" style="opacity:${full?0.9:pct/140};"></div>` : ''}
+          <span>${day}</span>
+        </div>`;
+    }
+    html += `
+      <div class="cal-month">
+        <div class="cal-month-title">${MONTH_NAMES[m]}</div>
+        <div class="cal-weekdays">${WEEKDAYS.map(w=>`<div class="cal-weekday">${w[0]}</div>`).join('')}</div>
+        <div class="cal-days">${cells}</div>
+      </div>`;
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll('.cal-day:not(.empty)').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      const key = el.getAttribute('data-key');
+      const parts = key.split('-').map(Number);
+      selectedDate = new Date(parts[0], parts[1]-1, parts[2]);
+      await loadSelectedDay();
+      switchView('home');
+    });
+  });
+}
+
+function renderHeaderStats(){
+  const dayNum = daysBetween(START_DATE, TODAY) + 1;
+  document.getElementById('dayCounter').textContent = Math.max(dayNum,1);
+  const p = document.getElementById('profileDayCounter');
+  if(p) p.textContent = Math.max(dayNum,1);
+}
+
+async function renderStreak(){
+  // Determine "real" current date fresh each time (protects against the tab staying open across midnight)
+  const realToday = startOfDay(new Date());
+  let cursor = new Date(realToday);
+  const todaysKey = todayKey(cursor);
+  let todaysState = yearCache[todaysKey];
+  if(todaysState === undefined) todaysState = await getDayState(todaysKey);
+  // If today isn't finished yet, don't zero the streak out — start counting from yesterday instead,
+  // so the streak only breaks once a full day has actually been missed.
+  if(!isFull(todaysState)) cursor.setDate(cursor.getDate()-1);
+
+  let streak = 0;
+  while(true){
+    const key = todayKey(cursor);
+    let state = yearCache[key];
+    if(state === undefined) state = await getDayState(key);
+    if(isFull(state)){ streak++; cursor.setDate(cursor.getDate()-1); }
+    else break;
+    if(streak > 2000) break;
+  }
+  document.getElementById('streakCounter').textContent = streak;
+  const profStreakEl = document.getElementById('profileStreak');
+  if(profStreakEl) profStreakEl.textContent = streak;
+
+  let best = Number(localStorage.getItem('meta:beststreak') || 0);
+  if(streak > best){ best = streak; try{ localStorage.setItem('meta:beststreak', String(best)); }catch(e){} }
+  const bestEl = document.getElementById('profileBestStreak');
+  if(bestEl) bestEl.textContent = best;
+}
+
+function fmtDate(d){
+  const wd = ['вс','пн','вт','ср','чт','пт','сб'][d.getDay()];
+  return wd + ' ' + String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+}
+
+async function loadSelectedDay(){
+  const key = todayKey(selectedDate);
+  selectedState = await getDayState(key);
+  yearCache[key] = {...selectedState};
+  document.getElementById('dayNavDate').textContent = fmtDate(selectedDate);
+  document.getElementById('jumpToday').classList.toggle('hidden', key===TODAY_KEY);
+  document.getElementById('dayNote').value = selectedState._note || '';
+  renderTasks('morningList', morningTasks, selectedState);
+  renderTasks('eveningList', eveningTasks, selectedState);
+  updateCounts();
+  if(selectedDate.getFullYear() !== calYear){
+    calYear = selectedDate.getFullYear();
+    await loadYearCache(calYear);
+  }
+  renderCalendar();
+}
+
+function shiftDay(delta){ const nd=new Date(selectedDate); nd.setDate(nd.getDate()+delta); selectedDate=nd; loadSelectedDay(); }
+async function shiftYear(delta){ calYear += delta; await loadYearCache(calYear); renderCalendar(); }
+
+/* ---------- AGENT IMAGES (valorant-api.com, public no-auth API) ---------- */
+let AGENT_IMAGES = {};
+async function loadAgentImages(){
+  try{
+    const cached = localStorage.getItem('agents:imgcache');
+    if(cached){
+      const parsed = JSON.parse(cached);
+      if(parsed && parsed.ts && (Date.now()-parsed.ts < 14*24*3600*1000) && parsed.data){
+        AGENT_IMAGES = parsed.data;
+        return;
+      }
+    }
+  }catch(e){}
+  try{
+    const res = await fetch('https://valorant-api.com/v1/agents?isPlayableCharacter=true&language=ru-RU');
+    const json = await res.json();
+    const map = {};
+    (json.data||[]).forEach(a=>{
+      const key = (a.displayName||'').toLowerCase().replace(/\//g,'');
+      map[key] = { icon:a.displayIcon, bust:a.bustPortrait, portrait:a.fullPortrait };
+    });
+    AGENT_IMAGES = map;
+    try{ localStorage.setItem('agents:imgcache', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
+  }catch(e){ console.warn('agent image fetch failed', e); }
+}
+function agentImgUrl(agent){
+  const key = agent.name.toLowerCase().replace(/\//g,'');
+  const found = AGENT_IMAGES[key];
+  return found ? (found.icon || found.bust || found.portrait) : null;
+}
+
+/* ---------- META TABLE (AGENT WINRATES) ---------- */
+let metaFilters = { role:'All', sort:'wr-desc' };
+function getFilteredSortedAgents(){
+  let list = AGENTS.filter(a => metaFilters.role==='All' || a.role===metaFilters.role);
+  const [field, dir] = metaFilters.sort.split('-');
+  list = [...list].sort((a,b)=>{
+    let av, bv;
+    if(field==='wr'){ av=a.wr; bv=b.wr; }
+    else { av = a.pr==null ? -1 : a.pr; bv = b.pr==null ? -1 : b.pr; }
+    return dir==='desc' ? bv-av : av-bv;
+  });
+  return list;
+}
+function renderMetaTable(){
+  const el = document.getElementById('metaTable');
+  const list = getFilteredSortedAgents();
+  if(list.length===0){ el.innerHTML = `<div class="meta-row"><div class="meta-name">Нет агентов под этот фильтр</div></div>`; }
+  else{
+    el.innerHTML = list.map(a => {
+      const img = agentImgUrl(a);
+      return `
+      <div class="meta-row">
+        <div class="meta-avatar">${img ? `<img src="${img}" alt="${a.name}" loading="lazy">` : '🎯'}</div>
+        <div class="meta-tier" style="background:${TIER_COLOR[a.tier]};">${a.tier}</div>
+        <div class="meta-name">${a.name}</div>
+        <div class="meta-role">${a.role}</div>
+        <div class="meta-wr">${a.wr.toFixed(1)}%</div>
+        <div class="meta-pr">${a.pr!=null ? a.pr.toFixed(1)+'% пик' : '—'}</div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('metaLegend').textContent = 'ориентир на ранги Immortal+ / Radiant, оценка по данным valking.gg, Tracker.gg и community тир-листов, июль 2026 — тир, винрейт и пикрейт (частота выбора)';
+}
+function setupMetaFilters(){
+  document.getElementById('roleFilters').addEventListener('click', e=>{
+    const btn = e.target.closest('.chip'); if(!btn) return;
+    metaFilters.role = btn.getAttribute('data-role');
+    document.querySelectorAll('#roleFilters .chip').forEach(c=>c.classList.toggle('active', c===btn));
+    renderMetaTable();
+  });
+  document.getElementById('sortFilters').addEventListener('click', e=>{
+    const btn = e.target.closest('.chip'); if(!btn) return;
+    metaFilters.sort = btn.getAttribute('data-sort');
+    document.querySelectorAll('#sortFilters .chip').forEach(c=>c.classList.toggle('active', c===btn));
+    renderMetaTable();
+  });
+}
+
+/* ---------- AGENTS / MAPS PANE ---------- */
+let agentsView = {stage:'maps', map:null, agent:null};
+
+function renderAgentsCrumb(){
+  const el = document.getElementById('agentsCrumb');
+  let html = `<button data-go="maps">Карты</button>`;
+  if(agentsView.map){
+    const m = MAPS.find(x=>x.id===agentsView.map);
+    html += ` › <button data-go="agents">${m.name}</button>`;
+  }
+  if(agentsView.agent){
+    const a = AGENTS.find(x=>x.id===agentsView.agent);
+    html += ` › <span>${a.name}</span>`;
+  }
+  el.innerHTML = html;
+  el.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const go = btn.getAttribute('data-go');
+      if(go==='maps'){ agentsView = {stage:'maps', map:null, agent:null}; }
+      if(go==='agents'){ agentsView.stage='agents'; agentsView.agent=null; }
+      renderAgentsPane();
+    });
+  });
+}
+
+function renderAgentsPane(){
+  renderAgentsCrumb();
+  const el = document.getElementById('agentsPane');
+  if(agentsView.stage==='maps'){
+    el.innerHTML = `<div class="map-grid">${MAPS.map(m=>`
+      <div class="map-card" data-id="${m.id}">
+        <div class="map-card-name">${m.name}</div>
+      </div>`).join('')}</div>`;
+    el.querySelectorAll('.map-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        agentsView = {stage:'agents', map: card.getAttribute('data-id'), agent:null};
+        renderAgentsPane();
+      });
+    });
+  } else if(agentsView.stage==='agents'){
+    const sorted = [...AGENTS].sort((a,b)=> b.wr - a.wr);
+    el.innerHTML = `<div class="agent-grid">${sorted.map(a=>{
+      const img = agentImgUrl(a);
+      return `
+      <div class="agent-card" data-id="${a.id}">
+        <div class="agent-card-img">${img ? `<img src="${img}" alt="${a.name}" loading="lazy">` : '🎯'}</div>
+        <div class="meta-tier" style="background:${TIER_COLOR[a.tier]}; margin:0 auto;">${a.tier}</div>
+        <div class="agent-card-name">${a.name}</div>
+        <div class="agent-card-tier">${a.wr.toFixed(1)}% WR</div>
+      </div>`;
+    }).join('')}</div>`;
+    el.querySelectorAll('.agent-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        agentsView.stage='detail'; agentsView.agent = card.getAttribute('data-id');
+        renderAgentsPane();
+      });
+    });
+  } else if(agentsView.stage==='detail'){
+    const a = AGENTS.find(x=>x.id===agentsView.agent);
+    const m = MAPS.find(x=>x.id===agentsView.map);
+    const img = agentImgUrl(a);
+    const q = encodeURIComponent(`${a.name} ${m.name} valorant guide`);
+    el.innerHTML = `
+      <div class="agent-detail">
+        <div class="agent-detail-head">
+          <div class="agent-detail-img">${img ? `<img src="${img}" alt="${a.name}">` : ''}</div>
+          <div class="meta-tier" style="background:${TIER_COLOR[a.tier]}; width:36px; height:36px; font-size:15px;">${a.tier}</div>
+          <div>
+            <div class="agent-detail-title">${a.name} на ${m.name}</div>
+            <div class="video-sub">${a.role}</div>
+          </div>
+        </div>
+        <div class="agent-detail-stats">
+          <div><div class="agent-detail-stat-label">Винрейт</div><div class="agent-detail-stat-value">${a.wr.toFixed(1)}%</div></div>
+          <div><div class="agent-detail-stat-label">Пикрейт</div><div class="agent-detail-stat-value">${a.pr!=null ? a.pr.toFixed(1)+'%' : '—'}</div></div>
+          <div><div class="agent-detail-stat-label">Тир</div><div class="agent-detail-stat-value">${a.tier}</div></div>
+        </div>
+        <div class="agent-tip"><strong>Как играть на роли:</strong> ${ROLE_TIPS[a.role] || ROLE_TIPS.Agent}</div>
+        <div class="agent-tip"><strong>Особенности карты ${m.name}:</strong> ${MAP_TIPS[m.id]}</div>
+        <a class="guide-btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Найти свежий гайд-видео на YouTube</a>
+      </div>`;
+  }
+}
+
+/* ---------- TIMER ---------- */
+let timerSeconds = 0, timerRunning = false, timerHandle = null;
+function fmtTimer(sec){
+  const h=String(Math.floor(sec/3600)).padStart(2,'0');
+  const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
+  const s=String(sec%60).padStart(2,'0');
+  return `${h}:${m}:${s}`;
+}
+function tickTimer(){ timerSeconds++; document.getElementById('timerDisplay').textContent = fmtTimer(timerSeconds); }
+function renderTimerToday(){
+  const sessions = loadList('timer:sessions', []);
+  const key = todayKey(new Date());
+  const todaySec = sessions.filter(s=>s.date===key).reduce((a,s)=>a+s.seconds,0);
+  document.getElementById('timerToday').textContent = `Сегодня натренировано: ${Math.round(todaySec/60)} мин`;
+  const log = document.getElementById('sessionLog');
+  const last = [...sessions].reverse().slice(0,15);
+  log.innerHTML = last.length ? last.map(s=>`<div class="session-row"><span>${s.date}</span><span>${fmtTimer(s.seconds)}</span></div>`).join('') : `<div class="session-row"><span>пока пусто</span></div>`;
+}
+function setupTimer(){
+  document.getElementById('timerStartBtn').addEventListener('click', ()=>{
+    if(timerRunning) return;
+    timerRunning = true;
+    timerHandle = setInterval(tickTimer, 1000);
+  });
+  document.getElementById('timerPauseBtn').addEventListener('click', ()=>{
+    timerRunning = false;
+    clearInterval(timerHandle);
+  });
+  document.getElementById('timerResetBtn').addEventListener('click', ()=>{
+    timerRunning = false;
+    clearInterval(timerHandle);
+    if(timerSeconds > 0){
+      const sessions = loadList('timer:sessions', []);
+      sessions.push({date: todayKey(new Date()), seconds: timerSeconds});
+      saveList('timer:sessions', sessions);
+    }
+    timerSeconds = 0;
+    document.getElementById('timerDisplay').textContent = fmtTimer(0);
+    renderTimerToday();
+  });
+  document.getElementById('timerClearBtn').addEventListener('click', ()=>{
+    if(!confirm('Очистить всю историю последних сессий? Это действие необратимо.')) return;
+    saveList('timer:sessions', []);
+    renderTimerToday();
+  });
+  renderTimerToday();
+}
+
+/* ---------- PLAYLIST ---------- */
+function detectEmbed(url){
+  if(/soundcloud\.com/i.test(url)){
+    const isSet = /\/sets\//i.test(url);
+    return { kind:'sc', isPlaylist:isSet };
+  }
+  const list = url.match(/[?&]list=([\w-]+)/);
+  if(list){ return { kind:'yt', isPlaylist:true, id:list[1] }; }
+  const yt = url.match(/(?:youtu\.be\/|v=)([\w-]{6,})/);
+  if(yt){ return { kind:'yt', isPlaylist:false, id:yt[1] }; }
+  return { kind:null, isPlaylist:false };
+}
+function embedForUrl(url){
+  const info = detectEmbed(url);
+  if(info.kind==='sc'){
+    return `<div class="playlist-embed"><iframe class="pl-frame" data-kind="sc" width="100%" height="${info.isPlaylist?200:120}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff4655&auto_play=false"></iframe></div>`;
+  }
+  if(info.kind==='yt'){
+    const src = info.isPlaylist
+      ? `https://www.youtube.com/embed/videoseries?list=${info.id}&enablejsapi=1`
+      : `https://www.youtube.com/embed/${info.id}?enablejsapi=1`;
+    return `<div class="playlist-embed"><iframe class="pl-frame" data-kind="yt" width="100%" height="200" src="${src}" frameborder="0" allowfullscreen></iframe></div>`;
+  }
+  return '';
+}
+function getMasterVolume(){
+  const v = localStorage.getItem('playlist:volume');
+  return v!==null ? Number(v) : 70;
+}
+function applyVolumeToFrame(frame){
+  const kind = frame.getAttribute('data-kind');
+  const vol = getMasterVolume();
+  if(kind==='yt'){
+    try{
+      frame.contentWindow.postMessage(JSON.stringify({event:'command', func:'setVolume', args:[vol]}), '*');
+      frame.contentWindow.postMessage(JSON.stringify({event:'command', func: vol===0 ? 'mute' : 'unMute', args:[]}), '*');
+    }catch(e){}
+  } else if(kind==='sc' && window.SC && window.SC.Widget){
+    try{ SC.Widget(frame).setVolume(vol); }catch(e){}
+  }
+}
+function applyVolumeToAllFrames(){
+  document.querySelectorAll('.pl-frame').forEach(applyVolumeToFrame);
+}
+function ensureSoundCloudApi(cb){
+  if(window.SC && window.SC.Widget){ cb(); return; }
+  const existing = document.getElementById('scWidgetApi');
+  if(existing){ existing.addEventListener('load', cb, {once:true}); return; }
+  const script = document.createElement('script');
+  script.id = 'scWidgetApi';
+  script.src = 'https://w.soundcloud.com/player/api.js';
+  script.onload = cb;
+  document.head.appendChild(script);
+}
+function setupVolumeControl(){
+  const slider = document.getElementById('masterVolume');
+  const valueEl = document.getElementById('masterVolumeValue');
+  const vol = getMasterVolume();
+  slider.value = vol;
+  valueEl.textContent = vol + '%';
+  slider.style.setProperty('--vol-pct', vol + '%');
+  ensureSoundCloudApi(()=>{});
+  slider.addEventListener('input', ()=>{
+    const v = Number(slider.value);
+    valueEl.textContent = v + '%';
+    slider.style.setProperty('--vol-pct', v + '%');
+    try{ localStorage.setItem('playlist:volume', v); }catch(e){}
+    applyVolumeToAllFrames();
+  });
+}
+function renderPlaylist(){
+  const el = document.getElementById('playlistList');
+  if(playlist.length===0){ el.innerHTML = `<div class="video-sub" style="margin-bottom:14px;">Плейлист пуст — добавь треки или плейлисты ниже.</div>`; return; }
+  el.innerHTML = playlist.map(p=>{
+    const info = detectEmbed(p.url);
+    const badge = info.isPlaylist ? `<span class="playlist-badge">плейлист</span>` : '';
+    return `
+    <div class="playlist-item">
+      <div class="playlist-head">
+        <a class="playlist-title" href="${p.url}" target="_blank" rel="noopener" style="color:inherit; text-decoration:none;">🎵 ${p.title}${badge}</a>
+        <div class="icon-btn danger del-song" data-id="${p.id}" title="Удалить">✕</div>
+      </div>
+      ${embedForUrl(p.url)}
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.del-song').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      playlist = playlist.filter(p=>p.id!==btn.getAttribute('data-id'));
+      saveList('playlist:list', playlist);
+      renderPlaylist();
+    });
+  });
+  // apply current volume once embeds have loaded
+  el.querySelectorAll('.pl-frame').forEach(frame=>{
+    frame.addEventListener('load', ()=> setTimeout(()=>applyVolumeToFrame(frame), 300));
+  });
+}
+function setupAddSong(){
+  const btn = document.getElementById('addSongBtn');
+  const wrap = document.getElementById('addSongFormWrap');
+  btn.addEventListener('click', ()=>{
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:10px; max-width:460px;">
+        <input class="new-song-title" placeholder="Название (трека или плейлиста)">
+        <input class="new-song-url" placeholder="Ссылка: видео, YouTube-плейлист (?list=...) или SoundCloud (трек / sets)">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-song">Добавить</button>
+          <button class="cancel-btn cancel-add-song">Отмена</button>
+        </div>
+      </div>`;
+    btn.style.display='none';
+    wrap.querySelector('.confirm-add-song').addEventListener('click', ()=>{
+      const title = wrap.querySelector('.new-song-title').value.trim();
+      const url = wrap.querySelector('.new-song-url').value.trim();
+      if(!title || !url) return;
+      playlist.push({id:uid('s'), title, url});
+      saveList('playlist:list', playlist);
+      renderPlaylist();
+      wrap.innerHTML=''; btn.style.display='';
+    });
+    wrap.querySelector('.cancel-add-song').addEventListener('click', ()=>{ wrap.innerHTML=''; btn.style.display=''; });
+  });
+}
+
+/* ---------- PROFILE ---------- */
+function loadProfile(){ return loadList('profile:data', {nick:'', avatar:'', banner:'', about:'', discord:''}); }
+function saveProfile(p){ saveList('profile:data', p); }
+function setupProfile(){
+  const profile = loadProfile();
+  const nick = document.getElementById('profileNick');
+  const about = document.getElementById('profileAbout');
+  const discord = document.getElementById('profileDiscord');
+  const startDate = document.getElementById('profileStartDate');
+  const avatarEl = document.getElementById('profileAvatar');
+  const bannerEl = document.getElementById('profileBanner');
+
+  nick.value = profile.nick || '';
+  about.value = profile.about || '';
+  discord.value = profile.discord || '';
+  startDate.value = todayKey(START_DATE);
+  if(profile.avatar){ avatarEl.style.backgroundImage = `url(${profile.avatar})`; avatarEl.textContent=''; }
+  if(profile.banner){ bannerEl.style.backgroundImage = `url(${profile.banner})`; }
+
+  let saveTimeout;
+  function persist(){
+    profile.nick = nick.value; profile.about = about.value; profile.discord = discord.value;
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(()=> saveProfile(profile), 400);
+  }
+  nick.addEventListener('input', persist);
+  about.addEventListener('input', persist);
+  discord.addEventListener('input', persist);
+
+  document.getElementById('avatarFile').addEventListener('change', e=>{
+    const file = e.target.files[0]; if(!file) return;
+    resizeImageFile(file, 400, dataUrl=>{
+      profile.avatar = dataUrl; saveProfile(profile);
+      avatarEl.style.backgroundImage = `url(${dataUrl})`; avatarEl.textContent='';
+    });
+  });
+  document.getElementById('bannerFile').addEventListener('change', e=>{
+    const file = e.target.files[0]; if(!file) return;
+    resizeImageFile(file, 1600, dataUrl=>{
+      profile.banner = dataUrl; saveProfile(profile);
+      bannerEl.style.backgroundImage = `url(${dataUrl})`;
+    });
+  });
+  startDate.addEventListener('change', ()=>{
+    if(!startDate.value) return;
+    try{ localStorage.setItem('meta:startdate', startDate.value); }catch(e){}
+    START_DATE = getStartDate();
+    renderHeaderStats();
+  });
+}
+
+/* ---------- FLOATING DECOR ---------- */
+const DECOR_ICONS = [
+  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8zm2.5 13h13v1.5h-13V21z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1" fill="currentColor"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l12 18M18 3L6 21"/></svg>`,
+];
+function buildDecorLayer(){
+  const layer = document.getElementById('decorLayer');
+  let html = '';
+  for(let i=0;i<10;i++){
+    const size = 40 + Math.random()*70;
+    const top = Math.random()*100;
+    const left = Math.random()*100;
+    const dur = 10 + Math.random()*14;
+    const delay = Math.random()*-20;
+    const icon = DECOR_ICONS[i % DECOR_ICONS.length];
+    html += `<div class="decor-item" style="width:${size}px; height:${size}px; top:${top}%; left:${left}%; animation-duration:${dur}s; animation-delay:${delay}s;">${icon}</div>`;
+  }
+  layer.innerHTML = html;
+}
+function applyDecorSetting(){
+  const enabled = localStorage.getItem('settings:decor') !== 'off';
+  document.getElementById('decorLayer').classList.toggle('hidden', !enabled);
+  document.getElementById('decorToggle').checked = enabled;
+}
+
+/* ---------- EXPORT / IMPORT ---------- */
+function exportData(){
+  const data = {};
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    data[k] = localStorage.getItem(k);
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aimmaxing-backup.json';
+  a.click();
+}
+function importData(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      Object.keys(data).forEach(k=> localStorage.setItem(k, data[k]));
+      location.reload();
+    }catch(err){ alert('Не удалось прочитать файл.'); }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- VIEW SWITCHING ---------- */
+function switchView(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.side-item').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===view));
+}
+
+/* ---------- THEME / SETTINGS ---------- */
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const num = parseInt(hex,16);
+  return [(num>>16)&255, (num>>8)&255, num&255];
+}
+function applyTheme(t){
+  const root = document.documentElement.style;
+  root.setProperty('--accent', t.accent);
+  root.setProperty('--accent-rgb', hexToRgb(t.accent).join(','));
+  root.setProperty('--panel-rgb', hexToRgb(t.panel).join(','));
+  root.setProperty('--bg-base', t.bg);
+  root.setProperty('--text', t.text);
+  root.setProperty('--panel-alpha', (t.panelAlpha/100).toFixed(2));
+  root.setProperty('--blur-amt', t.blur+'px');
+  const bg = document.getElementById('bodyBg');
+  bg.style.backgroundImage = t.wallpaper ? `url(${t.wallpaper})` : 'none';
+  bg.style.backgroundColor = t.bg;
+}
+function getTheme(){
+  try{ const raw = localStorage.getItem('settings:theme'); if(raw) return JSON.parse(raw); }catch(e){}
+  return null;
+}
+function saveTheme(t){ try{ localStorage.setItem('settings:theme', JSON.stringify(t)); }catch(e){ console.error('theme save error', e); } }
+
+const DEFAULT_THEME = { accent:'#ff4655', panel:'#1a1114', bg:'#0b0709', text:'#f2e9ea', panelAlpha:60, blur:24, wallpaper:'' };
+
+function resizeImageFile(file, maxW=1600, cb){
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    img.onload = ()=>{
+      const scale = Math.min(1, maxW/img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width*scale; canvas.height = img.height*scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      cb(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function init(){
+  buildPanel(document.getElementById('morningGrid'), 'Утро', morningTasks.length, 'morningList');
+  buildPanel(document.getElementById('eveningGrid'), 'Вечер', eveningTasks.length, 'eveningList');
+
+  document.querySelectorAll('.side-item').forEach(btn=>{
+    btn.addEventListener('click', ()=> switchView(btn.getAttribute('data-view')));
+  });
+
+  document.getElementById('prevDay').addEventListener('click', ()=>shiftDay(-1));
+  document.getElementById('nextDay').addEventListener('click', ()=>shiftDay(1));
+  document.getElementById('jumpToday').addEventListener('click', ()=>{ selectedDate = new Date(TODAY); loadSelectedDay(); });
+  document.getElementById('prevYear').addEventListener('click', ()=>shiftYear(-1));
+  document.getElementById('nextYear').addEventListener('click', ()=>shiftYear(1));
+
+  let noteTimeout;
+  document.getElementById('dayNote').addEventListener('input', (e)=>{
+    selectedState._note = e.target.value;
+    clearTimeout(noteTimeout);
+    noteTimeout = setTimeout(async ()=>{
+      const key = todayKey(selectedDate);
+      await setDayState(key, selectedState);
+      yearCache[key] = {...selectedState};
+    }, 500);
+  });
+
+  const meta = await getMeta();
+  const curInput = document.getElementById('currentRankInput');
+  const goalInput = document.getElementById('goalRankInput');
+  curInput.value = meta.current || 'D1 · 400RR';
+  goalInput.value = meta.goal || 'Ascendant';
+  async function saveMeta(){ await setMeta({current: curInput.value, goal: goalInput.value}); }
+  curInput.addEventListener('change', saveMeta);
+  goalInput.addEventListener('change', saveMeta);
+
+  renderLoadout();
+  setupAddKovaak();
+  renderVideoList('videoListRuMovement', videosRuMovement, null);
+  renderVideoList('videoListEnMovement', videosEnMovement, 'EN');
+  renderVideoList('videoListEnTilt', videosEnTilt, 'EN');
+  renderVideoList('videoListAimKovaak', videosAimKovaak, 'EN');
+  renderVideoList('videoListCustom', videosCustom, null);
+  setupAddVideo();
+  renderHeaderStats();
+
+  await loadAgentImages();
+  renderMetaTable();
+  setupMetaFilters();
+  renderAgentsPane();
+  setupTimer();
+  setupVolumeControl();
+  renderPlaylist();
+  setupAddSong();
+  setupProfile();
+  buildDecorLayer();
+  applyDecorSetting();
+  document.getElementById('decorToggle').addEventListener('change', e=>{
+    try{ localStorage.setItem('settings:decor', e.target.checked ? 'on' : 'off'); }catch(err){}
+    applyDecorSetting();
+  });
+  document.getElementById('exportBtn').addEventListener('click', exportData);
+  document.getElementById('importFile').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(file) importData(file);
+  });
+
+  // theme setup
+  let theme = getTheme() || {...DEFAULT_THEME};
+  applyTheme(theme);
+  document.getElementById('colorAccent').value = theme.accent;
+  document.getElementById('colorText').value = theme.text;
+  document.getElementById('colorPanel').value = theme.panel;
+  document.getElementById('colorBg').value = theme.bg;
+  document.getElementById('panelAlpha').value = theme.panelAlpha;
+  document.getElementById('blurAmt').value = theme.blur;
+  document.getElementById('wallpaperUrl').value = theme.wallpaper && !theme.wallpaper.startsWith('data:') ? theme.wallpaper : '';
+
+  function persistAndApply(){ saveTheme(theme); applyTheme(theme); }
+
+  document.getElementById('colorAccent').addEventListener('input', e=>{ theme.accent=e.target.value; persistAndApply(); });
+  document.getElementById('colorText').addEventListener('input', e=>{ theme.text=e.target.value; persistAndApply(); });
+  document.getElementById('colorPanel').addEventListener('input', e=>{ theme.panel=e.target.value; persistAndApply(); });
+  document.getElementById('colorBg').addEventListener('input', e=>{ theme.bg=e.target.value; persistAndApply(); });
+  document.getElementById('panelAlpha').addEventListener('input', e=>{ theme.panelAlpha=Number(e.target.value); persistAndApply(); });
+  document.getElementById('blurAmt').addEventListener('input', e=>{ theme.blur=Number(e.target.value); persistAndApply(); });
+  document.getElementById('wallpaperUrl').addEventListener('change', e=>{ theme.wallpaper=e.target.value.trim(); persistAndApply(); });
+  document.getElementById('wallpaperFile').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    resizeImageFile(file, 1600, (dataUrl)=>{
+      theme.wallpaper = dataUrl;
+      try{ persistAndApply(); }
+      catch(err){ console.error('wallpaper too large for storage', err); }
+    });
+  });
+  document.getElementById('resetTheme').addEventListener('click', ()=>{
+    theme = {...DEFAULT_THEME};
+    saveTheme(theme); applyTheme(theme);
+    document.getElementById('colorAccent').value = theme.accent;
+    document.getElementById('colorText').value = theme.text;
+    document.getElementById('colorPanel').value = theme.panel;
+    document.getElementById('colorBg').value = theme.bg;
+    document.getElementById('panelAlpha').value = theme.panelAlpha;
+    document.getElementById('blurAmt').value = theme.blur;
+    document.getElementById('wallpaperUrl').value = '';
+  });
+
+  await loadYearCache(calYear);
+  await loadSelectedDay();
+  await renderStreak();
+}
+
+init();
+</script>
+</body>
+</html>
