@@ -275,6 +275,7 @@
   .stat-input.accent{color:var(--accent);}
   .stat-input:focus{outline:none; border-bottom:1px solid var(--accent);}
   .stat-input::placeholder{color:var(--text-faint);}
+  .stat-input.synced-from-valo{ color:var(--accent); cursor:default; }
 
   .section-label{
     font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2.5px;
@@ -707,14 +708,19 @@
   .meta-row.lb-clickable:hover{ background:rgba(var(--accent-rgb),0.06); }
 
   /* ---------- HOME WIDGET (desktop side column) ---------- */
+  /* Раньше это была CSS-grid колонка с position:sticky и grid-row:1/-1. Виджет был растянут
+     на все неявные строки грида вместе с чек-листом, из-за чего браузер "размазывал" его высоту
+     по этим строкам — это и создавало пустое место под первым блоком (текущий ранг), и sticky
+     не всегда корректно прилипал при скролле. Теперь виджет просто зафиксирован относительно
+     окна (position:fixed) и не участвует в сетке основной колонки вообще — гарантированно
+     не двигается при скролле, а левая колонка получает обычный правый отступ под него. */
   @media (min-width:1180px){
-    /* было grid-template-columns:900px minmax(260px,1fr) — фиксированные 900px не сжимались,
-       из-за чего на многих разрешениях (особенно с открытым сайдбаром) сетка была шире контейнера,
-       overflow-x:hidden на body обрезал лишнее и правая колонка съезжала/наезжала на левую.
-       minmax(0,1fr) даёт основной колонке сжиматься, а виджету — фиксированный разумный максимум. */
-    #view-home .wrap{ max-width:1320px; display:grid; grid-template-columns:minmax(0,900px) minmax(260px,340px); gap:24px; align-items:start; }
-    #view-home .wrap > *:not(#homeWidgetCol){ grid-column:1; grid-row:auto; min-width:0; }
-    #homeWidgetCol{ grid-column:2; grid-row:1 / -1; position:sticky; top:24px; align-self:start; display:flex; flex-direction:column; gap:16px; min-width:0; }
+    #view-home .wrap{ max-width:900px; margin-right:352px; }
+    #homeWidgetCol{
+      position:fixed; top:24px; right:28px; width:320px; z-index:2;
+      max-height:calc(100vh - 48px); overflow-y:auto;
+      display:flex; flex-direction:column; gap:16px;
+    }
   }
   #homeWidgetCol{ display:none; }
   @media (min-width:1180px){ #homeWidgetCol{ display:flex; } }
@@ -2242,6 +2248,22 @@ function renderCalendar(){
   });
 }
 
+/* если Valorant привязан — подставляем актуальный ранг в поле "Текущий ранг" на главной,
+   вместо того, что человек когда-то вписал туда руками */
+function applyValoRankToHeader(data){
+  const curInput = document.getElementById('currentRankInput');
+  if(!curInput || !data) return;
+  const cfg = loadValoConfig();
+  if(!cfg.riotId || !cfg.apiKey) return;
+  const cur = (data.mmr && data.mmr.current) || {};
+  const tierName = cur.tier && cur.tier.name;
+  if(!tierName) return;
+  curInput.value = cur.rr != null ? `${tierName} · ${cur.rr}RR` : tierName;
+  curInput.readOnly = true;
+  curInput.title = 'подтягивается автоматически из привязанного Valorant-аккаунта';
+  curInput.classList.add('synced-from-valo');
+}
+
 function renderHeaderStats(){
   const dayNum = daysBetween(START_DATE, TODAY) + 1;
   document.getElementById('dayCounter').textContent = Math.max(dayNum,1);
@@ -2892,6 +2914,7 @@ function renderValoStats(data){
 
   renderValoMatchesInto('valoMatchList', data);
   renderValoMatchesInto('homeWidgetValoBody', data, {compact:true, limit:5});
+  applyValoRankToHeader(data);
 }
 
 /* находит игрока (себя) внутри списка players матча — раньше сравнивалось по несуществующему
