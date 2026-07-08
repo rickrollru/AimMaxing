@@ -80,6 +80,30 @@
     padding:22px 14px;
     display:flex; flex-direction:column; gap:4px;
     position:sticky; top:0; height:100vh;
+    transition:width .22s ease, padding .22s ease;
+  }
+  /* ---------- SIDEBAR COLLAPSE TOGGLE (desktop only) ---------- */
+  .sidebar-toggle{
+    position:absolute; top:24px; right:-12px; width:24px; height:24px; border-radius:50%;
+    background:var(--bg-base); border:1px solid var(--border); color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; z-index:5;
+    transition:border-color .2s ease, color .2s ease, box-shadow .2s ease;
+  }
+  .sidebar-toggle svg{ width:13px; height:13px; transition:transform .22s ease; }
+  .sidebar-toggle:hover{ border-color:var(--accent); color:var(--accent); box-shadow:0 0 10px rgba(var(--accent-rgb),0.25); }
+  .sidebar.collapsed .sidebar-toggle svg{ transform:rotate(180deg); }
+  @media (max-width:760px){ .sidebar-toggle{ display:none; } }
+
+  /* только десктоп — на мобильной раскладке сайдбар превращается в нижнюю панель (см. медиа-запрос
+     ниже) и правило схлопывания там не нужно и не должно перебивать её ширину */
+  @media (min-width:761px){
+    .sidebar.collapsed{ width:72px; padding-left:10px; padding-right:10px; }
+    .sidebar.collapsed .brand-text,
+    .sidebar.collapsed .side-item span,
+    .sidebar.collapsed .sidebar-foot{ display:none; }
+    .sidebar.collapsed .sidebar-brand{ justify-content:center; padding-left:0; padding-right:0; }
+    .sidebar.collapsed .side-item{ justify-content:center; padding-left:0; padding-right:0; }
+    .sidebar.collapsed .side-item:hover{ transform:none; }
   }
   .sidebar-brand{
     font-family:'Sora', sans-serif; font-weight:800; font-size:15px; letter-spacing:0.5px;
@@ -251,6 +275,7 @@
   .stat-input.accent{color:var(--accent);}
   .stat-input:focus{outline:none; border-bottom:1px solid var(--accent);}
   .stat-input::placeholder{color:var(--text-faint);}
+  .stat-input.synced-from-valo{ color:var(--accent); cursor:default; }
 
   .section-label{
     font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2.5px;
@@ -682,31 +707,31 @@
   .meta-row.lb-clickable{ cursor:pointer; }
   .meta-row.lb-clickable:hover{ background:rgba(var(--accent-rgb),0.06); }
 
-  /* ---------- HOME WIDGET (desktop side column) ---------- */
-  @media (min-width:1180px){
-    #view-home .wrap{ max-width:1320px; display:grid; grid-template-columns:900px minmax(260px,1fr); gap:24px; align-items:start; }
-    #view-home .wrap > *:not(#homeWidgetCol){ grid-column:1; }
-    #homeWidgetCol{ grid-column:2; grid-row:1 / span 20; position:sticky; top:24px; display:flex; flex-direction:column; gap:16px; }
-  }
-  #homeWidgetCol{ display:none; }
-  @media (min-width:1180px){ #homeWidgetCol{ display:flex; } }
-  .home-widget{
-    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px);
-    border:1px solid var(--border); border-radius:16px; padding:16px;
-  }
-  .home-widget-title{ font-family:'Sora',sans-serif; font-weight:700; font-size:13.5px; margin-bottom:2px; }
-  .home-widget-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin-bottom:12px; }
-  .home-widget-empty{ font-size:12px; color:var(--text-dim); line-height:1.5; }
-  .home-widget-empty a{ color:var(--accent); cursor:pointer; }
+  /* ---------- HOME WIDGET ----------
+     Виджет с последними матчами/друзьями на Главной убран по просьбе — вся статистика по
+     Valorant теперь живёт только на вкладке «Профиль», а сама Главная — просто чек-лист. */
 
-  .valo-match-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; border-bottom:1px solid var(--border); font-size:12px; }
+  .valo-match-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; border-bottom:1px solid var(--border); font-size:12px; transition:background .15s ease; }
   .valo-match-row:last-child{ border-bottom:none; }
+  .valo-match-row:hover{ background:rgba(255,255,255,0.03); }
   .valo-match-result{ width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11px; background:rgba(255,255,255,0.06); flex-shrink:0; }
   .valo-match-row.win .valo-match-result{ background:rgba(80,200,120,0.18); color:#5fd88a; }
   .valo-match-row.loss .valo-match-result{ background:rgba(255,70,85,0.18); color:var(--accent); }
-  .valo-match-map{ flex:1; color:var(--text-dim); }
-  .valo-match-agent{ color:var(--text-faint); font-family:'IBM Plex Mono',monospace; font-size:11px; }
-  .valo-match-score{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); width:52px; text-align:right; flex-shrink:0; }
+  .valo-match-agentimg{
+    width:30px; height:30px; border-radius:8px; flex-shrink:0;
+    background:rgba(255,255,255,0.06) center/cover; border:1px solid var(--border);
+  }
+  .valo-match-mapimg{ width:38px; height:26px; border-radius:6px; background:rgba(255,255,255,0.06) center/cover; flex-shrink:0; }
+  .valo-match-map{ flex:1; min-width:0; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .valo-match-map-name{ display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .valo-match-agent{ display:block; color:var(--text-faint); font-family:'IBM Plex Mono',monospace; font-size:10.5px; margin-top:1px; }
+  .valo-match-score{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); text-align:right; flex-shrink:0; }
+  .valo-match-kd{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; text-align:right; flex-shrink:0;
+    width:40px; color:var(--text-dim);
+  }
+  .valo-match-kd.good{ color:#5fd88a; }
+  .valo-match-kd.bad{ color:var(--accent); }
 
   /* ---------- FRIENDS ---------- */
   .friend-row{ display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border); }
@@ -897,6 +922,9 @@
 
 <div class="shell">
   <nav class="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" title="Свернуть меню" aria-label="Свернуть меню">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
     <div class="sidebar-brand" id="brandHome">
       <svg class="crown" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8zm2.5 13h13v1.5h-13V21z"/></svg>
       <span class="brand-text">AimTracker</span>
@@ -1030,19 +1058,6 @@
           <textarea class="day-note" id="dayNote" placeholder="Что чувствуешь по поводу этого дня — эмоции, мысли, что зашло, что нет..."></textarea>
         </div>
         <footer>отмечай честно — статистика только для тебя</footer>
-
-        <div id="homeWidgetCol">
-          <div class="home-widget" id="homeWidgetValo">
-            <div class="home-widget-title">Последние матчи</div>
-            <div class="home-widget-sub">Valorant · competitive</div>
-            <div id="homeWidgetValoBody"><div class="home-widget-empty">Привяжи Valorant в <a data-go-settings-valo="1">настройках</a>, чтобы видеть последние матчи здесь.</div></div>
-          </div>
-          <div class="home-widget" id="homeWidgetFriends">
-            <div class="home-widget-title">Друзья — лучшие серии</div>
-            <div class="home-widget-sub">топ по твоему списку друзей</div>
-            <div id="homeWidgetFriendsBody"><div class="home-widget-empty">Добавь друзей на вкладке «Профиль» — их серии появятся здесь.</div></div>
-          </div>
-        </div>
       </div>
     </section>
 
@@ -1146,6 +1161,16 @@
               <div class="account-sub">Ранг, RR и последние матчи прямо здесь, в профиле.</div>
             </div>
             <button class="file-btn" id="valoLinkBtn" style="cursor:pointer;">Привязать →</button>
+          </div>
+        </div>
+        <div class="account-card" id="valoErrorBanner" style="display:none; border-color:rgba(255,70,85,0.4);">
+          <div class="account-signed-out" style="width:100%;">
+            <div class="account-copy">
+              <div class="eyebrow" style="color:var(--accent);">‖ valorant — ошибка</div>
+              <div class="account-title" id="valoErrorText">Не удалось получить статистику</div>
+              <div class="account-sub">Проверь Riot ID, регион и API-ключ в Настройках.</div>
+            </div>
+            <button class="file-btn" id="valoErrorRetryBtn" style="cursor:pointer;">Повторить</button>
           </div>
         </div>
 
@@ -2210,6 +2235,22 @@ function renderCalendar(){
   });
 }
 
+/* если Valorant привязан — подставляем актуальный ранг в поле "Текущий ранг" на главной,
+   вместо того, что человек когда-то вписал туда руками */
+function applyValoRankToHeader(data){
+  const curInput = document.getElementById('currentRankInput');
+  if(!curInput || !data) return;
+  const cfg = loadValoConfig();
+  if(!cfg.riotId || !cfg.apiKey) return;
+  const cur = (data.mmr && data.mmr.current) || {};
+  const tierName = cur.tier && cur.tier.name;
+  if(!tierName) return;
+  curInput.value = cur.rr != null ? `${tierName} · ${cur.rr}RR` : tierName;
+  curInput.readOnly = true;
+  curInput.title = 'подтягивается автоматически из привязанного Valorant-аккаунта';
+  curInput.classList.add('synced-from-valo');
+}
+
 function renderHeaderStats(){
   const dayNum = daysBetween(START_DATE, TODAY) + 1;
   document.getElementById('dayCounter').textContent = Math.max(dayNum,1);
@@ -2306,7 +2347,7 @@ function agentImgUrl(agent){
 let MAP_IMAGES = {};
 async function loadMapImages(){
   try{
-    const cached = localStorage.getItem('maps:imgcache');
+    const cached = localStorage.getItem('maps:imgcache:v2');
     if(cached){
       const parsed = JSON.parse(cached);
       if(parsed && parsed.ts && (Date.now()-parsed.ts < 14*24*3600*1000) && parsed.data){
@@ -2316,7 +2357,10 @@ async function loadMapImages(){
     }
   }catch(e){}
   try{
-    const res = await fetch('https://valorant-api.com/v1/maps?language=ru-RU');
+    /* важно: язык здесь должен совпадать с тем, в каком приходят названия карт из матчей
+       HenrikDev API (они всегда на английском, например "Ascent") — иначе картинка не найдётся
+       по ключу и там будет пусто, даже если название карты отображается */
+    const res = await fetch('https://valorant-api.com/v1/maps?language=en-US');
     const json = await res.json();
     const map = {};
     (json.data||[]).forEach(m=>{
@@ -2324,7 +2368,7 @@ async function loadMapImages(){
       map[key] = { splash:m.splash, listView:m.listViewIcon, listViewFallback:m.listViewIconTall };
     });
     MAP_IMAGES = map;
-    try{ localStorage.setItem('maps:imgcache', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
+    try{ localStorage.setItem('maps:imgcache:v2', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
   }catch(e){ console.warn('map image fetch failed', e); }
 }
 function mapImgUrl(m){
@@ -2695,14 +2739,6 @@ function setupProfile(){
   customLabel.addEventListener('input', persist);
   customValue.addEventListener('input', persist);
 
-  document.querySelectorAll('[data-go-settings-valo]').forEach(el=> el.addEventListener('click', ()=>{
-    switchView('settings');
-    setTimeout(()=>{
-      const anchor = document.getElementById('valoSettingsAnchor');
-      if(anchor) anchor.scrollIntoView({behavior:'smooth', block:'start'});
-    }, 80);
-  }));
-
   document.getElementById('avatarFile').addEventListener('change', e=>{
     const file = e.target.files[0]; if(!file) return;
     resizeImageFile(file, 400, dataUrl=>{
@@ -2712,7 +2748,7 @@ function setupProfile(){
   });
   document.getElementById('bannerFile').addEventListener('change', e=>{
     const file = e.target.files[0]; if(!file) return;
-    resizeImageFile(file, 1600, dataUrl=>{
+    resizeImageFile(file, 960, dataUrl=>{
       profile.banner = dataUrl; saveProfile(profile);
       bannerEl.style.backgroundImage = `url(${dataUrl})`;
     });
@@ -2730,9 +2766,12 @@ function loadValoConfig(){ return loadList('valo:config', {riotId:'', region:'eu
 function saveValoConfig(cfg){ saveList('valo:config', cfg); }
 const VALO_API_BASE = 'https://api.henrikdev.xyz';
 
+/* HenrikDev с недавних пор требует ключ в заголовке Authorization, а не в query-параметре
+   ?api_key= (это был временный вариант только для твич-ботов, которые не могут слать заголовки).
+   Именно из-за старого query-параметра привязка ранга и переставала работать. */
 async function valoFetch(path, apiKey){
-  const url = `${VALO_API_BASE}${path}${path.includes('?') ? '&' : '?'}api_key=${encodeURIComponent(apiKey)}`;
-  const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
+  const url = `${VALO_API_BASE}${path}`;
+  const res = await fetch(url, { headers:{ 'Accept':'application/json', 'Authorization':apiKey } });
   const json = await res.json().catch(()=>null);
   if(!res.ok || !json || json.status >= 400){
     const msg = (json && (json.errors?.[0]?.message || json.message)) || `HTTP ${res.status}`;
@@ -2792,6 +2831,8 @@ function setupValoIntegration(){
   });
 
   refreshBtn.addEventListener('click', ()=> refreshValoStats(true));
+  const errRetryBtn = document.getElementById('valoErrorRetryBtn');
+  if(errRetryBtn) errRetryBtn.addEventListener('click', ()=> refreshValoStats(true));
 
   if(cfg.riotId && cfg.apiKey){
     const lastFetch = Number(localStorage.getItem('valo:lastfetch') || 0);
@@ -2814,6 +2855,7 @@ async function refreshValoStats(userInitiated){
   if(!cfg.riotId || !cfg.apiKey) return;
   const [name, tag] = cfg.riotId.split('#');
   const card = document.getElementById('valoStatsCard');
+  const errBanner = document.getElementById('valoErrorBanner');
   const refreshBtn = document.getElementById('valoRefreshBtn');
   if(refreshBtn){ refreshBtn.textContent = 'Обновляю...'; refreshBtn.disabled = true; }
   try{
@@ -2827,9 +2869,16 @@ async function refreshValoStats(userInitiated){
     try{ localStorage.setItem('valo:lastfetch', String(Date.now())); }catch(e){}
     renderValoStats(data);
     if(card) card.style.display = '';
+    if(errBanner) errBanner.style.display = 'none';
   }catch(err){
     console.error('valo fetch failed', err);
     if(userInitiated) alert('Не удалось получить статистику: ' + err.message + '\n\nПроверь Riot ID, регион и ключ в Настройках.');
+    // если ни разу не было успешного кэша — карточка со статистикой пустая и скрытая,
+    // поэтому показываем явный баннер с ошибкой вместо тихой пустоты
+    if(!loadList('valo:cache', null) && errBanner){
+      document.getElementById('valoErrorText').textContent = 'Не удалось получить статистику: ' + err.message;
+      errBanner.style.display = 'flex';
+    }
   } finally {
     if(refreshBtn){ refreshBtn.textContent = 'Обновить'; refreshBtn.disabled = false; }
   }
@@ -2855,45 +2904,91 @@ function renderValoStats(data){
   document.getElementById('valoPeakDisplay').textContent = (peak.tier && peak.tier.name) || '—';
   document.getElementById('valoUpdatedDisplay').textContent = new Date(data.fetchedAt).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
 
-  renderValoMatchesInto('valoMatchList', data);
-  renderValoMatchesInto('homeWidgetValoBody', data, {compact:true, limit:5});
+  // каждый блок в своём try/catch: раньше ошибка в одном (например, в рендере матчей)
+  // тихо обрывала весь renderValoStats и синхронизация ранга в шапке тоже переставала работать
+  try{ renderValoMatchesInto('valoMatchList', data); }catch(err){ console.error('valo matches render failed', err); }
+  try{ applyValoRankToHeader(data); }catch(err){ console.error('valo rank header sync failed', err); }
+}
+
+/* находит игрока (себя) внутри списка players матча — раньше сравнивалось по несуществующему
+   полю p.account.name (в матчах игроки лежат плоско: {puuid,name,tag,...}), из-за чего "я" не
+   находился никогда и статы всегда были пустые. Сравниваем по puuid, с фоллбэком на name+tag. */
+function findMeInMatch(m, acc){
+  const players = m.players || [];
+  if(acc && acc.puuid){
+    const byPuuid = players.find(p => p.puuid === acc.puuid);
+    if(byPuuid) return byPuuid;
+  }
+  if(acc && acc.name){
+    const byName = players.find(p =>
+      (p.name||'').toLowerCase() === (acc.name||'').toLowerCase() &&
+      (p.tag||'').toLowerCase() === (acc.tag||'').toLowerCase()
+    );
+    if(byName) return byName;
+  }
+  return {};
 }
 
 /* строит HTML для списка последних матчей из объекта data ({account, matches}) — используется
-   и на вкладке Профиль, и в виджете на Главной, и в модалке чужого публичного профиля */
+   и на вкладке Профиль, и в модалке чужого публичного профиля. Каждая строка теперь показывает
+   иконку агента и посчитанный K/D (не только сырые kills/deaths/assists).
+
+   Раньше здесь был баг: m.teams в реальном ответе HenrikDev — это ОБЪЕКТ вида {red:{...}, blue:{...}},
+   а не массив, а код звал teams.find(...), как будто это массив. .find на объекте не существует,
+   поэтому при первом же матче падало исключение — весь список матчей не отрисовывался вообще
+   (ни картинки карт, ни K/D), а applyValoRankToHeader (он вызывается сразу после этого рендера)
+   тоже не успевал отработать, из-за чего казалось, что даже привязка ранга не работает. */
 function buildValoMatchesHtml(data, opts){
   opts = opts || {};
   const matches = (data.matches || []).slice(0, opts.limit || 10);
   if(matches.length === 0) return `<div class="video-sub">Нет данных о последних матчах.</div>`;
-  return matches.map(m=>{
-    const me = (m.players || []).find(p => p.account && p.account.name === (data.account && data.account.name)) || {};
-    const myTeamId = me.team_id;
-    const teams = m.teams || [];
-    const myTeam = teams.find(t=>t.team_id === myTeamId);
-    const won = myTeam ? !!myTeam.won : null;
-    const mapName = (m.metadata && m.metadata.map && m.metadata.map.name) || '—';
-    const agentName = (me.agent && me.agent.name) || '—';
-    const stats = me.stats || {};
-    return `
-      <div class="valo-match-row ${won===true?'win':won===false?'loss':''}">
-        <div class="valo-match-result">${won===true?'W':won===false?'L':'-'}</div>
-        <div class="valo-match-map">${mapName}</div>
-        ${opts.compact ? '' : `<div class="valo-match-agent">${agentName}</div>`}
-        <div class="valo-match-score">${stats.kills ?? '-'}/${stats.deaths ?? '-'}/${stats.assists ?? '-'}</div>
-      </div>`;
-  }).join('');
+  const acc = data.account || {};
+  const rows = matches.map(m=>{
+    try{
+      const me = findMeInMatch(m, acc);
+      const myTeamId = (me.team_id || '').toLowerCase();
+      let won = null;
+      if(m.teams){
+        if(Array.isArray(m.teams)){
+          const myTeam = m.teams.find(t=> (t.team_id||'').toLowerCase() === myTeamId);
+          if(myTeam) won = !!(myTeam.has_won ?? myTeam.won);
+        } else if(myTeamId && m.teams[myTeamId]){
+          won = !!(m.teams[myTeamId].has_won ?? m.teams[myTeamId].won);
+        }
+      }
+      const mapName = (m.metadata && m.metadata.map && m.metadata.map.name) || '—';
+      const agentName = (me.agent && me.agent.name) || '—';
+      const stats = me.stats || {};
+      const kills = stats.kills ?? 0;
+      const deaths = stats.deaths ?? 0;
+      const assists = stats.assists ?? 0;
+      const kd = deaths > 0 ? (kills/deaths) : kills;
+      const kdClass = kd >= 1.2 ? 'good' : (kd < 0.8 ? 'bad' : '');
+      const mapImg = mapName !== '—' ? mapImgUrl({name:mapName}) : null;
+      const agentImg = agentName !== '—' ? agentImgUrl({name:agentName}) : null;
+      return `
+        <div class="valo-match-row ${won===true?'win':won===false?'loss':''}">
+          <div class="valo-match-result">${won===true?'W':won===false?'L':'-'}</div>
+          <div class="valo-match-agentimg"${agentImg ? ` style="background-image:url('${agentImg}');"` : ''}></div>
+          <div class="valo-match-mapimg"${mapImg ? ` style="background-image:url('${mapImg}');"` : ''}></div>
+          <div class="valo-match-map">
+            <span class="valo-match-map-name">${mapName}</span>
+            ${opts.compact ? '' : `<span class="valo-match-agent">${agentName}</span>`}
+          </div>
+          <div class="valo-match-score">${kills}/${deaths}/${assists}</div>
+          <div class="valo-match-kd ${kdClass}">${kd.toFixed(2)}</div>
+        </div>`;
+    }catch(err){
+      console.warn('skipping one match row due to render error', err);
+      return '';
+    }
+  });
+  return rows.join('');
 }
 function renderValoMatchesInto(elId, data, opts){
   const el = document.getElementById(elId);
   if(!el || !data) return;
   el.innerHTML = buildValoMatchesHtml(data, opts);
-}
-/* виджет на главной — рисуется из локального кэша при загрузке страницы, ещё до фетча по таймеру */
-function initHomeValoWidget(){
-  const cfg = loadValoConfig();
-  if(!cfg.riotId || !cfg.apiKey) return; // остаётся дефолтная подсказка "привяжи в настройках"
-  const cached = loadList('valo:cache', null);
-  if(cached) renderValoMatchesInto('homeWidgetValoBody', cached, {compact:true, limit:5});
 }
 
 /* ---------- ДРУЗЬЯ + ПУБЛИЧНЫЙ ПРОФИЛЬ (логика Firestore живёт в модуле ниже, здесь — вся разметка/UI) ---------- */
@@ -3120,6 +3215,32 @@ function closeMoreSheet(){
   document.getElementById('moreSheetBackdrop').classList.remove('open');
 }
 
+/* ---------- SIDEBAR COLLAPSE (desктоп) ---------- */
+function setupSidebarCollapse(){
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  if(!sidebar || !toggle) return;
+  // подписи как title, чтобы в свёрнутом виде по наведению на иконку было понятно, что это за пункт
+  sidebar.querySelectorAll('.side-item span').forEach(span=>{
+    const item = span.closest('.side-item');
+    if(item && !item.title) item.title = span.textContent.trim();
+  });
+  const KEY = 'ui:sidebarCollapsed';
+  let collapsed = false;
+  try{ collapsed = localStorage.getItem(KEY) === '1'; }catch(e){}
+  const apply = ()=>{
+    sidebar.classList.toggle('collapsed', collapsed);
+    toggle.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
+    toggle.title = collapsed ? 'Развернуть меню' : 'Свернуть меню';
+  };
+  apply();
+  toggle.addEventListener('click', ()=>{
+    collapsed = !collapsed;
+    try{ localStorage.setItem(KEY, collapsed ? '1' : '0'); }catch(e){}
+    apply();
+  });
+}
+
 function applyNavOrder(){
   const order = getNavOrder();
   const nav = document.querySelector('.sidebar');
@@ -3215,6 +3336,7 @@ async function init(){
 
   applyNavOrder();
   renderNavOrderSettings();
+  setupSidebarCollapse();
   document.getElementById('brandHome').addEventListener('click', ()=> switchView('home'));
   document.getElementById('moreNavBtn').addEventListener('click', openMoreSheet);
   document.getElementById('moreSheetBackdrop').addEventListener('click', closeMoreSheet);
@@ -3272,7 +3394,6 @@ async function init(){
   setupAddSong();
   setupProfile();
   setupValoIntegration();
-  initHomeValoWidget();
   setupFriendsUI();
   renderBackupList();
   backupNow();
@@ -3406,7 +3527,7 @@ init();
       if(!raw) return null;
       const acc = raw.account || {}, mmr = raw.mmr || {}, cur = mmr.current || {}, peak = mmr.peak || {};
       const matches = (raw.matches || []).slice(0,5).map(m=>{
-        const me = (m.players || []).find(p => p.account && p.account.name === acc.name) || {};
+        const me = findMeInMatch(m, acc);
         const teams = m.teams || [];
         const myTeam = teams.find(t=>t.team_id === me.team_id);
         const won = myTeam ? !!myTeam.won : null;
@@ -3429,17 +3550,19 @@ init();
     }catch(e){ return null; }
   }
 
+  /* раньше сначала писался большой бэкап-документ 'users' (весь localStorage), и только потом —
+     маленький публичный документ 'leaderboard'. Если бэкап был слишком большим (например, из-за
+     загруженной аватарки/баннера), запись падала с ошибкой ДО того как публичный профиль вообще
+     обновлялся — поэтому у других людей в публичном профиле ничего не появлялось. Теперь пишем
+     публичный документ первым и независимо от бэкапа, чтобы одно не блокировало другое. */
   async function pushToCloud(user, {silent=false}={}){
     const profile = currentProfile();
+    let publicOk = false, backupOk = false;
     try{
-      await setDoc(doc(db,'users',user.uid), {
-        data: dumpLocalStorage(),
-        updatedAt: serverTimestamp()
-      });
       await setDoc(doc(db,'leaderboard',user.uid), {
         nick: profile.nick || user.displayName || 'Игрок',
-        avatar: profile.avatar && profile.avatar.startsWith('data:') ? '' : (profile.avatar || user.photoURL || ''),
-        banner: profile.banner && profile.banner.startsWith('data:') ? '' : (profile.banner || ''),
+        avatar: profile.avatar || user.photoURL || '',
+        banner: profile.banner || '',
         about: profile.about || '',
         discord: profile.discord || '',
         twitch: profile.twitch || '',
@@ -3449,10 +3572,43 @@ init();
         valo: currentValoSummary(),
         updatedAt: serverTimestamp()
       });
-      setSyncStatus('синхронизировано ' + new Date().toLocaleTimeString('ru-RU'));
+      publicOk = true;
     }catch(err){
-      console.error('push to cloud failed', err);
-      if(!silent) alert('Не удалось сохранить в облако: ' + (err.code || err.message));
+      console.error('push public profile failed', err);
+      // документ слишком большой (лимит Firestore ~1MB) или другая ошибка записи —
+      // пробуем ещё раз без картинок, чтобы хотя бы ник/статы/валорант дошли до профиля
+      try{
+        await setDoc(doc(db,'leaderboard',user.uid), {
+          nick: profile.nick || user.displayName || 'Игрок',
+          avatar: user.photoURL || '',
+          banner: '',
+          about: profile.about || '',
+          discord: profile.discord || '',
+          twitch: profile.twitch || '',
+          customLabel: profile.customLabel || '',
+          customValue: profile.customValue || '',
+          bestStreak: currentBestStreak(),
+          valo: currentValoSummary(),
+          updatedAt: serverTimestamp()
+        });
+        publicOk = true;
+      }catch(err2){ console.error('push public profile retry failed', err2); }
+    }
+    try{
+      await setDoc(doc(db,'users',user.uid), {
+        data: dumpLocalStorage(),
+        updatedAt: serverTimestamp()
+      });
+      backupOk = true;
+    }catch(err){
+      console.error('push backup failed', err);
+    }
+    if(publicOk && backupOk){
+      setSyncStatus('синхронизировано ' + new Date().toLocaleTimeString('ru-RU'));
+    } else if(publicOk){
+      setSyncStatus('профиль синхронизирован, полный бэкап — нет (слишком большой)');
+    } else {
+      if(!silent) alert('Не удалось сохранить в облако.');
       setSyncStatus('ошибка синхронизации');
     }
   }
@@ -3727,34 +3883,6 @@ init();
     } else {
       friendsTable.innerHTML = '<div class="friend-empty">Пока никого — добавляй друзей из лидерборда, открыв чей-то профиль.</div>';
     }
-
-    renderHomeFriendsWidget(myUid, accepted);
-  }
-
-  async function renderHomeFriendsWidget(myUid, accepted){
-    const el = document.getElementById('homeWidgetFriendsBody');
-    if(!el) return;
-    if(!accepted.length){
-      el.innerHTML = '<div class="home-widget-empty">Добавь друзей на вкладке «Профиль» — их серии появятся здесь.</div>';
-      return;
-    }
-    const rows = await Promise.all(accepted.map(async e=>{
-      const otherUid = e.users.find(u=>u!==myUid);
-      const d = await fetchPublicProfile(otherUid);
-      return { uid: otherUid, nick: (d && d.nick) || 'Игрок', bestStreak: (d && d.bestStreak) || 0, avatar: d && d.avatar };
-    }));
-    rows.sort((a,b)=> b.bestStreak - a.bestStreak);
-    el.innerHTML = rows.slice(0,6).map(r=>{
-      const avatar = r.avatar ? `<img src="${r.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🎯';
-      return `<div class="friend-row" data-uid="${r.uid}" style="cursor:pointer;">
-        <div class="meta-avatar" style="width:26px;height:26px;font-size:13px;">${avatar}</div>
-        <div class="friend-row-name" style="font-size:12px;">${r.nick}</div>
-        <div class="meta-wr" style="width:auto;">${r.bestStreak} дн.</div>
-      </div>`;
-    }).join('');
-    el.querySelectorAll('[data-uid]').forEach(row=>{
-      row.addEventListener('click', ()=> window.openPublicProfile(row.getAttribute('data-uid')));
-    });
   }
 
   document.addEventListener('click', (e)=>{
@@ -3813,13 +3941,17 @@ init();
   /* ---------- ПУБЛИЧНЫЙ ПРОФИЛЬ (модалка при клике по лидерборду/друзьям) ---------- */
   function ppRenderCondensedMatches(matches){
     if(!matches || !matches.length) return '<div class="video-sub">Нет данных о последних матчах.</div>';
-    return matches.map(m=>`
+    return matches.map(m=>{
+      const mapImg = m.map && m.map !== '—' ? mapImgUrl({name:m.map}) : null;
+      return `
       <div class="valo-match-row ${m.won===true?'win':m.won===false?'loss':''}">
         <div class="valo-match-result">${m.won===true?'W':m.won===false?'L':'-'}</div>
+        <div class="valo-match-mapimg"${mapImg ? ` style="background-image:url('${mapImg}');"` : ''}></div>
         <div class="valo-match-map">${m.map}</div>
         <div class="valo-match-agent">${m.agent}</div>
         <div class="valo-match-score">${m.k ?? '-'}/${m.d ?? '-'}/${m.a ?? '-'}</div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   window.openPublicProfile = async function(uid){
