@@ -398,4 +398,3632 @@
     border-left:8px solid var(--accent); margin-left:2px;
   }
   .video-text{flex:1;}
-  .video-title{font-size:13.5px; font-w
+  .video-title{font-size:13.5px; font-weight:500; color:var(--text);}
+  .video-sub{font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-top:2px;}
+  .video-arrow{color:var(--text-faint); font-size:14px;}
+  .video-lang{
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:1px;
+    border:1px solid var(--border); border-radius:6px; color:var(--text-faint); padding:2px 6px; flex-shrink:0;
+  }
+
+  .cal-panel{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; padding:20px 22px;
+  }
+  .cal-year-nav{ display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+  .cal-year-label{ font-family:'Sora', sans-serif; font-weight:700; font-size:20px; color:var(--text); }
+  .cal-hint{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-bottom:14px; }
+  .cal-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; }
+  @media (min-width:1100px){ .cal-grid{grid-template-columns:repeat(4, 1fr);} }
+  @media (max-width:760px){ .cal-grid{grid-template-columns:repeat(2, 1fr);} }
+  @media (max-width:460px){ .cal-grid{grid-template-columns:1fr;} }
+  .cal-month{ border:1px solid var(--border); border-radius:12px; padding:10px 12px; }
+  .cal-month-title{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1.5px;
+    color:var(--accent); text-transform:uppercase; margin-bottom:8px;
+  }
+  .cal-weekdays{ display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; margin-bottom:3px; }
+  .cal-weekday{ font-family:'IBM Plex Mono', monospace; font-size:8px; color:var(--text-faint); text-align:center; text-transform:uppercase; }
+  .cal-days{ display:grid; grid-template-columns:repeat(7, 1fr); gap:2px; }
+  .cal-day{
+    aspect-ratio:1; position:relative; border:1px solid var(--border); border-radius:6px;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--text-dim);
+    transition:border-color .2s ease, transform .15s ease; overflow:hidden;
+  }
+  .cal-day.empty{ border:none; cursor:default; }
+  .cal-day:not(.empty):hover{ border-color:var(--accent); transform:scale(1.12); z-index:2; }
+  .cal-day.today{ border-color:var(--accent); border-style:dashed; }
+  .cal-day.selected{ border-color:var(--accent); border-width:2px; }
+  .cal-day-fill{ position:absolute; inset:0; background:var(--accent); z-index:0; }
+  .cal-day span{ position:relative; z-index:1; }
+  .cal-day.filled span{ color:#11111b; font-weight:600; }
+
+  .legend{
+    display:flex; gap:18px; margin-top:16px; flex-wrap:wrap;
+    font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint);
+  }
+  .legend-item{display:flex; align-items:center; gap:6px;}
+  .legend-swatch{width:10px; height:10px; border-radius:3px; border:1px solid var(--border);}
+
+  /* ---------- SETTINGS ---------- */
+  .settings-panel{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; padding:22px 24px; display:flex; flex-direction:column; gap:20px;
+  }
+  .settings-row{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .settings-row-label{ font-size:13.5px; font-weight:500; color:var(--text); }
+  .settings-row-desc{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-top:3px; }
+  .settings-control{ display:flex; align-items:center; gap:10px; }
+  input[type="color"]{
+    width:40px; height:32px; border:1px solid var(--border); border-radius:8px; background:none; cursor:pointer; padding:2px;
+  }
+  input[type="range"]{ accent-color:var(--accent); width:140px; }
+  .settings-input{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--text);
+    background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:8px; padding:8px 10px; width:220px;
+  }
+  .settings-input::placeholder{color:var(--text-faint);}
+  .file-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid rgba(var(--accent-rgb),0.5); border-radius:8px; color:var(--accent);
+    padding:8px 12px; cursor:pointer; text-transform:uppercase;
+  }
+  .file-btn:hover{ background:var(--accent); color:#11111b; }
+  .settings-divider{ height:1px; background:var(--border); }
+  .reset-btn{
+    align-self:flex-start;
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--text-faint);
+    padding:9px 14px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  .reset-btn:hover{ border-color:#e06c75; color:#e06c75; }
+  .reorder-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    padding:10px 4px; border-bottom:1px solid var(--border);
+  }
+  .reorder-row:last-child{ border-bottom:none; }
+  .reorder-label{ display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--text); }
+  .reorder-label svg{ width:16px; height:16px; opacity:0.7; flex-shrink:0; }
+  .reorder-btns{ display:flex; gap:6px; }
+  .reorder-btn{
+    width:28px; height:28px; border-radius:8px; border:1px solid var(--border);
+    background:transparent; color:var(--text-dim); cursor:pointer; font-size:13px;
+    display:flex; align-items:center; justify-content:center; transition:all .15s ease;
+  }
+  .reorder-btn:hover:not(:disabled){ border-color:var(--accent); color:var(--accent); }
+  .reorder-btn:disabled{ opacity:0.25; cursor:not-allowed; }
+
+  footer{
+    margin-top:36px; text-align:center; font-family:'IBM Plex Mono', monospace;
+    font-size:10px; color:var(--text-faint); letter-spacing:1px;
+  }
+
+  /* ---------- BRAND / CROWN ---------- */
+  .sidebar-brand .crown{ width:16px; height:16px; color:var(--accent); flex-shrink:0; }
+  .sidebar-brand span.brand-text{ font-weight:800; }
+
+  /* ---------- FLOATING BACKGROUND DECOR ---------- */
+  .decor-layer{ position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; }
+  .decor-layer.hidden{ display:none; }
+  .decor-item{
+    position:absolute; color:rgba(var(--accent-rgb),0.10); opacity:0.5;
+    animation: floatY 14s ease-in-out infinite;
+  }
+  .decor-item svg{ width:100%; height:100%; }
+  @keyframes floatY{
+    0%{ transform:translateY(0) rotate(0deg); }
+    50%{ transform:translateY(-26px) rotate(8deg); }
+    100%{ transform:translateY(0) rotate(0deg); }
+  }
+
+  /* ---------- ACCOUNT / GOOGLE AUTH ---------- */
+  .account-card{
+    border:1px solid var(--border); border-radius:18px;
+    background:rgba(var(--panel-rgb), var(--panel-alpha));
+    backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.25); margin-bottom:14px;
+    padding:18px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  }
+  .account-signed-out{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; width:100%; }
+  .account-copy .eyebrow{ margin-bottom:4px; }
+  .account-copy .account-title{ font-family:'Sora', sans-serif; font-weight:700; font-size:15px; color:var(--text); }
+  .account-copy .account-sub{ font-family:'Inter', sans-serif; font-size:12.5px; color:var(--text-dim); margin-top:3px; }
+  .gsi-btn{
+    display:inline-flex; align-items:center; gap:10px; cursor:pointer;
+    background:#1a1114; border:1px solid rgba(var(--accent-rgb),0.35); border-radius:10px;
+    padding:9px 16px 9px 12px; font-family:'Inter', sans-serif; font-size:13.5px; font-weight:600; color:var(--text);
+    transition:border-color .2s ease, background .2s ease, transform .2s ease; flex-shrink:0;
+  }
+  .gsi-btn:hover{ border-color:rgba(var(--accent-rgb),0.7); background:#241419; transform:translateY(-1px); }
+  .gsi-btn svg{ width:18px; height:18px; flex-shrink:0; }
+  .account-signed-in{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; width:100%; }
+  .account-user{ display:flex; align-items:center; gap:12px; min-width:0; }
+  .account-user-avatar{
+    width:42px; height:42px; border-radius:12px; flex-shrink:0;
+    background:rgba(var(--accent-rgb),0.15) center/cover no-repeat; border:1px solid var(--border);
+  }
+  .account-user-name{ font-family:'Sora', sans-serif; font-weight:600; font-size:14px; color:var(--text); }
+  .account-user-email{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--text-faint); margin-top:2px; }
+  .account-signout-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--text-faint);
+    padding:8px 12px; cursor:pointer; text-transform:uppercase; transition:all .2s ease; flex-shrink:0;
+  }
+  .account-signout-btn:hover{ border-color:#e06c75; color:#e06c75; }
+  .account-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase;
+    color:var(--accent); background:rgba(var(--accent-rgb),0.14); border:1px solid var(--border);
+    border-radius:6px; padding:2px 7px; margin-left:8px;
+  }
+
+  /* ---------- PROFILE ---------- */
+  .profile-banner{
+    position:relative; width:100%; height:150px; border-radius:18px 18px 0 0;
+    background:linear-gradient(120deg, rgba(var(--accent-rgb),0.35), rgba(var(--accent-rgb),0.05));
+    background-size:cover; background-position:center; overflow:hidden;
+  }
+  .profile-card{
+    border:1px solid var(--border); border-radius:18px; overflow:hidden;
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    box-shadow:0 8px 30px rgba(0,0,0,0.25); margin-bottom:8px;
+  }
+  .profile-body{ padding:0 26px 24px; position:relative; }
+  .profile-avatar-wrap{ margin-top:-46px; display:flex; align-items:flex-end; gap:18px; flex-wrap:wrap; }
+  .profile-avatar{
+    width:92px; height:92px; border-radius:20px; border:3px solid var(--bg-base);
+    background:rgba(var(--panel-rgb),1) center/cover no-repeat; box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    display:flex; align-items:center; justify-content:center; font-size:34px; color:var(--text-faint); flex-shrink:0;
+  }
+  .profile-name-row{ padding-bottom:6px; }
+  .profile-name-row .stat-input{ font-size:22px; }
+  .profile-upload-row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; }
+  .profile-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:20px; }
+  @media (max-width:640px){ .profile-grid{grid-template-columns:1fr;} }
+  .profile-stats{ display:grid; grid-template-columns:repeat(2,1fr); gap:0; margin-top:20px; border-top:1px solid var(--border); padding-top:16px; }
+  .profile-about{
+    width:100%; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:10px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13px; padding:12px 14px; resize:vertical; min-height:70px;
+  }
+  .profile-about::placeholder{color:var(--text-faint);}
+  .profile-about:focus{outline:none; border-color:var(--accent);}
+  .profile-field-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1.5px; color:var(--text-faint); text-transform:uppercase; margin-bottom:6px; }
+  .profile-input{
+    width:100%; background:rgba(0,0,0,0.25); border:1px solid var(--border); border-radius:10px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13.5px; padding:10px 12px;
+  }
+  .profile-input:focus{outline:none; border-color:var(--accent);}
+
+  /* ---------- EDITABLE TASK CONTROLS ---------- */
+  .task{ position:relative; padding-right:64px; }
+  .task-actions{ position:absolute; right:10px; top:10px; display:flex; gap:4px; opacity:0; transition:opacity .15s ease; }
+  .task:hover .task-actions{ opacity:1; }
+  .icon-btn{
+    width:24px; height:24px; border-radius:7px; border:1px solid var(--border); background:rgba(0,0,0,0.2);
+    color:var(--text-faint); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px;
+    flex-shrink:0; transition:all .15s ease;
+  }
+  .icon-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .icon-btn.danger:hover{ border-color:#e06c75; color:#e06c75; }
+  .task-edit-row{ display:flex; flex-direction:column; gap:6px; flex:1; }
+  .task-edit-row input{
+    background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:7px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13px; padding:6px 9px;
+  }
+  .task-edit-row input:focus{ outline:none; border-color:var(--accent); }
+  .add-row{ padding:12px 18px; }
+  .add-inline-btn{
+    width:100%; font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px dashed var(--border); border-radius:10px; color:var(--text-faint);
+    padding:9px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  .add-inline-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .day-override-notice{
+    padding:8px 18px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--accent);
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  }
+  .link-btn{
+    background:none; border:none; color:var(--text-faint); text-decoration:underline;
+    cursor:pointer; font-family:inherit; font-size:inherit; padding:0;
+  }
+  .link-btn:hover{ color:var(--accent); }
+  .add-form{ display:flex; flex-direction:column; gap:8px; }
+  .add-form input{
+    background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:8px; color:var(--text);
+    font-family:'Inter', sans-serif; font-size:13px; padding:8px 10px;
+  }
+  .add-form input:focus{ outline:none; border-color:var(--accent); }
+  .add-form-btns{ display:flex; gap:8px; }
+  .save-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:var(--accent); border:none; border-radius:8px; color:#11111b;
+    padding:8px 14px; cursor:pointer; text-transform:uppercase;
+  }
+  .cancel-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:1px;
+    background:transparent; border:1px solid var(--border); border-radius:8px; color:var(--text-faint);
+    padding:8px 14px; cursor:pointer; text-transform:uppercase;
+  }
+
+  /* ---------- VIDEO WATCH CHECK ---------- */
+  .video-item{ position:relative; }
+  .video-check{
+    width:20px; height:20px; border:1.5px solid var(--text-faint); border-radius:6px; flex-shrink:0;
+    position:relative; transition:all .2s ease;
+  }
+  .video-check.watched{ background:var(--accent); border-color:var(--accent); }
+  .video-check.watched::after{
+    content:""; position:absolute; left:6px; top:2px; width:5px; height:9px;
+    border:solid #11111b; border-width:0 2px 2px 0; transform:rotate(40deg);
+  }
+  .video-del{ margin-left:2px; }
+
+  /* ---------- AGENTS / MAPS ---------- */
+  .meta-table{ background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+  .meta-filters{ display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; margin:12px 0 14px; }
+  .filter-chips, .filter-sorts{ display:flex; flex-wrap:wrap; gap:8px; }
+  .chip{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.5px; text-transform:uppercase;
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); border:1px solid var(--border); border-radius:20px;
+    color:var(--text-dim); padding:7px 13px; cursor:pointer; transition:all .2s ease;
+  }
+  .chip:hover{ border-color:var(--accent); color:var(--accent); }
+  .chip.active{ background:var(--accent); border-color:var(--accent); color:#0b0709; font-weight:600; box-shadow:0 0 14px rgba(var(--accent-rgb),0.4); }
+  .meta-avatar{
+    width:34px; height:34px; border-radius:9px; flex-shrink:0; background:rgba(var(--panel-rgb),1) center/cover no-repeat;
+    display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--text-faint); overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .meta-avatar img{ width:100%; height:100%; object-fit:cover; }
+  .agent-card-img{
+    width:100%; aspect-ratio:1; border-radius:10px; margin-bottom:8px; background:rgba(0,0,0,0.3) center/cover no-repeat;
+    display:flex; align-items:center; justify-content:center; font-size:22px; color:var(--text-faint); overflow:hidden;
+  }
+  .agent-card-img img{ width:100%; height:100%; object-fit:cover; object-position:top center; }
+  .agent-detail-img{
+    width:64px; height:64px; border-radius:14px; flex-shrink:0; background:rgba(0,0,0,0.3) center/cover no-repeat; overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .agent-detail-img img{ width:100%; height:100%; object-fit:cover; object-position:top center; }
+  .meta-row{ display:flex; align-items:center; gap:12px; padding:11px 18px; border-bottom:1px solid var(--border); }
+  .meta-row:last-child{ border-bottom:none; }
+  .meta-tier{
+    width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    font-family:'Sora', sans-serif; font-weight:700; font-size:12px; flex-shrink:0; color:#11111b;
+  }
+  .meta-name{ flex:1; font-size:13.5px; font-weight:500; }
+  .meta-role{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); width:90px; flex-shrink:0; }
+  .meta-wr{ font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--accent); width:56px; text-align:right; flex-shrink:0; }
+  .meta-pr{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); width:64px; text-align:right; flex-shrink:0; }
+  .lb-rank{
+    width:28px; height:28px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; color:var(--text-dim);
+    background:rgba(255,255,255,0.05); border:1px solid var(--border);
+  }
+  .lb-rank.top1{ background:rgba(245,166,35,0.18); border-color:#f5a623; color:#f5a623; }
+  .lb-rank.top2{ background:rgba(200,200,200,0.14); border-color:#c8c8c8; color:#dcdcdc; }
+  .lb-rank.top3{ background:rgba(224,161,94,0.16); border-color:#e0a15e; color:#e0a15e; }
+  .meta-row.lb-you{ background:rgba(var(--accent-rgb),0.08); box-shadow:inset 2px 0 0 var(--accent); }
+  .meta-row.lb-clickable{ cursor:pointer; }
+  .meta-row.lb-clickable:hover{ background:rgba(var(--accent-rgb),0.06); }
+
+  /* ---------- HOME WIDGET ----------
+     Виджет с последними матчами/друзьями на Главной убран по просьбе — вся статистика по
+     Valorant теперь живёт только на вкладке «Профиль», а сама Главная — просто чек-лист. */
+
+  .valo-match-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; border-bottom:1px solid var(--border); font-size:12px; transition:background .15s ease; }
+  .valo-match-row:last-child{ border-bottom:none; }
+  .valo-match-row:hover{ background:rgba(255,255,255,0.03); }
+  .valo-match-result{ width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11px; background:rgba(255,255,255,0.06); flex-shrink:0; }
+  .valo-match-row.win .valo-match-result{ background:rgba(80,200,120,0.18); color:#5fd88a; }
+  .valo-match-row.loss .valo-match-result{ background:rgba(255,70,85,0.18); color:var(--accent); }
+  .valo-match-agentimg{
+    width:30px; height:30px; border-radius:8px; flex-shrink:0;
+    background:rgba(255,255,255,0.06) center/cover; border:1px solid var(--border);
+  }
+  .valo-match-mapimg{ width:38px; height:26px; border-radius:6px; background:rgba(255,255,255,0.06) center/cover; flex-shrink:0; }
+  .valo-match-map{ flex:1; min-width:0; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .valo-match-map-name{ display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .valo-match-agent{ display:block; color:var(--text-faint); font-family:'IBM Plex Mono',monospace; font-size:10.5px; margin-top:1px; }
+  .valo-match-score{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); text-align:right; flex-shrink:0; }
+  .valo-match-kd{
+    font-family:'IBM Plex Mono',monospace; font-size:12px; font-weight:700; text-align:right; flex-shrink:0;
+    width:40px; color:var(--text-dim);
+  }
+  .valo-match-kd.good{ color:#5fd88a; }
+  .valo-match-kd.bad{ color:var(--accent); }
+
+  /* ---------- FRIENDS ---------- */
+  .friend-row{ display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border); }
+  .friend-row:last-child{ border-bottom:none; }
+  .friend-row .meta-avatar{ cursor:pointer; }
+  .friend-row-name{ flex:1; font-size:13px; font-weight:500; cursor:pointer; }
+  .friend-row-sub{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-faint); }
+  .friend-mini-btn{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:6px 10px; border-radius:8px;
+    border:1px solid var(--border); background:rgba(255,255,255,0.04); color:var(--text); cursor:pointer;
+  }
+  .friend-mini-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .friend-mini-btn.accept{ background:rgba(80,200,120,0.14); border-color:rgba(80,200,120,0.4); color:#5fd88a; }
+  .friend-mini-btn.decline{ background:rgba(255,70,85,0.1); border-color:var(--border); }
+  .friend-empty{ font-size:12px; color:var(--text-faint); padding:6px 4px; }
+
+  /* ---------- PUBLIC PROFILE MODAL ---------- */
+  .pp-modal-backdrop{
+    position:fixed; inset:0; background:rgba(6,4,5,0.72); backdrop-filter:blur(6px);
+    display:none; align-items:flex-start; justify-content:center; z-index:500; padding:40px 16px; overflow-y:auto;
+  }
+  .pp-modal-backdrop.open{ display:flex; }
+  .pp-modal{
+    background:var(--bg-base); border:1px solid var(--border); border-radius:18px; max-width:520px; width:100%;
+    animation: popIn .2s ease; overflow:hidden;
+  }
+  .pp-modal-banner{ height:110px; background:linear-gradient(135deg, rgba(var(--accent-rgb),0.25), rgba(var(--accent-rgb),0.05)); background-size:cover; background-position:center; position:relative; }
+  .pp-modal-close{
+    position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%;
+    background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.15); color:#fff; cursor:pointer; font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pp-modal-body{ padding:0 22px 22px; margin-top:-38px; }
+  .pp-modal-avatar{
+    width:76px; height:76px; border-radius:16px; background:var(--bg-base) center/cover; border:3px solid var(--bg-base);
+    display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 4px 16px rgba(0,0,0,0.4);
+  }
+  .pp-modal-name{ font-family:'Sora',sans-serif; font-weight:700; font-size:19px; margin-top:10px; }
+  .pp-modal-actions{ display:flex; gap:8px; margin:14px 0; flex-wrap:wrap; }
+  .pp-modal-about{ font-size:13px; color:var(--text-dim); line-height:1.5; margin-bottom:14px; }
+  .pp-modal-links{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .pp-modal-link{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:6px 10px; }
+  .pp-modal-link.twitch{ color:#a97bff; border-color:rgba(169,123,255,0.35); }
+  .meta-legend{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin:10px 2px 0; }
+
+  .map-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:12px; }
+  .map-card{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)) center/cover; backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:14px; padding:18px 16px; cursor:pointer; transition:all .2s ease; text-align:center;
+    min-height:96px; display:flex; align-items:flex-end; justify-content:center; overflow:hidden;
+  }
+  .map-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .map-card-name{ font-family:'Sora', sans-serif; font-weight:700; font-size:15px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,0.6); }
+
+  .agent-detail-mapbanner{
+    margin:-22px -24px 18px -24px; padding:26px 24px 16px; border-radius:16px 16px 0 0;
+    background-size:cover; background-position:center; display:flex; align-items:flex-end; min-height:90px;
+  }
+  .agent-detail-mapbanner-name{ font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#fff; opacity:0.9; }
+
+  .agent-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(120px,1fr)); gap:10px; }
+  .agent-card{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:12px; padding:12px 10px; cursor:pointer; transition:all .2s ease; text-align:center;
+  }
+  .agent-card:hover{ border-color:var(--accent); transform:translateY(-2px); }
+  .agent-card-name{ font-size:12.5px; font-weight:600; margin-top:4px; }
+  .agent-card-tier{ font-family:'IBM Plex Mono', monospace; font-size:9px; color:var(--text-faint); }
+
+  .crumb{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); margin-bottom:14px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+  .crumb button{ background:none; border:none; color:var(--accent); cursor:pointer; font-family:inherit; font-size:inherit; padding:0; }
+  .agent-detail{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:16px; padding:22px 24px;
+  }
+  .agent-detail-head{ display:flex; align-items:center; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
+  .agent-detail-title{ font-family:'Sora', sans-serif; font-weight:700; font-size:20px; }
+  .agent-detail-stats{ display:flex; gap:18px; margin:14px 0; flex-wrap:wrap; }
+  .agent-detail-stat-label{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:1px; }
+  .agent-detail-stat-value{ font-family:'Sora', sans-serif; font-weight:600; font-size:16px; color:var(--accent); }
+  .agent-tip{ font-size:13.5px; line-height:1.6; color:var(--text-dim); margin:14px 0; }
+  .guide-btn{
+    display:inline-flex; align-items:center; gap:8px; font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:1px;
+    background:rgba(var(--accent-rgb),0.14); border:1px solid rgba(var(--accent-rgb),0.5); border-radius:10px; color:var(--accent);
+    padding:10px 16px; cursor:pointer; text-transform:uppercase; text-decoration:none; transition:all .2s ease;
+  }
+  .guide-btn:hover{ background:var(--accent); color:#11111b; }
+
+  /* ---------- TIMER ---------- */
+  .timer-panel{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:18px; padding:36px 24px; text-align:center;
+  }
+  .timer-display{ font-family:'IBM Plex Mono', monospace; font-size:54px; font-weight:600; color:var(--text); letter-spacing:2px; }
+  .timer-controls{ display:flex; gap:12px; justify-content:center; margin-top:20px; flex-wrap:wrap; }
+  .timer-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:1.5px;
+    background:rgba(var(--accent-rgb),0.14); border:1px solid rgba(var(--accent-rgb),0.5); border-radius:10px; color:var(--accent);
+    padding:11px 22px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
+  }
+  .timer-btn:hover{ background:var(--accent); color:#0b0709; transform:translateY(-1px) scale(1.03); box-shadow:0 0 18px rgba(var(--accent-rgb),0.4); }
+  .timer-btn.stop{ border-color:rgba(224,108,117,0.5); color:#e06c75; }
+  .timer-btn.stop:hover{ background:#e06c75; color:#11111b; }
+  .timer-today{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); margin-top:16px; }
+  .session-log{ margin-top:18px; }
+  .session-row{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-dim); padding:8px 4px; border-bottom:1px solid var(--border); }
+  .valo-match-row{
+    display:flex; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid var(--border);
+    font-size:12.5px; border-radius:8px;
+  }
+  .valo-match-row:last-child{ border-bottom:none; }
+  .valo-match-row.win{ background:rgba(143,214,160,0.06); }
+  .valo-match-row.loss{ background:rgba(224,108,117,0.06); }
+  .valo-match-result{ font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:11px; width:26px; flex-shrink:0; }
+  .valo-match-row.win .valo-match-result{ color:#8fd6a0; }
+  .valo-match-row.loss .valo-match-result{ color:#e06c75; }
+  .valo-match-map{ flex:1; color:var(--text); }
+  .valo-match-agent{ color:var(--text-faint); font-family:'IBM Plex Mono', monospace; font-size:11px; width:80px; flex-shrink:0; }
+  .valo-match-score{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-dim); width:60px; text-align:right; flex-shrink:0; }
+  .session-row:last-child{ border-bottom:none; }
+  .clear-sessions-btn{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase;
+    background:transparent; border:1px solid rgba(224,108,117,0.4); border-radius:8px; color:#e06c75;
+    padding:5px 10px; cursor:pointer; transition:all .2s ease; flex-shrink:0;
+  }
+  .clear-sessions-btn:hover{ background:#e06c75; color:#0b0709; box-shadow:0 0 14px rgba(224,108,117,0.4); }
+
+  /* ---------- PLAYLIST ---------- */
+  .playlist-item{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:14px; padding:14px 16px; margin-bottom:10px;
+  }
+  .playlist-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+  .playlist-title{ font-size:13.5px; font-weight:500; display:flex; align-items:center; gap:8px; }
+  .playlist-embed{ margin-top:8px; border-radius:10px; overflow:hidden; }
+  .playlist-badge{
+    font-family:'IBM Plex Mono', monospace; font-size:9px; letter-spacing:1px; text-transform:uppercase;
+    background:rgba(var(--accent-rgb),0.16); color:var(--accent); border:1px solid rgba(var(--accent-rgb),0.4);
+    border-radius:6px; padding:2px 6px; flex-shrink:0;
+  }
+  .volume-panel{
+    display:flex; align-items:center; gap:12px;
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px); border:1px solid var(--border);
+    border-radius:14px; padding:12px 16px; margin-bottom:14px;
+  }
+  .volume-label{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-dim); flex-shrink:0; }
+  .volume-slider{
+    flex:1; -webkit-appearance:none; appearance:none; height:4px; border-radius:2px;
+    background:linear-gradient(90deg, var(--accent) var(--vol-pct,70%), rgba(255,255,255,0.12) var(--vol-pct,70%));
+    outline:none; cursor:pointer;
+  }
+  .volume-slider::-webkit-slider-thumb{
+    -webkit-appearance:none; appearance:none; width:15px; height:15px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 10px rgba(var(--accent-rgb),0.7); cursor:pointer;
+  }
+  .volume-slider::-moz-range-thumb{
+    width:15px; height:15px; border-radius:50%; border:none;
+    background:var(--accent); box-shadow:0 0 10px rgba(var(--accent-rgb),0.7); cursor:pointer;
+  }
+  .volume-value{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--accent); width:38px; text-align:right; flex-shrink:0; }
+</style>
+</head>
+<body>
+<div class="body-bg" id="bodyBg"></div>
+<div class="decor-layer" id="decorLayer"></div>
+
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-card">
+    <div class="onboarding-dot"></div>
+    <h1 class="onboarding-title">AimTracker</h1>
+    <p class="onboarding-pitch">
+      Трекер тренировок для Valorant: чек-листы на утро и вечер, Kovaak-плейлисты,
+      гайды по картам и агентам, мета с винрейтом/пикрейтом, таймер сессий и календарь прогресса —
+      всё в одном месте, чтобы реально дойти до цели.
+    </p>
+    <div class="onboarding-actions">
+      <button class="onboarding-btn secondary" id="onboardOfflineBtn">
+        Продолжить офлайн
+        <span>без аккаунта, данные хранятся только в этом браузере</span>
+      </button>
+      <button class="onboarding-btn primary" id="onboardSigninBtn">
+        Войти в аккаунт
+        <span>синхронизация между устройствами, лидерборд</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="shell">
+  <nav class="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" title="Свернуть меню" aria-label="Свернуть меню">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <div class="sidebar-brand" id="brandHome">
+      <svg class="crown" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8zm2.5 13h13v1.5h-13V21z"/></svg>
+      <span class="brand-text">AimTracker</span>
+    </div>
+
+    <button class="side-item active" data-view="home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+      <span>Главная</span>
+    </button>
+    <button class="side-item" data-view="profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span>Профиль</span>
+    </button>
+    <button class="side-item" data-view="leaderboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 21h8M12 17v4M7 4h10v4a5 5 0 0 1-10 0V4z"/><path d="M7 6H4a2 2 0 0 0 2 4M17 6h3a2 2 0 0 1-2 4"/></svg>
+      <span>Лидерборд</span>
+    </button>
+    <button class="side-item" data-view="videos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M10 9l5 3-5 3z" fill="currentColor" stroke="none"/></svg>
+      <span>Видео</span>
+    </button>
+    <button class="side-item" data-view="kovaak">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      <span>Kovaak</span>
+    </button>
+    <button class="side-item" data-view="agents">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>
+      <span>Карты</span>
+    </button>
+    <button class="side-item" data-view="meta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M11 20V4M18 20v-7"/></svg>
+      <span>Мета</span>
+    </button>
+    <button class="side-item" data-view="timer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>
+      <span>Таймер</span>
+    </button>
+    <button class="side-item" data-view="playlist">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <span>Плейлист</span>
+    </button>
+    <button class="side-item" data-view="calendar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+      <span>Календарь</span>
+    </button>
+
+    <div class="sidebar-spacer"></div>
+
+    <button class="side-item" data-view="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.56V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.56-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.33-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.56 1.7 1.7 0 001.87-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.56 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1z"/></svg>
+      <span>Настройки</span>
+    </button>
+    <div class="sidebar-foot">AimTracker · твой трекер прогресса</div>
+
+    <button class="side-item more-trigger" id="moreNavBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
+      <span>Ещё</span>
+    </button>
+  </nav>
+
+  <div class="more-sheet-backdrop" id="moreSheetBackdrop"></div>
+  <div class="more-sheet" id="moreSheet">
+    <div class="more-sheet-handle"></div>
+    <div class="more-sheet-title">Разделы</div>
+    <div class="more-sheet-grid" id="moreSheetGrid"></div>
+  </div>
+
+  <div class="pp-modal-backdrop" id="ppModalBackdrop">
+    <div class="pp-modal" id="ppModal">
+      <div class="pp-modal-banner" id="ppModalBanner">
+        <button class="pp-modal-close" id="ppModalClose">✕</button>
+      </div>
+      <div class="pp-modal-body" id="ppModalBody">
+        <div class="pp-modal-avatar" id="ppModalAvatar">🎯</div>
+        <div class="pp-modal-name" id="ppModalName">—</div>
+        <div class="video-sub" id="ppModalMeta">—</div>
+        <div class="pp-modal-actions" id="ppModalActions"></div>
+        <div class="pp-modal-about" id="ppModalAbout" style="display:none;"></div>
+        <div class="pp-modal-links" id="ppModalLinks"></div>
+        <div id="ppModalValoWrap" style="display:none;">
+          <div class="section-label" style="margin-top:6px; margin-bottom:8px;">Valorant</div>
+          <div class="stats-row" id="ppModalValoStats" style="margin-bottom:10px;"></div>
+          <div class="section-label" style="margin-bottom:8px;">Последние матчи</div>
+          <div id="ppModalValoMatches"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main class="content">
+
+    <section id="view-home" class="view active">
+      <div class="wrap">
+        <div class="statusbar">
+          <div class="eyebrow">‖ личный трекер</div>
+          <h1>AimTracker</h1>
+          <div class="stats-row">
+            <div class="stat">
+              <div class="stat-label">Текущий ранг</div>
+              <input class="stat-input" id="currentRankInput" placeholder="D1 400RR">
+            </div>
+            <div class="stat">
+              <div class="stat-label">Цель</div>
+              <input class="stat-input accent" id="goalRankInput" placeholder="Ascendant">
+            </div>
+            <div class="stat">
+              <div class="stat-label">День операции</div>
+              <div class="stat-value" id="dayCounter">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Дней подряд</div>
+              <div class="stat-value accent" id="streakCounter">—</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="day-nav">
+          <button class="nav-btn" id="prevDay">‹</button>
+          <div class="day-nav-date" id="dayNavDate">—</div>
+          <button class="nav-btn" id="nextDay">›</button>
+          <button class="today-btn hidden" id="jumpToday">Сегодня</button>
+          <button class="today-btn" id="shareDayBtn">Поделиться</button>
+        </div>
+        <div class="duty-grid" id="morningGrid"></div>
+
+        <div class="section-label" style="margin-top:16px;">Вечер — применение</div>
+        <div class="duty-grid" id="eveningGrid"></div>
+
+        <div class="section-label">Как прошёл день</div>
+        <div class="day-summary">
+          <textarea class="day-note" id="dayNote" placeholder="Что чувствуешь по поводу этого дня — эмоции, мысли, что зашло, что нет..."></textarea>
+        </div>
+        <footer>отмечай честно — статистика только для тебя</footer>
+      </div>
+    </section>
+
+    <section id="view-profile" class="view">
+      <div class="wrap">
+        <div class="account-card" id="accountCard">
+          <div class="account-signed-out" id="accountSignedOut">
+            <div class="account-copy">
+              <div class="eyebrow">‖ аккаунт</div>
+              <div class="account-title">Войди, чтобы попасть в лидерборд</div>
+              <div class="account-sub">Вход через Google — нужен для будущего общего рейтинга по сериям.</div>
+            </div>
+            <button class="gsi-btn" id="googleSignInBtn">
+              <svg viewBox="0 0 48 48" fill="currentColor" style="color:var(--accent);"><path d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.36-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/><path d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+              Войти через Google
+            </button>
+          </div>
+          <div class="account-signed-in" id="accountSignedIn" style="display:none;">
+            <div class="account-user">
+              <div class="account-user-avatar" id="accountUserAvatar"></div>
+              <div>
+                <div class="account-user-name" id="accountUserName">—</div>
+                <div class="account-user-email" id="accountUserEmail">—</div>
+              </div>
+            </div>
+            <button class="account-signout-btn" id="googleSignOutBtn">Выйти</button>
+          </div>
+        </div>
+        <div class="account-card" id="syncCard" style="display:none;">
+          <div class="account-signed-out" style="width:100%;">
+            <div class="account-copy">
+              <div class="eyebrow">‖ синхронизация</div>
+              <div class="account-title">Данные между устройствами</div>
+              <div class="account-sub" id="syncStatus">ещё не синхронизировалось</div>
+            </div>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button class="file-btn" id="syncPushBtn">⬆ Сохранить в облако</button>
+              <button class="file-btn" id="syncPullBtn">⬇ Загрузить с облака</button>
+            </div>
+          </div>
+        </div>
+        <div class="profile-card">
+          <div class="profile-banner" id="profileBanner"></div>
+          <div class="profile-body">
+            <div class="profile-avatar-wrap">
+              <div class="profile-avatar" id="profileAvatar">🎯</div>
+              <div class="profile-name-row">
+                <input class="stat-input" id="profileNick" placeholder="Твой ник">
+              </div>
+            </div>
+            <div class="profile-upload-row">
+              <label class="file-btn">Аватар<input type="file" id="avatarFile" accept="image/*" style="display:none;"></label>
+              <label class="file-btn">Баннер<input type="file" id="bannerFile" accept="image/*" style="display:none;"></label>
+            </div>
+            <div class="profile-grid">
+              <div>
+                <div class="profile-field-label">О себе</div>
+                <textarea class="profile-about" id="profileAbout" placeholder="Пара слов о себе, целях, стиле игры..."></textarea>
+              </div>
+              <div>
+                <div class="profile-field-label">Discord</div>
+                <input class="profile-input" id="profileDiscord" placeholder="username#0000">
+                <div class="profile-field-label" style="margin-top:14px;">Twitch</div>
+                <input class="profile-input" id="profileTwitch" placeholder="twitch.tv/твой_канал">
+                <div class="profile-field-label" style="margin-top:14px;">Дата начала трекинга</div>
+                <input class="profile-input" id="profileStartDate" type="date">
+              </div>
+            </div>
+            <div class="profile-grid" style="margin-top:0;">
+              <div>
+                <div class="profile-field-label">Своё поле — название</div>
+                <input class="profile-input" id="profileCustomLabel" placeholder="например: YouTube, команда, сетап...">
+              </div>
+              <div>
+                <div class="profile-field-label">Своё поле — значение</div>
+                <input class="profile-input" id="profileCustomValue" placeholder="то, что хочешь показать в профиле">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-card" id="friendsCard" style="display:none;">
+          <div class="profile-body" style="padding-top:22px;">
+            <div class="eyebrow">‖ друзья</div>
+            <h1 style="font-size:18px; margin:4px 0 14px;">Друзья</h1>
+
+            <div id="friendRequestsWrap" style="display:none;">
+              <div class="section-label" style="margin-top:0; margin-bottom:6px;">Заявки в друзья</div>
+              <div class="meta-table" id="friendRequestsTable"></div>
+            </div>
+
+            <div class="section-label" style="margin-top:18px; margin-bottom:6px;">Твои друзья</div>
+            <div class="meta-table" id="friendsTable"><div class="friend-empty">Пока никого — добавляй друзей из лидерборда, открыв чей-то профиль.</div></div>
+          </div>
+        </div>
+        <div class="account-card" id="valoLinkPrompt" style="display:none;">
+          <div class="account-signed-out" style="width:100%;">
+            <div class="account-copy">
+              <div class="eyebrow">‖ valorant</div>
+              <div class="account-title">Привяжи Valorant профиль</div>
+              <div class="account-sub">Ранг, RR и последние матчи прямо здесь, в профиле.</div>
+            </div>
+            <button class="file-btn" id="valoLinkBtn" style="cursor:pointer;">Привязать →</button>
+          </div>
+        </div>
+        <div class="account-card" id="valoErrorBanner" style="display:none; border-color:rgba(255,70,85,0.4);">
+          <div class="account-signed-out" style="width:100%;">
+            <div class="account-copy">
+              <div class="eyebrow" style="color:var(--accent);">‖ valorant — ошибка</div>
+              <div class="account-title" id="valoErrorText">Не удалось получить статистику</div>
+              <div class="account-sub">Проверь Riot ID, регион и API-ключ в Настройках.</div>
+            </div>
+            <button class="file-btn" id="valoErrorRetryBtn" style="cursor:pointer;">Повторить</button>
+          </div>
+        </div>
+
+        <div class="profile-card" id="valoStatsCard" style="display:none;">
+          <div class="profile-body" style="padding-top:22px;">
+            <div class="profile-avatar-wrap" style="margin-top:0;">
+              <div class="profile-avatar" id="valoCardArt" style="border-radius:14px;">🎯</div>
+              <div class="profile-name-row">
+                <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:18px;" id="valoNickDisplay">—</div>
+                <div class="video-sub" id="valoLevelDisplay">—</div>
+              </div>
+              <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+                <button class="file-btn" id="valoRefreshBtn" style="cursor:pointer;">Обновить</button>
+              </div>
+            </div>
+            <div class="stats-row" style="margin-top:18px;">
+              <div class="stat">
+                <div class="stat-label">Ранг</div>
+                <div class="stat-value accent" id="valoRankDisplay" style="font-size:16px;">—</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">RR</div>
+                <div class="stat-value" id="valoRrDisplay">—</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Пик ранга</div>
+                <div class="stat-value" id="valoPeakDisplay" style="font-size:14px;">—</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Обновлено</div>
+                <div class="stat-value" id="valoUpdatedDisplay" style="font-size:12px; color:var(--text-faint);">—</div>
+              </div>
+            </div>
+            <div class="section-label" style="margin-top:18px; margin-bottom:8px;">Последние матчи</div>
+            <div id="valoMatchList"></div>
+          </div>
+        </div>
+
+        <div class="statusbar">
+          <div class="eyebrow">‖ прогресс</div>
+          <h1>Твоя серия</h1>
+          <div class="stats-row">
+            <div class="stat">
+              <div class="stat-label">Текущая серия</div>
+              <div class="stat-value accent" id="profileStreak">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Лучшая серия</div>
+              <div class="stat-value" id="profileBestStreak">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">День трекинга</div>
+              <div class="stat-value" id="profileDayCounter">—</div>
+            </div>
+            <div class="stat">
+              <div class="stat-label">Лидерборд</div>
+              <div class="stat-value accent" id="profileLbRank" style="cursor:pointer; font-size:15px;" data-go-lb="1">открыть →</div>
+            </div>
+          </div>
+        </div>
+        <footer>войди через Google — прогресс синхронизируется между устройствами, а лучшая серия попадает в общий лидерборд</footer>
+      </div>
+    </section>
+
+    <section id="view-leaderboard" class="view">
+      <div class="wrap">
+        <div class="statusbar">
+          <div class="eyebrow">‖ рейтинг</div>
+          <h1>Лидерборд — лучшая серия дней подряд</h1>
+        </div>
+        <div id="lbSignedOutNotice" class="statusbar" style="display:none;">
+          <div style="font-size:13.5px; color:var(--text-dim);">Войди через Google на вкладке «Профиль», чтобы попасть в рейтинг — сейчас ты видишь общий список, но твой результат в нём не участвует.</div>
+        </div>
+        <div class="meta-table" id="lbTable"><div class="meta-row"><div class="meta-name">Загрузка...</div></div></div>
+        <footer>рейтинг считается по лучшей серии подряд отмеченных дней · обновляется в реальном времени</footer>
+      </div>
+    </section>
+
+    <section id="view-videos" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Видео — мувмент (RU)</div>
+        <div class="video-list" id="videoListRuMovement"></div>
+        <div class="section-label sub">Movement (EN)</div>
+        <div class="video-list" id="videoListEnMovement"></div>
+        <div class="section-label sub">Tilt / Mental game (EN)</div>
+        <div class="video-list" id="videoListEnTilt"></div>
+        <div class="section-label sub">Aim / Kovaak routines (EN)</div>
+        <div class="video-list" id="videoListAimKovaak"></div>
+        <div class="section-label sub">Свои видео</div>
+        <div class="video-list" id="videoListCustom"></div>
+        <div class="add-row" style="padding:0; margin-top:10px;"><button class="add-inline-btn" id="addVideoBtn">+ Добавить видео</button></div>
+        <div id="addVideoFormWrap"></div>
+      </div>
+    </section>
+
+    <section id="view-kovaak" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Kovaak — плейлисты</div>
+        <div class="loadout-grid" id="loadoutGrid"></div>
+        <div class="add-row" style="padding:0; margin-top:14px;"><button class="add-inline-btn" id="addKovaakBtn">+ Добавить сценарий</button></div>
+        <div id="addKovaakFormWrap"></div>
+      </div>
+    </section>
+
+    <section id="view-meta" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Мета — винрейт и пикрейт агентов</div>
+        <div class="video-sub" style="margin:-6px 0 12px;">
+          Это статичный снепшот тир-листа (не живая подгрузка — у HenrikDev и подобных сервисов нет публичного API агрегированной статистики по агентам, который можно безопасно дёргать прямо из браузера). Обновляю вручную по актуальным тир-листам сообщества. Зато вкладка «Профиль» тянет твою личную статистику и последние матчи вживую через HenrikDev API.
+        </div>
+        <div class="meta-filters">
+          <div class="filter-chips" id="roleFilters">
+            <button class="chip active" data-role="All">Все роли</button>
+            <button class="chip" data-role="Duelist">Дуэлянт</button>
+            <button class="chip" data-role="Initiator">Инициатор</button>
+            <button class="chip" data-role="Controller">Контроллер</button>
+            <button class="chip" data-role="Sentinel">Страж</button>
+          </div>
+          <div class="filter-sorts" id="sortFilters">
+            <button class="chip sort-chip active" data-field="wr" id="sortWrBtn">Винрейт ↓</button>
+            <button class="chip sort-chip" data-field="pr" id="sortPrBtn">Пикрейт ↓</button>
+          </div>
+        </div>
+        <div class="meta-table" id="metaTable"></div>
+        <div class="meta-legend" id="metaLegend"></div>
+      </div>
+    </section>
+
+    <section id="view-agents" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Гайды по картам и агентам</div>
+        <div class="crumb" id="agentsCrumb"></div>
+        <div id="agentsPane"></div>
+      </div>
+    </section>
+
+    <section id="view-timer" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Таймер тренировки</div>
+        <div class="timer-panel">
+          <div class="timer-display" id="timerDisplay">00:00:00</div>
+          <div class="timer-controls">
+            <button class="timer-btn" id="timerStartBtn">Старт</button>
+            <button class="timer-btn" id="timerPauseBtn">Пауза</button>
+            <button class="timer-btn stop" id="timerResetBtn">Сброс и сохранить</button>
+          </div>
+          <div class="timer-today" id="timerToday">Сегодня натренировано: 0 мин</div>
+        </div>
+        <div class="section-label sub" style="align-items:center;">
+          <span>Последние сессии</span>
+          <button class="clear-sessions-btn" id="timerClearBtn" title="Очистить историю сессий">Очистить</button>
+        </div>
+        <div class="cal-panel session-log" id="sessionLog"></div>
+      </div>
+    </section>
+
+    <section id="view-playlist" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Плейлист для тренировок</div>
+        <div class="volume-panel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:18px;height:18px;flex-shrink:0;color:var(--accent);"><path d="M4 9v6h4l5 5V4L8 9H4z"/><path d="M16.5 8.5a5 5 0 010 7M19 6a9 9 0 010 12"/></svg>
+          <span class="volume-label">Громкость всех треков</span>
+          <input type="range" min="0" max="100" value="70" id="masterVolume" class="volume-slider">
+          <span class="volume-value" id="masterVolumeValue">70%</span>
+        </div>
+        <div id="playlistList"></div>
+        <button class="add-inline-btn" id="addSongBtn">+ Добавить трек или плейлист (YouTube / SoundCloud)</button>
+        <div id="addSongFormWrap"></div>
+      </div>
+    </section>
+
+    <section id="view-calendar" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Календарь</div>
+        <div class="cal-panel">
+          <div class="cal-year-nav">
+            <button class="nav-btn" id="prevYear">‹</button>
+            <div class="cal-year-label" id="calYearLabel">2026</div>
+            <button class="nav-btn" id="nextYear">›</button>
+          </div>
+          <div class="cal-hint">клик по любому дню — открыть его чек-лист на Главной</div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="legend">
+            <div class="legend-item"><div class="legend-swatch" style="background:transparent;"></div> ничего</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:rgba(255,70,85,0.35);"></div> часть пунктов</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#ff4655;"></div> всё выполнено</div>
+            <div class="legend-item"><div class="legend-swatch" style="border-style:dashed; border-color:#ff4655;"></div> сегодня</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="view-settings" class="view">
+      <div class="wrap">
+        <div class="section-label" style="margin-top:0;">Настройки — тема</div>
+        <div class="settings-panel">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Акцентный цвет</div>
+              <div class="settings-row-desc">кнопки, галочки, ссылки</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorAccent" value="#ff4655"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Цвет текста</div>
+              <div class="settings-row-desc">основной текст на сайте</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorText" value="#f2e9ea"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Цвет панелей</div>
+              <div class="settings-row-desc">оттенок стеклянных карточек</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorPanel" value="#1a1114"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Базовый фон</div>
+              <div class="settings-row-desc">виден, если нет картинки-обоев</div>
+            </div>
+            <div class="settings-control"><input type="color" id="colorBg" value="#0b0709"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Прозрачность панелей</div>
+              <div class="settings-row-desc">чем меньше — тем сильнее видно обои</div>
+            </div>
+            <div class="settings-control"><input type="range" id="panelAlpha" min="20" max="90" value="60"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Размытие обоев</div>
+              <div class="settings-row-desc">эффект матового стекла</div>
+            </div>
+            <div class="settings-control"><input type="range" id="blurAmt" min="0" max="60" value="24"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Обои (фон)</div>
+              <div class="settings-row-desc">своя картинка или ссылка</div>
+            </div>
+            <div class="settings-control">
+              <input type="text" class="settings-input" id="wallpaperUrl" placeholder="https://...jpg">
+              <label class="file-btn">Файл<input type="file" id="wallpaperFile" accept="image/*" style="display:none;"></label>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Плавающий декор на фоне</div>
+              <div class="settings-row-desc">корона / прицел / хедшот-иконки на заднем плане</div>
+            </div>
+            <div class="settings-control"><input type="checkbox" id="decorToggle" checked style="width:20px;height:20px;"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <button class="reset-btn" id="resetTheme">Сбросить тему по умолчанию</button>
+        </div>
+
+        <div class="section-label" id="valoSettingsAnchor">Valorant — привязка аккаунта</div>
+        <div class="settings-panel">
+          <div class="settings-row-desc" style="margin-bottom:10px;">
+            Данные берутся через сторонний сервис HenrikDev API (community-проект, не от Riot). Нужен бесплатный ключ:
+            зайди на <a href="https://api.henrikdev.xyz/dashboard/api-keys" target="_blank" rel="noopener" style="color:var(--accent);">страницу выдачи ключей HenrikDev</a>,
+            войди туда через Discord и создай ключ (Basic — бесплатно и без ожидания). Ключ хранится только в этом браузере, никуда не отправляется, кроме HenrikDev API.
+          </div>
+          <div class="settings-row">
+            <div><div class="settings-row-label">Riot ID</div><div class="settings-row-desc">Имя#Тег, например Player#EUW1</div></div>
+            <div class="settings-control"><input type="text" class="settings-input" id="valoRiotId" placeholder="Имя#Тег"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div><div class="settings-row-label">Регион</div></div>
+            <div class="settings-control">
+              <select class="settings-input" id="valoRegion">
+                <option value="eu">EU</option>
+                <option value="na">NA</option>
+                <option value="ap">AP</option>
+                <option value="kr">KR</option>
+                <option value="latam">LATAM</option>
+                <option value="br">BR</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div><div class="settings-row-label">API-ключ HenrikDev</div></div>
+            <div class="settings-control"><input type="password" class="settings-input" id="valoApiKey" placeholder="HDEV-..."></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Сохранить и проверить</div>
+              <div class="settings-row-desc" id="valoStatus">не подключено</div>
+            </div>
+            <div class="settings-control"><button class="file-btn" id="valoConnectBtn" style="cursor:pointer;">Подключить</button></div>
+          </div>
+        </div>
+
+        <div class="section-label">Порядок разделов</div>
+        <div class="settings-panel">
+          <div class="settings-row-desc" style="margin-bottom:6px;">меняй местами стрелками — порядок применится и в боковой панели, и в нижней на телефоне</div>
+          <div id="navOrderList"></div>
+        </div>
+
+        <div class="section-label">Поделиться тренировкой</div>
+        <div class="settings-panel">
+          <div class="settings-row-desc" style="margin-bottom:2px;">только список заданий (утро/вечер и Kovaak-плейлисты) — без твоего прогресса, рангов и заметок. Можно прислать файл в чат, друг импортирует и получает такой же чек-лист</div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Отправить тренировку</div>
+              <div class="settings-row-desc">сохранить .json, чтобы скинуть другу</div>
+            </div>
+            <div class="settings-control"><button class="file-btn" id="exportWorkoutBtn" style="cursor:pointer;">Экспорт</button></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Взять тренировку у друга</div>
+              <div class="settings-row-desc">заменит твои текущие задания и плейлисты</div>
+            </div>
+            <div class="settings-control"><label class="file-btn">Импорт<input type="file" id="importWorkoutFile" accept="application/json" style="display:none;"></label></div>
+          </div>
+        </div>
+
+        <div class="section-label">Данные</div>
+        <div class="settings-panel">
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Экспорт настроек и прогресса</div>
+              <div class="settings-row-desc">сохранить всё в файл .json</div>
+            </div>
+            <div class="settings-control"><button class="file-btn" id="exportBtn" style="cursor:pointer;">Экспорт</button></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Импорт настроек и прогресса</div>
+              <div class="settings-row-desc">восстановить из файла .json</div>
+            </div>
+            <div class="settings-control"><label class="file-btn">Импорт<input type="file" id="importFile" accept="application/json" style="display:none;"></label></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Автобэкапы</div>
+              <div class="settings-row-desc">при любом изменении сам сохраняет снепшот (хранит последние 5) — если что-то сломается, можно откатиться</div>
+            </div>
+          </div>
+          <div id="backupList" style="margin-top:6px;"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* ---------- AUTO-BACKUP ENGINE ---------- */
+const BACKUP_PREFIX = 'backup:';
+const BACKUP_KEEP = 5;
+(function(){
+  const origSetItem = localStorage.setItem.bind(localStorage);
+  let timer = null;
+  window.__scheduleBackup = function(){
+    clearTimeout(timer);
+    timer = setTimeout(()=>{
+      backupNow();
+      if(typeof renderBackupList === 'function') renderBackupList();
+      if(window.aimPushToCloud) window.aimPushToCloud();
+    }, 2500);
+  };
+  localStorage.setItem = function(key, value){
+    origSetItem(key, value);
+    if(!String(key).startsWith(BACKUP_PREFIX) && key !== 'valo:lastfetch'){
+      window.__scheduleBackup();
+    }
+  };
+})();
+function backupNow(){
+  try{
+    const snapshot = {};
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k.startsWith(BACKUP_PREFIX)) continue;
+      snapshot[k] = localStorage.getItem(k);
+    }
+    if(Object.keys(snapshot).length === 0) return;
+    localStorage.setItem(BACKUP_PREFIX + Date.now(), JSON.stringify(snapshot));
+    pruneBackups();
+  }catch(e){ console.error('backup failed', e); }
+}
+function listBackups(){
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith(BACKUP_PREFIX)) keys.push(k);
+  }
+  return keys.sort((a,b)=> Number(b.slice(BACKUP_PREFIX.length)) - Number(a.slice(BACKUP_PREFIX.length)));
+}
+function pruneBackups(){
+  const keys = listBackups();
+  keys.slice(BACKUP_KEEP).forEach(k=> localStorage.removeItem(k));
+}
+function restoreBackup(key){
+  try{
+    const snapshot = JSON.parse(localStorage.getItem(key));
+    if(!snapshot) return;
+    if(!confirm('Откатить все данные к этому снепшоту? Текущее состояние будет заменено.')) return;
+    Object.keys(snapshot).forEach(k=>{
+      if(k.startsWith(BACKUP_PREFIX)) return;
+      localStorage.setItem(k, snapshot[k]);
+    });
+    location.reload();
+  }catch(e){ alert('Не удалось прочитать этот бэкап.'); }
+}
+function renderBackupList(){
+  const el = document.getElementById('backupList');
+  if(!el) return;
+  const keys = listBackups();
+  if(keys.length===0){ el.innerHTML = `<div class="video-sub">Бэкапов пока нет — появятся после первого изменения.</div>`; return; }
+  el.innerHTML = keys.map(k=>{
+    const ts = Number(k.slice(BACKUP_PREFIX.length));
+    const label = new Date(ts).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    return `<div class="settings-row" style="padding:8px 0;">
+      <div class="settings-row-desc" style="font-size:11.5px;">${label}</div>
+      <button class="file-btn" style="cursor:pointer;" data-restore="${k}">Восстановить</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-restore]').forEach(btn=>{
+    btn.addEventListener('click', ()=> restoreBackup(btn.getAttribute('data-restore')));
+  });
+}
+
+/* ---------- GENERIC LOCAL-STORAGE LIST STORE ---------- */
+function loadList(key, fallback){
+  try{ const raw = localStorage.getItem(key); if(raw) return JSON.parse(raw); }catch(e){}
+  const copy = JSON.parse(JSON.stringify(fallback));
+  try{ localStorage.setItem(key, JSON.stringify(copy)); }catch(e){}
+  return copy;
+}
+function saveList(key, list){ try{ localStorage.setItem(key, JSON.stringify(list)); }catch(e){ console.error('save error', key, e); } }
+function uid(prefix){ return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+const DEFAULT_MORNING = [
+  {id:'m1', name:'Статики', meta:'20 мин · KovaaKsSwitchingEntryWipe'},
+  {id:'m2', name:'Микра', meta:'20 мин · KovaaKsTrollingDesertsandGasmask'},
+  {id:'m3', name:'Боты — разогрев', meta:'10 мин'},
+  {id:'m4', name:'Паркур', meta:'10–15 мин · чувство мувмента'},
+  {id:'m5', name:'Кастом-лобби — углы', meta:'40–50 мин · приоритет сессии'},
+  {id:'m6', name:'Трекинг', meta:'20 мин · KovaaKsCampingDesertsandRifle'},
+  {id:'m7', name:'Свитчи', meta:'20 мин · KovaaKsWipingBuffedCamper'},
+  {id:'m8', name:'ДМ', meta:'15–20 мин · проверка вместе'},
+];
+const DEFAULT_EVENING = [
+  {id:'e1', name:'Реактивация прицела', meta:'5–10 мин · один короткий трек'},
+  {id:'e2', name:'ДМ', meta:'25–30 мин · 2–3 игры, килл = смена угла'},
+  {id:'e3', name:'Кастом-лобби 1v1 / 2v2', meta:'40–50 мин · пики против живого игрока'},
+  {id:'e4', name:'VOD-ревью', meta:'15 мин · где стоял на месте, где не туда пикнул'},
+];
+let morningTasks = loadList('tasks:morning', DEFAULT_MORNING);
+let eveningTasks = loadList('tasks:evening', DEFAULT_EVENING);
+
+const DEFAULT_LOADOUT = [
+  {id:'k1', tag:'Статики', code:'KovaaKsSwitchingEntryWipe'},
+  {id:'k2', tag:'Трекинг', code:'KovaaKsCampingDesertsandRifle'},
+  {id:'k3', tag:'Микра', code:'KovaaKsTrollingDesertsandGasmask'},
+  {id:'k4', tag:'Свитчи', code:'KovaaKsWipingBuffedCamper'},
+];
+let loadout = loadList('kovaak:list', DEFAULT_LOADOUT);
+
+/* ---------- AGENTS / MAPS META (ориентир на Immortal+ / Radiant, патч 12.10–13.00, июль 2026 — оценка по данным op.gg, valking.gg, Tracker.gg и community-тир-листов) ---------- */
+const TIER_COLOR = { S:'#f5a623', A:'#ff4655', B:'#8fd6a0', C:'#a8969a', D:'#e0a15e', F:'#e06c75' };
+/* Тир считается динамически от винрейта (общий ориентир из актуальных тир-листов):
+   S ≥ 53% · A 51.5–53% · B 49.5–51.5% · C 47.5–49.5% · D < 47.5% */
+function tierFromWr(wr){
+  if(wr >= 53) return 'S';
+  if(wr >= 51.5) return 'A';
+  if(wr >= 49.5) return 'B';
+  if(wr >= 47.5) return 'C';
+  return 'D';
+}
+const AGENTS = [
+  {id:'clove', name:'Clove', role:'Controller', tier:'S', wr:54.8, pr:15.0},
+  {id:'cypher', name:'Cypher', role:'Sentinel', tier:'S', wr:55.3, pr:10.2},
+  {id:'killjoy', name:'Killjoy', role:'Sentinel', tier:'A', wr:52.6, pr:9.5},
+  {id:'fade', name:'Fade', role:'Initiator', tier:'A', wr:52.3, pr:8.0},
+  {id:'chamber', name:'Chamber', role:'Sentinel', tier:'A', wr:52.1, pr:10.3},
+  {id:'neon', name:'Neon', role:'Duelist', tier:'B', wr:51.6, pr:9.0},
+  {id:'jett', name:'Jett', role:'Duelist', tier:'B', wr:51.4, pr:13.0},
+  {id:'sova', name:'Sova', role:'Initiator', tier:'B', wr:51.2, pr:11.5},
+  {id:'skye', name:'Skye', role:'Initiator', tier:'B', wr:51.0, pr:8.5},
+  {id:'sage', name:'Sage', role:'Sentinel', tier:'B', wr:50.8, pr:4.0},
+  {id:'waylay', name:'Waylay', role:'Duelist', tier:'B', wr:50.6, pr:6.5},
+  {id:'omen', name:'Omen', role:'Controller', tier:'B', wr:50.4, pr:10.2},
+  {id:'raze', name:'Raze', role:'Duelist', tier:'B', wr:50.2, pr:7.0},
+  {id:'astra', name:'Astra', role:'Controller', tier:'C', wr:49.8, pr:3.5},
+  {id:'viper', name:'Viper', role:'Controller', tier:'C', wr:49.6, pr:3.0},
+  {id:'phoenix', name:'Phoenix', role:'Duelist', tier:'C', wr:49.5, pr:2.0},
+  {id:'reyna', name:'Reyna', role:'Duelist', tier:'C', wr:49.4, pr:9.0},
+  {id:'vyse', name:'Vyse', role:'Sentinel', tier:'C', wr:49.2, pr:2.0},
+  {id:'miks', name:'Miks', role:'Controller', tier:'C', wr:49.0, pr:4.5},
+  {id:'deadlock', name:'Deadlock', role:'Sentinel', tier:'C', wr:48.6, pr:1.5},
+  {id:'tejo', name:'Tejo', role:'Initiator', tier:'C', wr:48.4, pr:2.0},
+  {id:'veto', name:'Veto', role:'Sentinel', tier:'C', wr:48.2, pr:2.5},
+  {id:'gekko', name:'Gekko', role:'Initiator', tier:'C', wr:48.0, pr:2.2},
+  {id:'iso', name:'Iso', role:'Duelist', tier:'D', wr:47.6, pr:2.0},
+  {id:'brimstone', name:'Brimstone', role:'Controller', tier:'D', wr:47.2, pr:1.0},
+  {id:'breach', name:'Breach', role:'Initiator', tier:'D', wr:46.8, pr:1.2},
+  {id:'harbor', name:'Harbor', role:'Controller', tier:'D', wr:46.5, pr:1.5},
+  {id:'kayo', name:'KAY/O', role:'Initiator', tier:'D', wr:46.2, pr:2.5},
+  {id:'yoru', name:'Yoru', role:'Duelist', tier:'F', wr:44.8, pr:1.8},
+];
+const ROLE_TIPS = {
+  Duelist:'Твоя задача — открывать раунд и забирать первый фраг. Заходи с утилити впереди себя, не пиши тимейтам ждать тебя — играй с темпом и всегда имей план отхода.',
+  Controller:'Ставь дым до появления на англе, а не после. Держи связь с командой по таймингам смоков и не трать все чарджи в начале раунда.',
+  Initiator:'Собирай информацию перед заходом команды. Твои способности должны открывать англы и убирать утилити соперника, а не наносить урон напрямую.',
+  Sentinel:'Держи фланг и слушай ротации. Расставляй утилити так, чтобы у тебя было время среагировать, а не просто "закрыть" точку.',
+  Agent:'Изучи актуальные способности агента в игре — это недавно добавленный агент, детальный гайд по роли скоро появится.',
+};
+const MAPS = [
+  {id:'summit', name:'Summit', pool:true},
+  {id:'sunset', name:'Sunset', pool:true},
+  {id:'breeze', name:'Breeze', pool:true},
+  {id:'haven', name:'Haven', pool:true},
+  {id:'lotus', name:'Lotus', pool:true},
+  {id:'split', name:'Split', pool:true},
+  {id:'ascent', name:'Ascent', pool:true},
+  {id:'bind', name:'Bind', pool:false},
+  {id:'icebox', name:'Icebox', pool:false},
+  {id:'fracture', name:'Fracture', pool:false},
+  {id:'pearl', name:'Pearl', pool:false},
+  {id:'abyss', name:'Abyss', pool:false},
+  {id:'corrode', name:'Corrode', pool:false},
+];
+const MAP_TIPS = {
+  summit:'Новая карта в пуле — фокус на контроле мида и ранней информации, пока комьюнити ещё не выучило все углы.',
+  sunset:'Карта без классического мида — бои идут через тайтовые коридоры, важен контроль дверей и быстрые тайминги.',
+  breeze:'Открытые дальние дистанции — цени операторов и утилити для пересечения открытых зон, следи за флангами.',
+  haven:'Три сайта — больше территории для контроля, атакующим важно закрывать лишний сайт информацией.',
+  lotus:'Три сайта с вращающимися дверями — постоянно проверяй двери за спиной, инфа важнее чистого урона.',
+  split:'Вертикальная карта с канатами — контроль мида и вышек решает, много места для флангов через верх.',
+  ascent:'Большой мид-корт и механические двери — держи мид под контролем, двери можно намертво закрыть.',
+  bind:'Нет мида — только два длинных пути и телепорты. Ротации через телепорт решают, держи их под контролем.',
+  icebox:'Очень вертикальная карта с канатами и зиплайнами — много крыш и высоких позиций, цени вертикальный контроль.',
+  fracture:'Четырёхсторонняя карта — атакующие заходят с двух сторон одновременно, защите тяжело держать оба фланга.',
+  pearl:'Плотный мид с двумя точками входа на сайты — компактная карта, где решает контроль связок мид-сайт.',
+  abyss:'Карта без перил — можно упасть вниз и погибнуть. Много вертикальности, но без страховки на краях.',
+  corrode:'Тесные коридоры средневекового городка — много close-range стычек и мало длинных сайтлайнов.',
+};
+
+/* ---------- ПОПРАВКА НА КАРТУ ----------
+   У каждой карты своя планировка (кол-во сайтов, длина коридоров, наличие дальних углов),
+   поэтому винрейт/пикрейт агента реально отличается от карты к карте, а не одинаковый везде.
+   Ниже — поправки к базовому винрейту (WR, п.п.) и множитель пикрейта, подобранные по роли
+   агента и характеру карты (open sightlines → дальнобойные дуэлянты/сентинелы; несколько сайтов
+   → сеть контроллеров/инициаторов; тайтовые карты без мида → близкий бой). Карты вне текущего
+   пула (Bind, Icebox, Fracture, Pearl, Abyss, Corrode) размечены по тем же принципам их планировки. */
+const MAP_AGENT_DELTA = {
+  ascent:{ // большой мид-корт, механические двери — решает контроль мида
+    sova:1.4, fade:1.2, skye:0.8, killjoy:0.9, chamber:0.7, jett:0.6, clove:0.3,
+    omen:0.4, cypher:0.5, gekko:0.4, viper:-0.3, raze:-0.4, reyna:-0.6, yoru:-0.3
+  },
+  breeze:{ // открытые дальние дистанции — цена дальнобойного оружия и утили
+    chamber:1.8, jett:1.1, viper:1.0, killjoy:0.6, sova:0.5, cypher:-0.4,
+    raze:-1.1, neon:-0.8, reyna:-0.5, phoenix:-0.7, breach:0.3, brimstone:0.4
+  },
+  haven:{ // три сайта — больше территории, ценятся info-агенты и holding-сентинелы
+    killjoy:1.3, cypher:1.2, viper:0.9, fade:1.0, sova:0.8, skye:0.6, chamber:0.3,
+    yoru:-0.6, neon:-0.4, iso:-0.5
+  },
+  lotus:{ // три сайта с вращающимися дверями — инфа важнее урона
+    fade:1.3, sova:1.0, skye:0.9, omen:0.8, viper:0.6, killjoy:0.4,
+    raze:-0.5, jett:-0.3, phoenix:-0.4, yoru:-0.5
+  },
+  split:{ // вертикальная карта, канаты и мид-вышки — простор для дуэлянтов и фланг-контроля
+    raze:1.5, cypher:1.0, sova:0.8, chamber:0.7, killjoy:0.5, brimstone:0.5,
+    viper:-0.9, jett:-0.4, harbor:-0.5
+  },
+  sunset:{ // без классического мида, тайтовые коридоры — ближний бой и контроль дверей
+    raze:1.2, neon:1.0, reyna:0.9, phoenix:0.7, killjoy:0.9, vyse:0.8, cypher:0.6,
+    chamber:-1.0, jett:-0.6, viper:-0.5, skye:-0.3
+  },
+  summit:{}, // новая карта — данных по патчу 13.00 пока недостаточно, поправка 0
+  bind:{ // нет мида, только телепорты — держат сайты близко, ценятся смоки и дуэлянты ближнего боя
+    viper:1.2, raze:1.3, brimstone:1.0, reyna:0.8, phoenix:0.6, skye:0.5, killjoy:0.4,
+    jett:-0.3, chamber:-0.9, sova:-0.5
+  },
+  icebox:{ // очень вертикальная карта, зиплайны и крыши — сентинелы и близкий бой в узостях
+    killjoy:1.4, cypher:0.9, sova:0.7, raze:0.9, fade:0.6, breach:0.5,
+    chamber:-0.6, jett:-0.4, viper:0.3
+  },
+  fracture:{ // четырёхсторонняя карта, атака с двух флангов — инициаторы и стражи держат тыл
+    breach:1.3, skye:1.1, fade:1.0, killjoy:1.2, raze:0.8, sova:0.6,
+    jett:-0.5, chamber:-1.1, viper:-0.3
+  },
+  pearl:{ // компактный мид, связки мид-сайт — контроллеры и info-агенты решают темп
+    viper:1.1, astra:0.9, fade:1.0, sova:0.8, killjoy:0.7, chamber:0.4,
+    raze:-0.4, jett:-0.3, reyna:-0.5
+  },
+  abyss:{ // без перил, можно упасть — вертикальность без страховки, цена точной утили
+    gekko:0.9, sova:0.8, fade:0.7, killjoy:0.6, viper:0.5,
+    jett:-0.6, raze:-0.5, chamber:-0.4
+  },
+  corrode:{ // тесные коридоры, close-range — дуэлянты и стражи ближнего боя
+    raze:1.1, neon:0.9, reyna:0.8, killjoy:0.9, vyse:0.7,
+    chamber:-1.0, jett:-0.5, viper:-0.3
+  },
+};
+function getAgentMapStat(agent, mapId){
+  const d = (MAP_AGENT_DELTA[mapId] && MAP_AGENT_DELTA[mapId][agent.id]) || 0;
+  const wr = Math.max(40, Math.min(60, agent.wr + d));
+  const prMult = d===0 ? 1 : (1 + d/28); // пикрейт слегка следует за силой агента на карте
+  const pr = agent.pr==null ? null : Math.max(0.2, agent.pr * prMult);
+  return { wr, pr, tier: tierFromWr(wr) };
+}
+const DEFAULT_VIDEOS_RU = [
+  {title:'Как пикать правильно в Valorant — виды пиков', sub:'youtube.com/watch?v=0pY12sRWqLI', url:'https://www.youtube.com/watch?v=0pY12sRWqLI'},
+  {title:'Нужный гайд на мувмент Valorant', sub:'youtube.com/watch?v=kYJ1njt3vvs', url:'https://www.youtube.com/watch?v=kYJ1njt3vvs'},
+  {title:'Мувмент в Валоранте — двигайся как про', sub:'youtube.com/watch?v=GcG9Ymu2qqU', url:'https://www.youtube.com/watch?v=GcG9Ymu2qqU'},
+  {title:'Jiggle & Jump Peek Guide (разбор по кадрам)', sub:'youtube.com/watch?v=0rRXagqocI8', url:'https://www.youtube.com/watch?v=0rRXagqocI8'},
+  {title:'Мувмент в Валоранте — скрытые фишки', sub:'youtube.com/watch?v=jTK0Pup-Tjg', url:'https://www.youtube.com/watch?v=jTK0Pup-Tjg'},
+  {title:'Полный гайд по пикам в Valorant', sub:'youtube.com/watch?v=MlHTlS89vs0', url:'https://www.youtube.com/watch?v=MlHTlS89vs0'},
+  {title:'Как правильно пикать в Valorant', sub:'youtube.com/watch?v=uzPZ6TnaazY', url:'https://www.youtube.com/watch?v=uzPZ6TnaazY'},
+  {title:'Пикай как про / как пикать углы', sub:'youtube.com/watch?v=Bym3O0Hv-JA', url:'https://www.youtube.com/watch?v=Bym3O0Hv-JA'},
+];
+const DEFAULT_VIDEOS_EN_MOVEMENT = [
+  {title:'The ULTIMATE Movement Guide for VALORANT', sub:'youtube.com/watch?v=NzAxzm0UqFQ', url:'https://www.youtube.com/watch?v=NzAxzm0UqFQ'},
+  {title:'Get INSANE Movement (NO BS) — Movement Guide + Routine', sub:'youtube.com/watch?v=tDC2vISCHHA', url:'https://www.youtube.com/watch?v=tDC2vISCHHA'},
+  {title:'The #1 Rule To Master Movement (In-Depth Guide)', sub:'youtube.com/watch?v=Rq0aJBU9CNg', url:'https://www.youtube.com/watch?v=Rq0aJBU9CNg'},
+];
+const DEFAULT_VIDEOS_AIM_KOVAAK = [
+  {title:'Ultimate KOVAAK Training for PERFECT AIM (Hard Radiant Routine)', sub:'youtube.com/watch?v=LqbMQs-8vCA', url:'https://www.youtube.com/watch?v=LqbMQs-8vCA'},
+  {title:"Aim Training Guide By A Kovaak's Voltaic Master Player", sub:'youtube.com/watch?v=JG0T2haMQh0', url:'https://www.youtube.com/watch?v=JG0T2haMQh0'},
+  {title:"NEW Ultimate Kovaak's Training Guide for VALORANT", sub:'youtube.com/watch?v=fSLodvO-qlM', url:'https://www.youtube.com/watch?v=fSLodvO-qlM'},
+  {title:'This Training Routine Will FIX Your Aim', sub:'youtube.com/watch?v=_f_suNanRgU', url:'https://www.youtube.com/watch?v=_f_suNanRgU'},
+  {title:"The Beginner Routine That'll Turn You Pro", sub:'youtube.com/watch?v=t1gVUZVFQHI', url:'https://www.youtube.com/watch?v=t1gVUZVFQHI'},
+];
+const DEFAULT_VIDEOS_EN_TILT = [
+  {title:'How to Avoid Tilt and Improve Your Mental Game', sub:'youtube.com/watch?v=OcZD9FJrZww', url:'https://www.youtube.com/watch?v=OcZD9FJrZww'},
+  {title:'"How Do I Stop Getting Tilted?"', sub:'youtube.com/watch?v=0K0DNYjucu0', url:'https://www.youtube.com/watch?v=0K0DNYjucu0'},
+];
+
+let videosRuMovement = loadList('videos:ru', DEFAULT_VIDEOS_RU);
+let videosEnMovement = loadList('videos:en_movement', DEFAULT_VIDEOS_EN_MOVEMENT);
+let videosAimKovaak = loadList('videos:aim_kovaak', DEFAULT_VIDEOS_AIM_KOVAAK);
+let videosEnTilt = loadList('videos:en_tilt', DEFAULT_VIDEOS_EN_TILT);
+let videosCustom = loadList('videos:custom', []);
+let playlist = loadList('playlist:list', []);
+const watchedVideos = loadList('videos:watched', {});
+function saveWatched(){ saveList('videos:watched', watchedVideos); }
+
+function getStartDate(){
+  let raw = localStorage.getItem('meta:startdate');
+  if(!raw){ raw = todayKey(new Date()); try{ localStorage.setItem('meta:startdate', raw); }catch(e){} }
+  const p = raw.split('-').map(Number);
+  return new Date(p[0], p[1]-1, p[2]);
+}
+let START_DATE = getStartDate();
+
+function todayKey(date){ const d=date||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function daysBetween(a,b){ return Math.round((startOfDay(b).getTime() - startOfDay(a).getTime()) / 86400000); }
+function effectiveTasksFor(state, period){
+  const ov = state['_ovr_'+period];
+  return (ov && Array.isArray(ov)) ? ov : (period==='morning' ? morningTasks : eveningTasks);
+}
+function doneCount(state){
+  const m = effectiveTasksFor(state,'morning'), e = effectiveTasksFor(state,'evening');
+  return m.filter(t=>state[t.id]).length + e.filter(t=>state[t.id]).length;
+}
+function totalTasksForState(state){
+  return effectiveTasksFor(state,'morning').length + effectiveTasksFor(state,'evening').length;
+}
+function fillPctOf(state){ const d=doneCount(state); const tt=totalTasksForState(state); return d>0 ? Math.round((d/tt)*100) : 0; }
+function isFull(state){ const tt=totalTasksForState(state); return tt>0 && doneCount(state)===tt; }
+
+async function getDayState(key){
+  try{ const raw = localStorage.getItem('day:'+key); if(raw) return JSON.parse(raw); }catch(e){}
+  return {};
+}
+async function setDayState(key, state){
+  try{ localStorage.setItem('day:'+key, JSON.stringify(state)); }catch(e){ console.error('write error', e); }
+}
+async function getMeta(){
+  try{ const raw = localStorage.getItem('meta:ranks'); if(raw) return JSON.parse(raw); }catch(e){}
+  return {current:'', goal:''};
+}
+async function setMeta(meta){
+  try{ localStorage.setItem('meta:ranks', JSON.stringify(meta)); }catch(e){}
+}
+
+const TODAY = startOfDay(new Date());
+const TODAY_KEY = todayKey(TODAY);
+let selectedDate = new Date(TODAY);
+let selectedState = {};
+let calYear = TODAY.getFullYear();
+let yearCache = {};
+
+function taskListKey(period){ return period==='morning' ? 'tasks:morning' : 'tasks:evening'; }
+async function persistDayOverride(state){
+  const key = todayKey(selectedDate);
+  await setDayState(key, state);
+  yearCache[key] = {...state};
+}
+function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
+
+function renderTasks(containerId, period, state){
+  const container = document.getElementById(containerId);
+  const globalTasks = period==='morning' ? morningTasks : eveningTasks;
+  const overrideKey = '_ovr_'+period;
+  const hasOverride = Array.isArray(state[overrideKey]);
+  const tasks = hasOverride ? state[overrideKey] : globalTasks;
+
+  container.innerHTML = tasks.map(t => `
+    <div class="task ${state[t.id] ? 'done':''}" data-id="${t.id}">
+      <div class="checkbox"></div>
+      <div class="task-body">
+        <div class="task-name">${t.name}</div>
+        <div class="task-meta">${t.meta}</div>
+      </div>
+      <div class="task-actions">
+        <div class="icon-btn edit-task" title="Изменить">✎</div>
+        <div class="icon-btn danger del-task" title="Удалить">✕</div>
+      </div>
+    </div>
+  `).join('')
+  + (hasOverride ? `<div class="day-override-notice">только для этого дня · <button class="link-btn reset-day-tasks">сбросить к общим</button></div>` : '')
+  + `<div class="add-row"><button class="add-inline-btn add-task-btn">+ Добавить задание</button><div class="add-task-form-wrap"></div></div>`;
+
+  container.querySelectorAll('.task').forEach(el=>{
+    el.addEventListener('click', async (ev)=>{
+      if(ev.target.closest('.task-actions')) return;
+      const id = el.getAttribute('data-id');
+      selectedState[id] = !selectedState[id];
+      el.classList.toggle('done', selectedState[id]);
+      const key = todayKey(selectedDate);
+      await setDayState(key, selectedState);
+      yearCache[key] = {...selectedState};
+      updateCounts();
+      renderCalendar();
+      renderStreak();
+    });
+  });
+
+  container.querySelectorAll('.del-task').forEach(btn=>{
+    btn.addEventListener('click', async (ev)=>{
+      ev.stopPropagation();
+      const el = btn.closest('.task');
+      const id = el.getAttribute('data-id');
+      if(hasOverride){
+        const idx = state[overrideKey].findIndex(t=>t.id===id);
+        if(idx>-1) state[overrideKey].splice(idx,1);
+        await persistDayOverride(state);
+      } else {
+        const idx = globalTasks.findIndex(t=>t.id===id);
+        if(idx>-1){ globalTasks.splice(idx,1); saveList(taskListKey(period), globalTasks); }
+      }
+      renderTasks(containerId, period, state);
+      updateCounts(); renderCalendar(); renderStreak();
+    });
+  });
+
+  container.querySelectorAll('.edit-task').forEach(btn=>{
+    btn.addEventListener('click', (ev)=>{
+      ev.stopPropagation();
+      const el = btn.closest('.task');
+      const id = el.getAttribute('data-id');
+      const t = tasks.find(x=>x.id===id);
+      el.innerHTML = `
+        <div class="task-edit-row">
+          <input class="edit-name" value="${escapeAttr(t.name)}" placeholder="Название">
+          <input class="edit-meta" value="${escapeAttr(t.meta)}" placeholder="Описание">
+          <div class="add-form-btns">
+            ${hasOverride
+              ? `<button class="save-btn save-task-day">Сохранить</button>`
+              : `<button class="save-btn save-task-all">Сохранить везде</button><button class="save-btn save-task-day">Только сегодня</button>`
+            }
+            <button class="cancel-btn cancel-task">Отмена</button>
+          </div>
+        </div>`;
+      const saveAllBtn = el.querySelector('.save-task-all');
+      if(saveAllBtn) saveAllBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        t.name = el.querySelector('.edit-name').value.trim() || t.name;
+        t.meta = el.querySelector('.edit-meta').value.trim();
+        saveList(taskListKey(period), globalTasks);
+        renderTasks(containerId, period, state);
+      });
+      el.querySelector('.save-task-day').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        const name = el.querySelector('.edit-name').value.trim() || t.name;
+        const meta = el.querySelector('.edit-meta').value.trim();
+        if(!hasOverride) state[overrideKey] = globalTasks.map(x=>({...x}));
+        const ovTask = state[overrideKey].find(x=>x.id===id);
+        if(ovTask){ ovTask.name = name; ovTask.meta = meta; }
+        await persistDayOverride(state);
+        renderTasks(containerId, period, state);
+        updateCounts(); renderCalendar(); renderStreak();
+      });
+      el.querySelector('.cancel-task').addEventListener('click', (e)=>{
+        e.stopPropagation();
+        renderTasks(containerId, period, state);
+      });
+    });
+  });
+
+  const addBtn = container.querySelector('.add-task-btn');
+  addBtn.addEventListener('click', ()=>{
+    const wrap = container.querySelector('.add-task-form-wrap');
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:8px;">
+        <input class="new-task-name" placeholder="Название задания">
+        <input class="new-task-meta" placeholder="Описание (время, детали)">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-all">Добавить везде</button>
+          <button class="save-btn confirm-add-day">Только сегодня</button>
+          <button class="cancel-btn cancel-add-task">Отмена</button>
+        </div>
+      </div>`;
+    addBtn.style.display='none';
+    wrap.querySelector('.confirm-add-all').addEventListener('click', ()=>{
+      const name = wrap.querySelector('.new-task-name').value.trim();
+      const meta = wrap.querySelector('.new-task-meta').value.trim();
+      if(!name) return;
+      globalTasks.push({id: uid('t'), name, meta});
+      saveList(taskListKey(period), globalTasks);
+      renderTasks(containerId, period, state);
+      updateCounts();
+    });
+    wrap.querySelector('.confirm-add-day').addEventListener('click', async ()=>{
+      const name = wrap.querySelector('.new-task-name').value.trim();
+      const meta = wrap.querySelector('.new-task-meta').value.trim();
+      if(!name) return;
+      if(!state[overrideKey]) state[overrideKey] = globalTasks.map(x=>({...x}));
+      state[overrideKey].push({id: uid('t'), name, meta});
+      await persistDayOverride(state);
+      renderTasks(containerId, period, state);
+      updateCounts(); renderCalendar(); renderStreak();
+    });
+    wrap.querySelector('.cancel-add-task').addEventListener('click', ()=>{
+      wrap.innerHTML=''; addBtn.style.display='';
+    });
+  });
+
+  const resetBtn = container.querySelector('.reset-day-tasks');
+  if(resetBtn) resetBtn.addEventListener('click', async ()=>{
+    delete state[overrideKey];
+    await persistDayOverride(state);
+    renderTasks(containerId, period, state);
+    updateCounts(); renderCalendar(); renderStreak();
+  });
+}
+
+function buildPanel(gridEl, title, count, listId){
+  gridEl.innerHTML = `
+    <div class="duty-panel">
+      <div class="duty-head">
+        <div class="duty-title">${title}</div>
+        <div class="duty-count" id="${listId}-count">0/${count}</div>
+      </div>
+      <div class="duty-list" id="${listId}"></div>
+    </div>`;
+}
+
+function updateCounts(){
+  const mTasks = effectiveTasksFor(selectedState,'morning');
+  const eTasks = effectiveTasksFor(selectedState,'evening');
+  const mDone = mTasks.filter(t=>selectedState[t.id]).length;
+  const eDone = eTasks.filter(t=>selectedState[t.id]).length;
+  document.getElementById('morningList-count').textContent = mDone+'/'+mTasks.length;
+  document.getElementById('eveningList-count').textContent = eDone+'/'+eTasks.length;
+}
+
+function renderLoadout(){
+  const grid = document.getElementById('loadoutGrid');
+  grid.innerHTML = loadout.map((l) => `
+    <div class="loadout-card">
+      <div class="loadout-tag">${l.tag}</div>
+      <div class="loadout-code-row">
+        <div class="loadout-code">${l.code}</div>
+        <button class="copy-btn" data-code="${l.code}">Copy</button>
+        <div class="icon-btn danger del-kovaak" data-id="${l.id}" title="Удалить">✕</div>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('.copy-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const code = btn.getAttribute('data-code');
+      try{
+        await navigator.clipboard.writeText(code);
+        btn.textContent = 'Copied'; btn.classList.add('copied');
+        setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); }, 1400);
+      }catch(e){}
+    });
+  });
+  grid.querySelectorAll('.del-kovaak').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.getAttribute('data-id');
+      loadout = loadout.filter(l=>l.id!==id);
+      saveList('kovaak:list', loadout);
+      renderLoadout();
+    });
+  });
+}
+
+function setupAddKovaak(){
+  const btn = document.getElementById('addKovaakBtn');
+  const wrap = document.getElementById('addKovaakFormWrap');
+  btn.addEventListener('click', ()=>{
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:10px; max-width:420px;">
+        <input class="new-kv-tag" placeholder="Название (напр. Трекинг)">
+        <input class="new-kv-code" placeholder="Код сценария Kovaak">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-kv">Добавить</button>
+          <button class="cancel-btn cancel-add-kv">Отмена</button>
+        </div>
+      </div>`;
+    btn.style.display='none';
+    wrap.querySelector('.confirm-add-kv').addEventListener('click', ()=>{
+      const tag = wrap.querySelector('.new-kv-tag').value.trim();
+      const code = wrap.querySelector('.new-kv-code').value.trim();
+      if(!tag || !code) return;
+      loadout.push({id:uid('k'), tag, code});
+      saveList('kovaak:list', loadout);
+      renderLoadout();
+      wrap.innerHTML=''; btn.style.display='';
+    });
+    wrap.querySelector('.cancel-add-kv').addEventListener('click', ()=>{ wrap.innerHTML=''; btn.style.display=''; });
+  });
+}
+
+const VIDEO_STORE_KEY = {
+  videoListRuMovement:'videos:ru', videoListEnMovement:'videos:en_movement',
+  videoListEnTilt:'videos:en_tilt', videoListAimKovaak:'videos:aim_kovaak', videoListCustom:'videos:custom'
+};
+function renderVideoList(containerId, list, langTag){
+  const el = document.getElementById(containerId);
+  if(list.length===0 && containerId==='videoListCustom'){ el.innerHTML = ''; return; }
+  el.innerHTML = list.map(v => `
+    <div class="video-item" data-url="${v.url}">
+      <div class="video-check ${watchedVideos[v.url] ? 'watched':''}" title="Отметить просмотренным"></div>
+      <a class="video-text" href="${v.url}" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="video-title">${v.title}</div>
+        <div class="video-sub">${v.sub}</div>
+      </a>
+      ${langTag ? `<div class="video-lang">${langTag}</div>` : ''}
+      <div class="icon-btn danger video-del del-video" title="Удалить">✕</div>
+    </div>`).join('');
+  el.querySelectorAll('.video-check').forEach(chk=>{
+    chk.addEventListener('click', ()=>{
+      const url = chk.closest('.video-item').getAttribute('data-url');
+      watchedVideos[url] = !watchedVideos[url];
+      saveWatched();
+      chk.classList.toggle('watched', !!watchedVideos[url]);
+    });
+  });
+  el.querySelectorAll('.del-video').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const url = btn.closest('.video-item').getAttribute('data-url');
+      const idx = list.findIndex(v=>v.url===url);
+      if(idx>-1) list.splice(idx,1);
+      saveList(VIDEO_STORE_KEY[containerId], list);
+      renderVideoList(containerId, list, langTag);
+    });
+  });
+}
+
+function setupAddVideo(){
+  const btn = document.getElementById('addVideoBtn');
+  const wrap = document.getElementById('addVideoFormWrap');
+  btn.addEventListener('click', ()=>{
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:10px; max-width:460px;">
+        <input class="new-vid-title" placeholder="Название видео">
+        <input class="new-vid-url" placeholder="Ссылка (YouTube и т.д.)">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-vid">Добавить</button>
+          <button class="cancel-btn cancel-add-vid">Отмена</button>
+        </div>
+      </div>`;
+    btn.style.display='none';
+    wrap.querySelector('.confirm-add-vid').addEventListener('click', ()=>{
+      const title = wrap.querySelector('.new-vid-title').value.trim();
+      const url = wrap.querySelector('.new-vid-url').value.trim();
+      if(!title || !url) return;
+      let sub = url.replace(/^https?:\/\//,'').replace(/^www\./,'');
+      videosCustom.push({title, url, sub});
+      saveList('videos:custom', videosCustom);
+      renderVideoList('videoListCustom', videosCustom, null);
+      wrap.innerHTML=''; btn.style.display='';
+    });
+    wrap.querySelector('.cancel-add-vid').addEventListener('click', ()=>{ wrap.innerHTML=''; btn.style.display=''; });
+  });
+}
+
+const MONTH_NAMES = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const WEEKDAYS = ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+
+async function loadYearCache(year){
+  yearCache = {};
+  try{
+    const prefix = 'day:'+year+'-';
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith(prefix)){
+        const dateKey = k.replace('day:','');
+        yearCache[dateKey] = await getDayState(dateKey);
+      }
+    }
+  }catch(e){}
+}
+
+function renderCalendar(){
+  document.getElementById('calYearLabel').textContent = calYear;
+  const grid = document.getElementById('calGrid');
+  const selectedKey = todayKey(selectedDate);
+  let html = '';
+  for(let m=0;m<12;m++){
+    const firstDay = new Date(calYear, m, 1);
+    const daysInMonth = new Date(calYear, m+1, 0).getDate();
+    const startOffset = (firstDay.getDay()+6)%7;
+    let cells = '';
+    for(let i=0;i<startOffset;i++){ cells += '<div class="cal-day empty"></div>'; }
+    for(let day=1; day<=daysInMonth; day++){
+      const d = new Date(calYear, m, day);
+      const key = todayKey(d);
+      const state = yearCache[key] || {};
+      const pct = fillPctOf(state);
+      const full = isFull(state);
+      const isToday = key===TODAY_KEY;
+      const isSelected = key===selectedKey;
+      cells += `
+        <div class="cal-day ${isToday?'today':''} ${isSelected?'selected':''} ${full?'filled':''}" data-key="${key}">
+          ${pct>0 ? `<div class="cal-day-fill" style="opacity:${full?0.9:pct/140};"></div>` : ''}
+          <span>${day}</span>
+        </div>`;
+    }
+    html += `
+      <div class="cal-month">
+        <div class="cal-month-title">${MONTH_NAMES[m]}</div>
+        <div class="cal-weekdays">${WEEKDAYS.map(w=>`<div class="cal-weekday">${w[0]}</div>`).join('')}</div>
+        <div class="cal-days">${cells}</div>
+      </div>`;
+  }
+  grid.innerHTML = html;
+  grid.querySelectorAll('.cal-day:not(.empty)').forEach(el=>{
+    el.addEventListener('click', async ()=>{
+      const key = el.getAttribute('data-key');
+      const parts = key.split('-').map(Number);
+      selectedDate = new Date(parts[0], parts[1]-1, parts[2]);
+      await loadSelectedDay();
+      switchView('home');
+    });
+  });
+}
+
+/* если Valorant привязан — подставляем актуальный ранг в поле "Текущий ранг" на главной,
+   вместо того, что человек когда-то вписал туда руками */
+function applyValoRankToHeader(data){
+  const curInput = document.getElementById('currentRankInput');
+  if(!curInput || !data) return;
+  const cfg = loadValoConfig();
+  if(!cfg.riotId || !cfg.apiKey) return;
+  const cur = (data.mmr && data.mmr.current) || {};
+  const tierName = cur.tier && cur.tier.name;
+  if(!tierName) return;
+  curInput.value = cur.rr != null ? `${tierName} · ${cur.rr}RR` : tierName;
+  curInput.readOnly = true;
+  curInput.title = 'подтягивается автоматически из привязанного Valorant-аккаунта';
+  curInput.classList.add('synced-from-valo');
+}
+
+function renderHeaderStats(){
+  const dayNum = daysBetween(START_DATE, TODAY) + 1;
+  document.getElementById('dayCounter').textContent = Math.max(dayNum,1);
+  const p = document.getElementById('profileDayCounter');
+  if(p) p.textContent = Math.max(dayNum,1);
+}
+
+async function renderStreak(){
+  // Determine "real" current date fresh each time (protects against the tab staying open across midnight)
+  const realToday = startOfDay(new Date());
+  let cursor = new Date(realToday);
+  const todaysKey = todayKey(cursor);
+  let todaysState = yearCache[todaysKey];
+  if(todaysState === undefined) todaysState = await getDayState(todaysKey);
+  // If today isn't finished yet, don't zero the streak out — start counting from yesterday instead,
+  // so the streak only breaks once a full day has actually been missed.
+  if(!isFull(todaysState)) cursor.setDate(cursor.getDate()-1);
+
+  let streak = 0;
+  while(true){
+    const key = todayKey(cursor);
+    let state = yearCache[key];
+    if(state === undefined) state = await getDayState(key);
+    if(isFull(state)){ streak++; cursor.setDate(cursor.getDate()-1); }
+    else break;
+    if(streak > 2000) break;
+  }
+  document.getElementById('streakCounter').textContent = streak;
+  const profStreakEl = document.getElementById('profileStreak');
+  if(profStreakEl) profStreakEl.textContent = streak;
+
+  let best = Number(localStorage.getItem('meta:beststreak') || 0);
+  if(streak > best){ best = streak; try{ localStorage.setItem('meta:beststreak', String(best)); }catch(e){} }
+  const bestEl = document.getElementById('profileBestStreak');
+  if(bestEl) bestEl.textContent = best;
+}
+
+function fmtDate(d){
+  const wd = ['вс','пн','вт','ср','чт','пт','сб'][d.getDay()];
+  return wd + ' ' + String(d.getDate()).padStart(2,'0')+'.'+String(d.getMonth()+1).padStart(2,'0')+'.'+d.getFullYear();
+}
+
+async function loadSelectedDay(){
+  const key = todayKey(selectedDate);
+  selectedState = await getDayState(key);
+  yearCache[key] = {...selectedState};
+  document.getElementById('dayNavDate').textContent = fmtDate(selectedDate);
+  document.getElementById('jumpToday').classList.toggle('hidden', key===TODAY_KEY);
+  document.getElementById('dayNote').value = selectedState._note || '';
+  renderTasks('morningList', 'morning', selectedState);
+  renderTasks('eveningList', 'evening', selectedState);
+  updateCounts();
+  if(selectedDate.getFullYear() !== calYear){
+    calYear = selectedDate.getFullYear();
+    await loadYearCache(calYear);
+  }
+  renderCalendar();
+}
+
+function shiftDay(delta){ const nd=new Date(selectedDate); nd.setDate(nd.getDate()+delta); selectedDate=nd; loadSelectedDay(); }
+async function shiftYear(delta){ calYear += delta; await loadYearCache(calYear); renderCalendar(); }
+
+/* ---------- AGENT IMAGES (valorant-api.com, public no-auth API) ---------- */
+let AGENT_IMAGES = {};
+async function loadAgentImages(){
+  try{
+    const cached = localStorage.getItem('agents:imgcache');
+    if(cached){
+      const parsed = JSON.parse(cached);
+      if(parsed && parsed.ts && (Date.now()-parsed.ts < 14*24*3600*1000) && parsed.data){
+        AGENT_IMAGES = parsed.data;
+        return;
+      }
+    }
+  }catch(e){}
+  try{
+    const res = await fetch('https://valorant-api.com/v1/agents?isPlayableCharacter=true&language=ru-RU');
+    const json = await res.json();
+    const map = {};
+    (json.data||[]).forEach(a=>{
+      const key = (a.displayName||'').toLowerCase().replace(/\//g,'');
+      map[key] = { icon:a.displayIcon, bust:a.bustPortrait, portrait:a.fullPortrait };
+    });
+    AGENT_IMAGES = map;
+    try{ localStorage.setItem('agents:imgcache', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
+  }catch(e){ console.warn('agent image fetch failed', e); }
+}
+function agentImgUrl(agent){
+  const key = agent.name.toLowerCase().replace(/\//g,'');
+  const found = AGENT_IMAGES[key];
+  return found ? (found.icon || found.bust || found.portrait) : null;
+}
+
+let MAP_IMAGES = {};
+async function loadMapImages(){
+  try{
+    const cached = localStorage.getItem('maps:imgcache:v2');
+    if(cached){
+      const parsed = JSON.parse(cached);
+      if(parsed && parsed.ts && (Date.now()-parsed.ts < 14*24*3600*1000) && parsed.data){
+        MAP_IMAGES = parsed.data;
+        return;
+      }
+    }
+  }catch(e){}
+  try{
+    /* важно: язык здесь должен совпадать с тем, в каком приходят названия карт из матчей
+       HenrikDev API (они всегда на английском, например "Ascent") — иначе картинка не найдётся
+       по ключу и там будет пусто, даже если название карты отображается */
+    const res = await fetch('https://valorant-api.com/v1/maps?language=en-US');
+    const json = await res.json();
+    const map = {};
+    (json.data||[]).forEach(m=>{
+      const key = (m.displayName||'').toLowerCase();
+      map[key] = { splash:m.splash, listView:m.listViewIcon, listViewFallback:m.listViewIconTall };
+    });
+    MAP_IMAGES = map;
+    try{ localStorage.setItem('maps:imgcache:v2', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
+  }catch(e){ console.warn('map image fetch failed', e); }
+}
+function mapImgUrl(m){
+  const found = MAP_IMAGES[m.name.toLowerCase()];
+  return found ? (found.splash || found.listView || found.listViewFallback) : null;
+}
+
+/* ---------- META TABLE (AGENT WINRATES) ---------- */
+let metaFilters = { role:'All', field:'wr', dir:'desc' };
+function getFilteredSortedAgents(){
+  let list = AGENTS.filter(a => metaFilters.role==='All' || a.role===metaFilters.role);
+  const field = metaFilters.field, dir = metaFilters.dir;
+  list = [...list].sort((a,b)=>{
+    let av, bv;
+    if(field==='wr'){ av=a.wr; bv=b.wr; }
+    else { av = a.pr==null ? -1 : a.pr; bv = b.pr==null ? -1 : b.pr; }
+    return dir==='desc' ? bv-av : av-bv;
+  });
+  return list;
+}
+function renderMetaTable(){
+  const el = document.getElementById('metaTable');
+  const list = getFilteredSortedAgents();
+  if(list.length===0){ el.innerHTML = `<div class="meta-row"><div class="meta-name">Нет агентов под этот фильтр</div></div>`; }
+  else{
+    el.innerHTML = list.map(a => {
+      const img = agentImgUrl(a);
+      return `
+      <div class="meta-row">
+        <div class="meta-avatar">${img ? `<img src="${img}" alt="${a.name}" loading="lazy">` : '🎯'}</div>
+        <div class="meta-tier" style="background:${TIER_COLOR[tierFromWr(a.wr)]};">${tierFromWr(a.wr)}</div>
+        <div class="meta-name">${a.name}</div>
+        <div class="meta-role">${a.role}</div>
+        <div class="meta-wr">${a.wr.toFixed(1)}%</div>
+        <div class="meta-pr">${a.pr!=null ? a.pr.toFixed(1)+'% пик' : '—'}</div>
+      </div>`;
+    }).join('');
+  }
+  document.getElementById('metaLegend').textContent = 'общий винрейт по всем картам · ориентир на ранги Immortal+ / Radiant, оценка по данным op.gg, valking.gg, Tracker.gg и community тир-листов, июль 2026 — открой конкретную карту в разделе «Карты», чтобы увидеть цифры именно по ней';
+}
+function setupMetaFilters(){
+  document.getElementById('roleFilters').addEventListener('click', e=>{
+    const btn = e.target.closest('.chip'); if(!btn) return;
+    metaFilters.role = btn.getAttribute('data-role');
+    document.querySelectorAll('#roleFilters .chip').forEach(c=>c.classList.toggle('active', c===btn));
+    renderMetaTable();
+  });
+  document.getElementById('sortFilters').addEventListener('click', e=>{
+    const btn = e.target.closest('.chip'); if(!btn) return;
+    const field = btn.getAttribute('data-field');
+    if(metaFilters.field === field){
+      metaFilters.dir = metaFilters.dir === 'desc' ? 'asc' : 'desc';
+    } else {
+      metaFilters.field = field;
+      metaFilters.dir = 'desc';
+    }
+    document.querySelectorAll('#sortFilters .chip').forEach(c=>c.classList.toggle('active', c===btn));
+    document.getElementById('sortWrBtn').textContent = 'Винрейт ' + (metaFilters.field==='wr' ? (metaFilters.dir==='desc'?'↓':'↑') : '↓');
+    document.getElementById('sortPrBtn').textContent = 'Пикрейт ' + (metaFilters.field==='pr' ? (metaFilters.dir==='desc'?'↓':'↑') : '↓');
+    renderMetaTable();
+  });
+}
+
+/* ---------- AGENTS / MAPS PANE ---------- */
+let agentsView = {stage:'maps', map:null, agent:null};
+
+function renderAgentsCrumb(){
+  const el = document.getElementById('agentsCrumb');
+  let html = `<button data-go="maps">Карты</button>`;
+  if(agentsView.map){
+    const m = MAPS.find(x=>x.id===agentsView.map);
+    html += ` › <button data-go="agents">${m.name}</button>`;
+  }
+  if(agentsView.agent){
+    const a = AGENTS.find(x=>x.id===agentsView.agent);
+    html += ` › <span>${a.name}</span>`;
+  }
+  el.innerHTML = html;
+  el.querySelectorAll('button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const go = btn.getAttribute('data-go');
+      if(go==='maps'){ agentsView = {stage:'maps', map:null, agent:null}; }
+      if(go==='agents'){ agentsView.stage='agents'; agentsView.agent=null; }
+      renderAgentsPane();
+    });
+  });
+}
+
+function renderAgentsPane(){
+  renderAgentsCrumb();
+  const el = document.getElementById('agentsPane');
+  if(agentsView.stage==='maps'){
+    el.innerHTML = `<div class="map-grid">${MAPS.map(m=>{
+      const img = mapImgUrl(m);
+      return `
+      <div class="map-card" data-id="${m.id}" style="${img ? `background-image:linear-gradient(180deg, rgba(11,7,9,0.15), rgba(11,7,9,0.85)), url('${img}'); background-size:cover; background-position:center;` : ''}">
+        <div class="map-card-name">${m.name}</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:1px; margin-top:3px; color:${m.pool ? 'var(--accent)' : 'rgba(255,255,255,0.55)'};">${m.pool ? 'В ПУЛЕ' : 'вне пула'}</div>
+      </div>`;
+    }).join('')}</div>`;
+    el.querySelectorAll('.map-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        agentsView = {stage:'agents', map: card.getAttribute('data-id'), agent:null};
+        renderAgentsPane();
+      });
+    });
+  } else if(agentsView.stage==='agents'){
+    const m = MAPS.find(x=>x.id===agentsView.map);
+    const withStats = AGENTS.map(a=>({ a, s:getAgentMapStat(a, m.id) }));
+    const sorted = withStats.sort((x,y)=> y.s.wr - x.s.wr);
+    el.innerHTML = `<div class="agent-grid">${sorted.map(({a,s})=>{
+      const img = agentImgUrl(a);
+      return `
+      <div class="agent-card" data-id="${a.id}">
+        <div class="agent-card-img">${img ? `<img src="${img}" alt="${a.name}" loading="lazy">` : '🎯'}</div>
+        <div class="meta-tier" style="background:${TIER_COLOR[s.tier]}; margin:0 auto;">${s.tier}</div>
+        <div class="agent-card-name">${a.name}</div>
+        <div class="agent-card-tier">${s.wr.toFixed(1)}% WR на ${m.name}</div>
+      </div>`;
+    }).join('')}</div>`;
+    el.querySelectorAll('.agent-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        agentsView.stage='detail'; agentsView.agent = card.getAttribute('data-id');
+        renderAgentsPane();
+      });
+    });
+  } else if(agentsView.stage==='detail'){
+    const a = AGENTS.find(x=>x.id===agentsView.agent);
+    const m = MAPS.find(x=>x.id===agentsView.map);
+    const s = getAgentMapStat(a, m.id);
+    const img = agentImgUrl(a);
+    const mapImg = mapImgUrl(m);
+    const q = encodeURIComponent(`${a.name} ${m.name} valorant guide`);
+    const delta = s.wr - a.wr;
+    const deltaTxt = Math.abs(delta) < 0.05 ? 'как в среднем по игре' : (delta > 0 ? `на ${delta.toFixed(1)} п.п. выше среднего` : `на ${Math.abs(delta).toFixed(1)} п.п. ниже среднего`);
+    el.innerHTML = `
+      <div class="agent-detail">
+        ${mapImg ? `<div class="agent-detail-mapbanner" style="background-image:linear-gradient(180deg, rgba(11,7,9,0.1), rgba(11,7,9,0.95)), url('${mapImg}');"><div class="agent-detail-mapbanner-name">${m.name}</div></div>` : ''}
+        <div class="agent-detail-head">
+          <div class="agent-detail-img">${img ? `<img src="${img}" alt="${a.name}">` : ''}</div>
+          <div class="meta-tier" style="background:${TIER_COLOR[s.tier]}; width:36px; height:36px; font-size:15px;">${s.tier}</div>
+          <div>
+            <div class="agent-detail-title">${a.name} на ${m.name}</div>
+            <div class="video-sub">${a.role}</div>
+          </div>
+        </div>
+        <div class="agent-detail-stats">
+          <div><div class="agent-detail-stat-label">Винрейт на карте</div><div class="agent-detail-stat-value">${s.wr.toFixed(1)}%</div></div>
+          <div><div class="agent-detail-stat-label">Пикрейт на карте</div><div class="agent-detail-stat-value">${s.pr!=null ? s.pr.toFixed(1)+'%' : '—'}</div></div>
+          <div><div class="agent-detail-stat-label">Тир на карте</div><div class="agent-detail-stat-value">${s.tier}</div></div>
+        </div>
+        <div class="agent-tip">На ${m.name} винрейт ${deltaTxt} (общий по всем картам — ${a.wr.toFixed(1)}%).</div>
+        <div class="agent-tip"><strong>Как играть на роли:</strong> ${ROLE_TIPS[a.role] || ROLE_TIPS.Agent}</div>
+        <div class="agent-tip"><strong>Особенности карты ${m.name}:</strong> ${MAP_TIPS[m.id]}</div>
+        <a class="guide-btn" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ Найти свежий гайд-видео на YouTube</a>
+      </div>`;
+  }
+}
+
+/* ---------- TIMER ---------- */
+let timerSeconds = 0, timerRunning = false, timerHandle = null;
+function fmtTimer(sec){
+  const h=String(Math.floor(sec/3600)).padStart(2,'0');
+  const m=String(Math.floor((sec%3600)/60)).padStart(2,'0');
+  const s=String(sec%60).padStart(2,'0');
+  return `${h}:${m}:${s}`;
+}
+function tickTimer(){ timerSeconds++; document.getElementById('timerDisplay').textContent = fmtTimer(timerSeconds); }
+function renderTimerToday(){
+  const sessions = loadList('timer:sessions', []);
+  const key = todayKey(new Date());
+  const todaySec = sessions.filter(s=>s.date===key).reduce((a,s)=>a+s.seconds,0);
+  document.getElementById('timerToday').textContent = `Сегодня натренировано: ${Math.round(todaySec/60)} мин`;
+  const log = document.getElementById('sessionLog');
+  const last = [...sessions].reverse().slice(0,15);
+  log.innerHTML = last.length ? last.map(s=>`<div class="session-row"><span>${s.date}</span><span>${fmtTimer(s.seconds)}</span></div>`).join('') : `<div class="session-row"><span>пока пусто</span></div>`;
+}
+function setupTimer(){
+  document.getElementById('timerStartBtn').addEventListener('click', ()=>{
+    if(timerRunning) return;
+    timerRunning = true;
+    timerHandle = setInterval(tickTimer, 1000);
+  });
+  document.getElementById('timerPauseBtn').addEventListener('click', ()=>{
+    timerRunning = false;
+    clearInterval(timerHandle);
+  });
+  document.getElementById('timerResetBtn').addEventListener('click', ()=>{
+    timerRunning = false;
+    clearInterval(timerHandle);
+    if(timerSeconds > 0){
+      const sessions = loadList('timer:sessions', []);
+      sessions.push({date: todayKey(new Date()), seconds: timerSeconds});
+      saveList('timer:sessions', sessions);
+    }
+    timerSeconds = 0;
+    document.getElementById('timerDisplay').textContent = fmtTimer(0);
+    renderTimerToday();
+  });
+  document.getElementById('timerClearBtn').addEventListener('click', ()=>{
+    if(!confirm('Очистить всю историю последних сессий? Это действие необратимо.')) return;
+    saveList('timer:sessions', []);
+    renderTimerToday();
+  });
+  renderTimerToday();
+}
+
+/* ---------- PLAYLIST ---------- */
+function detectEmbed(url){
+  if(/soundcloud\.com/i.test(url)){
+    const isSet = /\/sets\//i.test(url);
+    return { kind:'sc', isPlaylist:isSet };
+  }
+  const list = url.match(/[?&]list=([\w-]+)/);
+  if(list){ return { kind:'yt', isPlaylist:true, id:list[1] }; }
+  const yt = url.match(/(?:youtu\.be\/|v=)([\w-]{6,})/);
+  if(yt){ return { kind:'yt', isPlaylist:false, id:yt[1] }; }
+  return { kind:null, isPlaylist:false };
+}
+function embedForUrl(url){
+  const info = detectEmbed(url);
+  if(info.kind==='sc'){
+    return `<div class="playlist-embed"><iframe class="pl-frame" data-kind="sc" width="100%" height="${info.isPlaylist?200:120}" scrolling="no" frameborder="no" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&color=%23ff4655&auto_play=false"></iframe></div>`;
+  }
+  if(info.kind==='yt'){
+    const src = info.isPlaylist
+      ? `https://www.youtube.com/embed/videoseries?list=${info.id}&enablejsapi=1`
+      : `https://www.youtube.com/embed/${info.id}?enablejsapi=1`;
+    return `<div class="playlist-embed"><iframe class="pl-frame" data-kind="yt" width="100%" height="200" src="${src}" frameborder="0" allowfullscreen></iframe></div>`;
+  }
+  return '';
+}
+function getMasterVolume(){
+  const v = localStorage.getItem('playlist:volume');
+  return v!==null ? Number(v) : 70;
+}
+function applyVolumeToFrame(frame){
+  const kind = frame.getAttribute('data-kind');
+  const vol = getMasterVolume();
+  if(kind==='yt'){
+    try{
+      frame.contentWindow.postMessage(JSON.stringify({event:'command', func:'setVolume', args:[vol]}), '*');
+      frame.contentWindow.postMessage(JSON.stringify({event:'command', func: vol===0 ? 'mute' : 'unMute', args:[]}), '*');
+    }catch(e){}
+  } else if(kind==='sc' && window.SC && window.SC.Widget){
+    try{ SC.Widget(frame).setVolume(vol); }catch(e){}
+  }
+}
+function applyVolumeToAllFrames(){
+  document.querySelectorAll('.pl-frame').forEach(applyVolumeToFrame);
+}
+function ensureSoundCloudApi(cb){
+  if(window.SC && window.SC.Widget){ cb(); return; }
+  const existing = document.getElementById('scWidgetApi');
+  if(existing){ existing.addEventListener('load', cb, {once:true}); return; }
+  const script = document.createElement('script');
+  script.id = 'scWidgetApi';
+  script.src = 'https://w.soundcloud.com/player/api.js';
+  script.onload = cb;
+  document.head.appendChild(script);
+}
+function setupVolumeControl(){
+  const slider = document.getElementById('masterVolume');
+  const valueEl = document.getElementById('masterVolumeValue');
+  const vol = getMasterVolume();
+  slider.value = vol;
+  valueEl.textContent = vol + '%';
+  slider.style.setProperty('--vol-pct', vol + '%');
+  ensureSoundCloudApi(()=>{});
+  slider.addEventListener('input', ()=>{
+    const v = Number(slider.value);
+    valueEl.textContent = v + '%';
+    slider.style.setProperty('--vol-pct', v + '%');
+    try{ localStorage.setItem('playlist:volume', v); }catch(e){}
+    applyVolumeToAllFrames();
+  });
+}
+function renderPlaylist(){
+  const el = document.getElementById('playlistList');
+  if(playlist.length===0){ el.innerHTML = `<div class="video-sub" style="margin-bottom:14px;">Плейлист пуст — добавь треки или плейлисты ниже.</div>`; return; }
+  el.innerHTML = playlist.map(p=>{
+    const info = detectEmbed(p.url);
+    const badge = info.isPlaylist ? `<span class="playlist-badge">плейлист</span>` : '';
+    return `
+    <div class="playlist-item">
+      <div class="playlist-head">
+        <a class="playlist-title" href="${p.url}" target="_blank" rel="noopener" style="color:inherit; text-decoration:none;">🎵 ${p.title}${badge}</a>
+        <div class="icon-btn danger del-song" data-id="${p.id}" title="Удалить">✕</div>
+      </div>
+      ${embedForUrl(p.url)}
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.del-song').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      playlist = playlist.filter(p=>p.id!==btn.getAttribute('data-id'));
+      saveList('playlist:list', playlist);
+      renderPlaylist();
+    });
+  });
+  // apply current volume once embeds have loaded
+  el.querySelectorAll('.pl-frame').forEach(frame=>{
+    frame.addEventListener('load', ()=> setTimeout(()=>applyVolumeToFrame(frame), 300));
+  });
+}
+function setupAddSong(){
+  const btn = document.getElementById('addSongBtn');
+  const wrap = document.getElementById('addSongFormWrap');
+  btn.addEventListener('click', ()=>{
+    wrap.innerHTML = `
+      <div class="add-form" style="margin-top:10px; max-width:460px;">
+        <input class="new-song-title" placeholder="Название (трека или плейлиста)">
+        <input class="new-song-url" placeholder="Ссылка: видео, YouTube-плейлист (?list=...) или SoundCloud (трек / sets)">
+        <div class="add-form-btns">
+          <button class="save-btn confirm-add-song">Добавить</button>
+          <button class="cancel-btn cancel-add-song">Отмена</button>
+        </div>
+      </div>`;
+    btn.style.display='none';
+    wrap.querySelector('.confirm-add-song').addEventListener('click', ()=>{
+      const title = wrap.querySelector('.new-song-title').value.trim();
+      const url = wrap.querySelector('.new-song-url').value.trim();
+      if(!title || !url) return;
+      playlist.push({id:uid('s'), title, url});
+      saveList('playlist:list', playlist);
+      renderPlaylist();
+      wrap.innerHTML=''; btn.style.display='';
+    });
+    wrap.querySelector('.cancel-add-song').addEventListener('click', ()=>{ wrap.innerHTML=''; btn.style.display=''; });
+  });
+}
+
+/* ---------- PROFILE ---------- */
+function loadProfile(){ return loadList('profile:data', {nick:'', avatar:'', banner:'', about:'', discord:'', twitch:'', customLabel:'', customValue:''}); }
+function saveProfile(p){ saveList('profile:data', p); try{ if(window.aimPushToCloud) window.aimPushToCloud(); }catch(e){} }
+function setupProfile(){
+  const profile = loadProfile();
+  const nick = document.getElementById('profileNick');
+  const about = document.getElementById('profileAbout');
+  const discord = document.getElementById('profileDiscord');
+  const twitch = document.getElementById('profileTwitch');
+  const customLabel = document.getElementById('profileCustomLabel');
+  const customValue = document.getElementById('profileCustomValue');
+  const startDate = document.getElementById('profileStartDate');
+  const avatarEl = document.getElementById('profileAvatar');
+  const bannerEl = document.getElementById('profileBanner');
+
+  nick.value = profile.nick || '';
+  about.value = profile.about || '';
+  discord.value = profile.discord || '';
+  twitch.value = profile.twitch || '';
+  customLabel.value = profile.customLabel || '';
+  customValue.value = profile.customValue || '';
+  startDate.value = todayKey(START_DATE);
+  if(profile.avatar){ avatarEl.style.backgroundImage = `url(${profile.avatar})`; avatarEl.textContent=''; }
+  if(profile.banner){ bannerEl.style.backgroundImage = `url(${profile.banner})`; }
+
+  let saveTimeout;
+  function persist(){
+    profile.nick = nick.value; profile.about = about.value; profile.discord = discord.value;
+    profile.twitch = twitch.value; profile.customLabel = customLabel.value; profile.customValue = customValue.value;
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(()=> saveProfile(profile), 400);
+  }
+  nick.addEventListener('input', persist);
+  about.addEventListener('input', persist);
+  discord.addEventListener('input', persist);
+  twitch.addEventListener('input', persist);
+  customLabel.addEventListener('input', persist);
+  customValue.addEventListener('input', persist);
+
+  document.getElementById('avatarFile').addEventListener('change', e=>{
+    const file = e.target.files[0]; if(!file) return;
+    resizeImageFile(file, 400, dataUrl=>{
+      profile.avatar = dataUrl; saveProfile(profile);
+      avatarEl.style.backgroundImage = `url(${dataUrl})`; avatarEl.textContent='';
+    });
+  });
+  document.getElementById('bannerFile').addEventListener('change', e=>{
+    const file = e.target.files[0]; if(!file) return;
+    resizeImageFile(file, 960, dataUrl=>{
+      profile.banner = dataUrl; saveProfile(profile);
+      bannerEl.style.backgroundImage = `url(${dataUrl})`;
+    });
+  });
+  startDate.addEventListener('change', ()=>{
+    if(!startDate.value) return;
+    try{ localStorage.setItem('meta:startdate', startDate.value); }catch(e){}
+    START_DATE = getStartDate();
+    renderHeaderStats();
+  });
+}
+
+/* ---------- VALORANT ACCOUNT (HenrikDev API — сторонний community-сервис, не Riot) ---------- */
+function loadValoConfig(){ return loadList('valo:config', {riotId:'', region:'eu', apiKey:''}); }
+function saveValoConfig(cfg){ saveList('valo:config', cfg); }
+const VALO_API_BASE = 'https://api.henrikdev.xyz';
+
+/* HenrikDev с недавних пор требует ключ в заголовке Authorization, а не в query-параметре
+   ?api_key= (это был временный вариант только для твич-ботов, которые не могут слать заголовки).
+   Именно из-за старого query-параметра привязка ранга и переставала работать. */
+async function valoFetch(path, apiKey){
+  const url = `${VALO_API_BASE}${path}`;
+  const res = await fetch(url, { headers:{ 'Accept':'application/json', 'Authorization':apiKey } });
+  const json = await res.json().catch(()=>null);
+  if(!res.ok || !json || json.status >= 400){
+    const msg = (json && (json.errors?.[0]?.message || json.message)) || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  return json;
+}
+
+function setupValoIntegration(){
+  const cfg = loadValoConfig();
+  const riotInput = document.getElementById('valoRiotId');
+  const regionSel = document.getElementById('valoRegion');
+  const keyInput = document.getElementById('valoApiKey');
+  const statusEl = document.getElementById('valoStatus');
+  const connectBtn = document.getElementById('valoConnectBtn');
+  const refreshBtn = document.getElementById('valoRefreshBtn');
+  const linkPrompt = document.getElementById('valoLinkPrompt');
+  const linkBtn = document.getElementById('valoLinkBtn');
+
+  riotInput.value = cfg.riotId || '';
+  regionSel.value = cfg.region || 'eu';
+  keyInput.value = cfg.apiKey || '';
+  if(cfg.riotId && cfg.apiKey) statusEl.textContent = 'сохранено — обнови статистику на вкладке Профиль';
+
+  const isLinked = !!(cfg.riotId && cfg.apiKey);
+  if(linkPrompt) linkPrompt.style.display = isLinked ? 'none' : 'flex';
+
+  if(linkBtn){
+    linkBtn.addEventListener('click', ()=>{
+      switchView('settings');
+      setTimeout(()=>{
+        const anchor = document.getElementById('valoSettingsAnchor');
+        if(anchor) anchor.scrollIntoView({behavior:'smooth', block:'start'});
+        riotInput.focus();
+      }, 80);
+    });
+  }
+
+  connectBtn.addEventListener('click', async ()=>{
+    const riotId = riotInput.value.trim();
+    const region = regionSel.value;
+    const apiKey = keyInput.value.trim();
+    if(!riotId.includes('#')){ statusEl.textContent = 'укажи Riot ID в формате Имя#Тег'; return; }
+    if(!apiKey){ statusEl.textContent = 'нужен API-ключ HenrikDev'; return; }
+    saveValoConfig({riotId, region, apiKey});
+    statusEl.textContent = 'проверяю...';
+    connectBtn.disabled = true;
+    try{
+      await refreshValoStats(true);
+      statusEl.textContent = 'подключено ✓';
+      if(linkPrompt) linkPrompt.style.display = 'none';
+    }catch(err){
+      statusEl.textContent = 'ошибка: ' + err.message;
+    } finally {
+      connectBtn.disabled = false;
+    }
+  });
+
+  refreshBtn.addEventListener('click', ()=> refreshValoStats(true));
+  const errRetryBtn = document.getElementById('valoErrorRetryBtn');
+  if(errRetryBtn) errRetryBtn.addEventListener('click', ()=> refreshValoStats(true));
+
+  if(cfg.riotId && cfg.apiKey){
+    const lastFetch = Number(localStorage.getItem('valo:lastfetch') || 0);
+    if(Date.now() - lastFetch > 10*60*1000){
+      refreshValoStats(false);
+    } else {
+      renderValoFromCache();
+    }
+    setInterval(()=> refreshValoStats(false), 10*60*1000);
+  }
+}
+
+function renderValoFromCache(){
+  const cached = loadList('valo:cache', null);
+  if(cached) renderValoStats(cached);
+}
+
+async function refreshValoStats(userInitiated){
+  const cfg = loadValoConfig();
+  if(!cfg.riotId || !cfg.apiKey) return;
+  const [name, tag] = cfg.riotId.split('#');
+  const card = document.getElementById('valoStatsCard');
+  const errBanner = document.getElementById('valoErrorBanner');
+  const refreshBtn = document.getElementById('valoRefreshBtn');
+  if(refreshBtn){ refreshBtn.textContent = 'Обновляю...'; refreshBtn.disabled = true; }
+  try{
+    const [accountRes, mmrRes, matchesRes] = await Promise.all([
+      valoFetch(`/valorant/v2/account/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`, cfg.apiKey),
+      valoFetch(`/valorant/v3/mmr/${cfg.region}/pc/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`, cfg.apiKey),
+      valoFetch(`/valorant/v4/matches/${cfg.region}/pc/${encodeURIComponent(name)}/${encodeURIComponent(tag)}?mode=competitive&size=5`, cfg.apiKey).catch(()=>null),
+    ]);
+    const data = { account: accountRes.data, mmr: mmrRes.data, matches: matchesRes ? matchesRes.data : [], fetchedAt: Date.now() };
+    saveList('valo:cache', data);
+    try{ localStorage.setItem('valo:lastfetch', String(Date.now())); }catch(e){}
+    renderValoStats(data);
+    if(card) card.style.display = '';
+    if(errBanner) errBanner.style.display = 'none';
+  }catch(err){
+    console.error('valo fetch failed', err);
+    if(userInitiated) alert('Не удалось получить статистику: ' + err.message + '\n\nПроверь Riot ID, регион и ключ в Настройках.');
+    // если ни разу не было успешного кэша — карточка со статистикой пустая и скрытая,
+    // поэтому показываем явный баннер с ошибкой вместо тихой пустоты
+    if(!loadList('valo:cache', null) && errBanner){
+      document.getElementById('valoErrorText').textContent = 'Не удалось получить статистику: ' + err.message;
+      errBanner.style.display = 'flex';
+    }
+  } finally {
+    if(refreshBtn){ refreshBtn.textContent = 'Обновить'; refreshBtn.disabled = false; }
+  }
+}
+
+function renderValoStats(data){
+  const card = document.getElementById('valoStatsCard');
+  if(!card || !data) return;
+  card.style.display = '';
+  const acc = data.account || {};
+  const mmr = data.mmr || {};
+  const cur = mmr.current || {};
+  const peak = mmr.peak || {};
+
+  document.getElementById('valoNickDisplay').textContent = `${acc.name || '—'}#${acc.tag || ''}`;
+  document.getElementById('valoLevelDisplay').textContent = acc.account_level ? `Уровень ${acc.account_level}` : '';
+  const artEl = document.getElementById('valoCardArt');
+  const cardArtUrl = acc.card && (acc.card.small || acc.card.large || (typeof acc.card === 'string' ? `https://media.valorant-api.com/playercards/${acc.card}/smallart.png` : null));
+  if(cardArtUrl){ artEl.style.backgroundImage = `url(${cardArtUrl})`; artEl.style.backgroundSize='cover'; artEl.textContent=''; }
+
+  document.getElementById('valoRankDisplay').textContent = (cur.tier && cur.tier.name) || '—';
+  document.getElementById('valoRrDisplay').textContent = cur.rr != null ? `${cur.rr} RR` : '—';
+  document.getElementById('valoPeakDisplay').textContent = (peak.tier && peak.tier.name) || '—';
+  document.getElementById('valoUpdatedDisplay').textContent = new Date(data.fetchedAt).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+
+  renderValoMatchesInto('valoMatchList', data);
+  applyValoRankToHeader(data);
+}
+
+/* находит игрока (себя) внутри списка players матча — раньше сравнивалось по несуществующему
+   полю p.account.name (в матчах игроки лежат плоско: {puuid,name,tag,...}), из-за чего "я" не
+   находился никогда и статы всегда были пустые. Сравниваем по puuid, с фоллбэком на name+tag. */
+function findMeInMatch(m, acc){
+  const players = m.players || [];
+  if(acc && acc.puuid){
+    const byPuuid = players.find(p => p.puuid === acc.puuid);
+    if(byPuuid) return byPuuid;
+  }
+  if(acc && acc.name){
+    const byName = players.find(p =>
+      (p.name||'').toLowerCase() === (acc.name||'').toLowerCase() &&
+      (p.tag||'').toLowerCase() === (acc.tag||'').toLowerCase()
+    );
+    if(byName) return byName;
+  }
+  return {};
+}
+
+/* строит HTML для списка последних матчей из объекта data ({account, matches}) — используется
+   и на вкладке Профиль, и в модалке чужого публичного профиля. Каждая строка теперь показывает
+   иконку агента и посчитанный K/D (не только сырые kills/deaths/assists). */
+function buildValoMatchesHtml(data, opts){
+  opts = opts || {};
+  const matches = (data.matches || []).slice(0, opts.limit || 10);
+  if(matches.length === 0) return `<div class="video-sub">Нет данных о последних матчах.</div>`;
+  const acc = data.account || {};
+  return matches.map(m=>{
+    const me = findMeInMatch(m, acc);
+    const myTeamId = me.team_id;
+    const teams = m.teams || [];
+    const myTeam = teams.find(t=>t.team_id === myTeamId);
+    const won = myTeam ? !!myTeam.won : null;
+    const mapName = (m.metadata && m.metadata.map && m.metadata.map.name) || '—';
+    const agentName = (me.agent && me.agent.name) || '—';
+    const stats = me.stats || {};
+    const kills = stats.kills ?? 0;
+    const deaths = stats.deaths ?? 0;
+    const assists = stats.assists ?? 0;
+    const kd = deaths > 0 ? (kills/deaths) : kills;
+    const kdClass = kd >= 1.2 ? 'good' : (kd < 0.8 ? 'bad' : '');
+    const mapImg = mapName !== '—' ? mapImgUrl({name:mapName}) : null;
+    const agentImg = agentName !== '—' ? agentImgUrl({name:agentName}) : null;
+    return `
+      <div class="valo-match-row ${won===true?'win':won===false?'loss':''}">
+        <div class="valo-match-result">${won===true?'W':won===false?'L':'-'}</div>
+        <div class="valo-match-agentimg"${agentImg ? ` style="background-image:url('${agentImg}');"` : ''}></div>
+        <div class="valo-match-mapimg"${mapImg ? ` style="background-image:url('${mapImg}');"` : ''}></div>
+        <div class="valo-match-map">
+          <span class="valo-match-map-name">${mapName}</span>
+          ${opts.compact ? '' : `<span class="valo-match-agent">${agentName}</span>`}
+        </div>
+        <div class="valo-match-score">${kills}/${deaths}/${assists}</div>
+        <div class="valo-match-kd ${kdClass}">${kd.toFixed(2)}</div>
+      </div>`;
+  }).join('');
+}
+function renderValoMatchesInto(elId, data, opts){
+  const el = document.getElementById(elId);
+  if(!el || !data) return;
+  el.innerHTML = buildValoMatchesHtml(data, opts);
+}
+
+/* ---------- ДРУЗЬЯ + ПУБЛИЧНЫЙ ПРОФИЛЬ (логика Firestore живёт в модуле ниже, здесь — вся разметка/UI) ---------- */
+function setupFriendsUI(){
+  window.addEventListener('aimauthchanged', (e)=>{
+    const user = e.detail && e.detail.user;
+    const card = document.getElementById('friendsCard');
+    if(user){
+      if(card) card.style.display = 'flex';
+      if(window.aimFriends) window.aimFriends.subscribe(user.uid);
+    } else {
+      if(card) card.style.display = 'none';
+      if(window.aimFriends) window.aimFriends.unsubscribe();
+      document.getElementById('friendsTable').innerHTML = '<div class="friend-empty">Войди через Google, чтобы добавлять друзей.</div>';
+      document.getElementById('friendRequestsWrap').style.display = 'none';
+    }
+  });
+
+  // клик по строке лидерборда — открыть публичный профиль
+  document.getElementById('lbTable').addEventListener('click', (e)=>{
+    const row = e.target.closest('.meta-row[data-uid]');
+    if(row && window.openPublicProfile) window.openPublicProfile(row.getAttribute('data-uid'));
+  });
+  document.getElementById('friendsTable').addEventListener('click', (e)=>{
+    const row = e.target.closest('[data-uid]');
+    if(row && !e.target.closest('button') && window.openPublicProfile) window.openPublicProfile(row.getAttribute('data-uid'));
+  });
+
+  document.getElementById('ppModalClose').addEventListener('click', closePublicProfile);
+  document.getElementById('ppModalBackdrop').addEventListener('click', (e)=>{
+    if(e.target.id === 'ppModalBackdrop') closePublicProfile();
+  });
+}
+function closePublicProfile(){
+  document.getElementById('ppModalBackdrop').classList.remove('open');
+}
+
+/* ---------- FLOATING DECOR ---------- */
+const DECOR_ICONS = [
+  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8zm2.5 13h13v1.5h-13V21z"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="1" fill="currentColor"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></svg>`,
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3l12 18M18 3L6 21"/></svg>`,
+];
+function buildDecorLayer(){
+  const layer = document.getElementById('decorLayer');
+  let html = '';
+  for(let i=0;i<10;i++){
+    const size = 40 + Math.random()*70;
+    const top = Math.random()*100;
+    const left = Math.random()*100;
+    const dur = 10 + Math.random()*14;
+    const delay = Math.random()*-20;
+    const icon = DECOR_ICONS[i % DECOR_ICONS.length];
+    html += `<div class="decor-item" style="width:${size}px; height:${size}px; top:${top}%; left:${left}%; animation-duration:${dur}s; animation-delay:${delay}s;">${icon}</div>`;
+  }
+  layer.innerHTML = html;
+}
+function applyDecorSetting(){
+  const enabled = localStorage.getItem('settings:decor') !== 'off';
+  document.getElementById('decorLayer').classList.toggle('hidden', !enabled);
+  document.getElementById('decorToggle').checked = enabled;
+}
+
+/* ---------- EXPORT / IMPORT ---------- */
+/* ---------- SHARE WORKOUT (tasks + kovaak only, no personal progress) ---------- */
+function exportWorkout(){
+  const payload = {
+    type: 'aimtracker-workout',
+    version: 1,
+    morningTasks: morningTasks,
+    eveningTasks: eveningTasks,
+    loadout: loadout
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aimtracker-workout.json';
+  a.click();
+}
+function importWorkout(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(data.type !== 'aimtracker-workout'){ alert('Это не файл тренировки AimTracker.'); return; }
+      if(!confirm('Заменить твои текущие задания и Kovaak-плейлисты на присланные? Прогресс по дням и заметки не пострадают.')) return;
+      if(Array.isArray(data.morningTasks)) saveList('tasks:morning', data.morningTasks);
+      if(Array.isArray(data.eveningTasks)) saveList('tasks:evening', data.eveningTasks);
+      if(Array.isArray(data.loadout)) saveList('kovaak:list', data.loadout);
+      location.reload();
+    }catch(err){ alert('Не удалось прочитать файл тренировки.'); }
+  };
+  reader.readAsText(file);
+}
+
+function exportData(){
+  const data = {};
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    data[k] = localStorage.getItem(k);
+  }
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aimtracker-backup.json';
+  a.click();
+}
+function importData(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      Object.keys(data).forEach(k=> localStorage.setItem(k, data[k]));
+      location.reload();
+    }catch(err){ alert('Не удалось прочитать файл.'); }
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- ONBOARDING (once per browser) ---------- */
+function initOnboarding(){
+  let seen = false;
+  try{ seen = localStorage.getItem('onboarding:seen') === '1'; }catch(e){}
+  const overlay = document.getElementById('onboardingOverlay');
+  if(seen){ overlay.classList.remove('open'); return; }
+  overlay.classList.add('open');
+
+  function dismiss(){
+    try{ localStorage.setItem('onboarding:seen', '1'); }catch(e){}
+    overlay.classList.remove('open');
+  }
+  document.getElementById('onboardOfflineBtn').addEventListener('click', dismiss);
+  document.getElementById('onboardSigninBtn').addEventListener('click', ()=>{
+    dismiss();
+    switchView('settings');
+    setTimeout(()=>{
+      if(window.aimAuth && window.aimAuth.signIn) window.aimAuth.signIn();
+    }, 200);
+  });
+}
+
+/* ---------- SHARE DAY ---------- */
+function buildShareText(date, state){
+  const m = effectiveTasksFor(state,'morning');
+  const e = effectiveTasksFor(state,'evening');
+  const lines = [];
+  lines.push(`Тренировка · ${fmtDate(date)}`);
+  lines.push('');
+  lines.push('Утро:');
+  m.forEach(t=> lines.push(`${state[t.id] ? '✅' : '⬜'} ${t.name}${t.meta ? ' — '+t.meta : ''}`));
+  lines.push('');
+  lines.push('Вечер:');
+  e.forEach(t=> lines.push(`${state[t.id] ? '✅' : '⬜'} ${t.name}${t.meta ? ' — '+t.meta : ''}`));
+  lines.push('');
+  const done = doneCount(state), total = totalTasksForState(state);
+  lines.push(`Выполнено: ${done}/${total}`);
+  return lines.join('\n');
+}
+async function shareCurrentDay(){
+  const text = buildShareText(selectedDate, selectedState);
+  if(navigator.share){
+    try{ await navigator.share({ title:'Моя тренировка', text }); return; }catch(e){ /* пользователь закрыл шторку — просто выходим */ return; }
+  }
+  try{
+    await navigator.clipboard.writeText(text);
+    alert('Тренировка скопирована в буфер обмена — вставь другу в чат.');
+  }catch(e){
+    prompt('Скопируй текст вручную:', text);
+  }
+}
+function switchView(view){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+view).classList.add('active');
+  document.querySelectorAll('.side-item[data-view]').forEach(b=>b.classList.toggle('active', b.getAttribute('data-view')===view));
+  const primary = getNavOrder().slice(0,4);
+  document.getElementById('moreNavBtn').classList.toggle('active', !primary.includes(view));
+}
+
+/* ---------- NAV ORDER (reorderable sidebar / bottom bar) ---------- */
+const NAV_LABELS = {
+  home:'Главная', profile:'Профиль', leaderboard:'Лидерборд', agents:'Карты', meta:'Мета',
+  videos:'Видео', kovaak:'Kovaak', timer:'Таймер', playlist:'Плейлист', calendar:'Календарь', settings:'Настройки'
+};
+const DEFAULT_NAV_ORDER = ['home','profile','leaderboard','agents','meta','videos','kovaak','timer','playlist','calendar','settings'];
+
+function getNavOrder(){
+  let order;
+  try{ order = JSON.parse(localStorage.getItem('settings:navOrder')||'null'); }catch(e){ order = null; }
+  if(!Array.isArray(order)) order = [...DEFAULT_NAV_ORDER];
+  order = order.filter(id => DEFAULT_NAV_ORDER.includes(id));
+  DEFAULT_NAV_ORDER.forEach(id=>{ if(!order.includes(id)) order.push(id); });
+  return order;
+}
+function saveNavOrder(order){ try{ localStorage.setItem('settings:navOrder', JSON.stringify(order)); }catch(e){} }
+
+function updateMobileOverflow(){
+  const order = getNavOrder();
+  const primary = order.slice(0,4);
+  const overflow = order.slice(4);
+
+  document.querySelectorAll('.side-item[data-view]').forEach(btn=>{
+    const id = btn.getAttribute('data-view');
+    btn.classList.toggle('mobile-overflow', !primary.includes(id));
+  });
+
+  const grid = document.getElementById('moreSheetGrid');
+  grid.innerHTML = overflow.map(id=>{
+    const src = document.querySelector(`.side-item[data-view="${id}"]`);
+    return src ? `<button class="more-sheet-item" data-view="${id}">${src.innerHTML}</button>` : '';
+  }).join('');
+  grid.querySelectorAll('.more-sheet-item').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      switchView(btn.getAttribute('data-view'));
+      closeMoreSheet();
+    });
+  });
+}
+function openMoreSheet(){
+  document.getElementById('moreSheet').classList.add('open');
+  document.getElementById('moreSheetBackdrop').classList.add('open');
+}
+function closeMoreSheet(){
+  document.getElementById('moreSheet').classList.remove('open');
+  document.getElementById('moreSheetBackdrop').classList.remove('open');
+}
+
+/* ---------- SIDEBAR COLLAPSE (desктоп) ---------- */
+function setupSidebarCollapse(){
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  if(!sidebar || !toggle) return;
+  // подписи как title, чтобы в свёрнутом виде по наведению на иконку было понятно, что это за пункт
+  sidebar.querySelectorAll('.side-item span').forEach(span=>{
+    const item = span.closest('.side-item');
+    if(item && !item.title) item.title = span.textContent.trim();
+  });
+  const KEY = 'ui:sidebarCollapsed';
+  let collapsed = false;
+  try{ collapsed = localStorage.getItem(KEY) === '1'; }catch(e){}
+  const apply = ()=>{
+    sidebar.classList.toggle('collapsed', collapsed);
+    toggle.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
+    toggle.title = collapsed ? 'Развернуть меню' : 'Свернуть меню';
+  };
+  apply();
+  toggle.addEventListener('click', ()=>{
+    collapsed = !collapsed;
+    try{ localStorage.setItem(KEY, collapsed ? '1' : '0'); }catch(e){}
+    apply();
+  });
+}
+
+function applyNavOrder(){
+  const order = getNavOrder();
+  const nav = document.querySelector('.sidebar');
+  const spacer = document.querySelector('.sidebar-spacer');
+  order.forEach(id=>{
+    const btn = nav.querySelector(`.side-item[data-view="${id}"]`);
+    if(btn) nav.insertBefore(btn, spacer);
+  });
+  updateMobileOverflow();
+}
+
+function renderNavOrderSettings(){
+  const order = getNavOrder();
+  const el = document.getElementById('navOrderList');
+  el.innerHTML = order.map((id,i) => `
+    <div class="reorder-row">
+      <div class="reorder-label">${NAV_LABELS[id] || id}</div>
+      <div class="reorder-btns">
+        <button class="reorder-btn" data-id="${id}" data-dir="up" ${i===0?'disabled':''}>↑</button>
+        <button class="reorder-btn" data-id="${id}" data-dir="down" ${i===order.length-1?'disabled':''}>↓</button>
+      </div>
+    </div>`).join('');
+
+  el.querySelectorAll('.reorder-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.getAttribute('data-id');
+      const dir = btn.getAttribute('data-dir');
+      const cur = getNavOrder();
+      const idx = cur.indexOf(id);
+      const swapWith = dir==='up' ? idx-1 : idx+1;
+      if(swapWith < 0 || swapWith >= cur.length) return;
+      [cur[idx], cur[swapWith]] = [cur[swapWith], cur[idx]];
+      saveNavOrder(cur);
+      applyNavOrder();
+      renderNavOrderSettings();
+    });
+  });
+}
+
+/* ---------- THEME / SETTINGS ---------- */
+function hexToRgb(hex){
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const num = parseInt(hex,16);
+  return [(num>>16)&255, (num>>8)&255, num&255];
+}
+function applyTheme(t){
+  const root = document.documentElement.style;
+  root.setProperty('--accent', t.accent);
+  root.setProperty('--accent-rgb', hexToRgb(t.accent).join(','));
+  root.setProperty('--panel-rgb', hexToRgb(t.panel).join(','));
+  root.setProperty('--bg-base', t.bg);
+  root.setProperty('--text', t.text);
+  root.setProperty('--panel-alpha', (t.panelAlpha/100).toFixed(2));
+  root.setProperty('--blur-amt', t.blur+'px');
+  const bg = document.getElementById('bodyBg');
+  bg.style.backgroundImage = t.wallpaper ? `url(${t.wallpaper})` : 'none';
+  bg.style.backgroundColor = t.bg;
+}
+function getTheme(){
+  try{ const raw = localStorage.getItem('settings:theme'); if(raw) return JSON.parse(raw); }catch(e){}
+  return null;
+}
+function saveTheme(t){ try{ localStorage.setItem('settings:theme', JSON.stringify(t)); }catch(e){ console.error('theme save error', e); } }
+
+const DEFAULT_THEME = { accent:'#ff4655', panel:'#1a1114', bg:'#0b0709', text:'#f2e9ea', panelAlpha:60, blur:24, wallpaper:'' };
+
+function resizeImageFile(file, maxW=1600, cb){
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    img.onload = ()=>{
+      const scale = Math.min(1, maxW/img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width*scale; canvas.height = img.height*scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      cb(canvas.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function init(){
+  initOnboarding();
+
+  buildPanel(document.getElementById('morningGrid'), 'Утро', morningTasks.length, 'morningList');
+  buildPanel(document.getElementById('eveningGrid'), 'Вечер', eveningTasks.length, 'eveningList');
+
+  document.getElementById('brandHome').addEventListener('click', ()=> switchView('home'));
+  document.getElementById('shareDayBtn').addEventListener('click', shareCurrentDay);
+
+  applyNavOrder();
+  renderNavOrderSettings();
+  setupSidebarCollapse();
+  document.getElementById('brandHome').addEventListener('click', ()=> switchView('home'));
+  document.getElementById('moreNavBtn').addEventListener('click', openMoreSheet);
+  document.getElementById('moreSheetBackdrop').addEventListener('click', closeMoreSheet);
+
+  document.querySelectorAll('.side-item[data-view]').forEach(btn=>{
+    btn.addEventListener('click', ()=> switchView(btn.getAttribute('data-view')));
+  });
+  const lbLink = document.getElementById('profileLbRank');
+  if(lbLink) lbLink.addEventListener('click', ()=> switchView('leaderboard'));
+
+  document.getElementById('prevDay').addEventListener('click', ()=>shiftDay(-1));
+  document.getElementById('nextDay').addEventListener('click', ()=>shiftDay(1));
+  document.getElementById('jumpToday').addEventListener('click', ()=>{ selectedDate = new Date(TODAY); loadSelectedDay(); });
+  document.getElementById('prevYear').addEventListener('click', ()=>shiftYear(-1));
+  document.getElementById('nextYear').addEventListener('click', ()=>shiftYear(1));
+
+  let noteTimeout;
+  document.getElementById('dayNote').addEventListener('input', (e)=>{
+    selectedState._note = e.target.value;
+    clearTimeout(noteTimeout);
+    noteTimeout = setTimeout(async ()=>{
+      const key = todayKey(selectedDate);
+      await setDayState(key, selectedState);
+      yearCache[key] = {...selectedState};
+    }, 500);
+  });
+
+  const meta = await getMeta();
+  const curInput = document.getElementById('currentRankInput');
+  const goalInput = document.getElementById('goalRankInput');
+  curInput.value = meta.current || 'D1 · 400RR';
+  goalInput.value = meta.goal || 'Ascendant';
+  async function saveMeta(){ await setMeta({current: curInput.value, goal: goalInput.value}); }
+  curInput.addEventListener('change', saveMeta);
+  goalInput.addEventListener('change', saveMeta);
+
+  renderLoadout();
+  setupAddKovaak();
+  renderVideoList('videoListRuMovement', videosRuMovement, null);
+  renderVideoList('videoListEnMovement', videosEnMovement, 'EN');
+  renderVideoList('videoListEnTilt', videosEnTilt, 'EN');
+  renderVideoList('videoListAimKovaak', videosAimKovaak, 'EN');
+  renderVideoList('videoListCustom', videosCustom, null);
+  setupAddVideo();
+  renderHeaderStats();
+
+  await loadAgentImages();
+  await loadMapImages();
+  renderMetaTable();
+  setupMetaFilters();
+  renderAgentsPane();
+  setupTimer();
+  setupVolumeControl();
+  renderPlaylist();
+  setupAddSong();
+  setupProfile();
+  setupValoIntegration();
+  setupFriendsUI();
+  renderBackupList();
+  backupNow();
+  buildDecorLayer();
+  applyDecorSetting();
+  document.getElementById('decorToggle').addEventListener('change', e=>{
+    try{ localStorage.setItem('settings:decor', e.target.checked ? 'on' : 'off'); }catch(err){}
+    applyDecorSetting();
+  });
+  document.getElementById('exportBtn').addEventListener('click', exportData);
+  document.getElementById('exportWorkoutBtn').addEventListener('click', exportWorkout);
+  document.getElementById('importWorkoutFile').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(file) importWorkout(file);
+  });
+  document.getElementById('importFile').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(file) importData(file);
+  });
+
+  // theme setup
+  let theme = getTheme() || {...DEFAULT_THEME};
+  applyTheme(theme);
+  document.getElementById('colorAccent').value = theme.accent;
+  document.getElementById('colorText').value = theme.text;
+  document.getElementById('colorPanel').value = theme.panel;
+  document.getElementById('colorBg').value = theme.bg;
+  document.getElementById('panelAlpha').value = theme.panelAlpha;
+  document.getElementById('blurAmt').value = theme.blur;
+  document.getElementById('wallpaperUrl').value = theme.wallpaper && !theme.wallpaper.startsWith('data:') ? theme.wallpaper : '';
+
+  function persistAndApply(){ saveTheme(theme); applyTheme(theme); }
+
+  document.getElementById('colorAccent').addEventListener('input', e=>{ theme.accent=e.target.value; persistAndApply(); });
+  document.getElementById('colorText').addEventListener('input', e=>{ theme.text=e.target.value; persistAndApply(); });
+  document.getElementById('colorPanel').addEventListener('input', e=>{ theme.panel=e.target.value; persistAndApply(); });
+  document.getElementById('colorBg').addEventListener('input', e=>{ theme.bg=e.target.value; persistAndApply(); });
+  document.getElementById('panelAlpha').addEventListener('input', e=>{ theme.panelAlpha=Number(e.target.value); persistAndApply(); });
+  document.getElementById('blurAmt').addEventListener('input', e=>{ theme.blur=Number(e.target.value); persistAndApply(); });
+  document.getElementById('wallpaperUrl').addEventListener('change', e=>{ theme.wallpaper=e.target.value.trim(); persistAndApply(); });
+  document.getElementById('wallpaperFile').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    resizeImageFile(file, 1600, (dataUrl)=>{
+      theme.wallpaper = dataUrl;
+      try{ persistAndApply(); }
+      catch(err){ console.error('wallpaper too large for storage', err); }
+    });
+  });
+  document.getElementById('resetTheme').addEventListener('click', ()=>{
+    theme = {...DEFAULT_THEME};
+    saveTheme(theme); applyTheme(theme);
+    document.getElementById('colorAccent').value = theme.accent;
+    document.getElementById('colorText').value = theme.text;
+    document.getElementById('colorPanel').value = theme.panel;
+    document.getElementById('colorBg').value = theme.bg;
+    document.getElementById('panelAlpha').value = theme.panelAlpha;
+    document.getElementById('blurAmt').value = theme.blur;
+    document.getElementById('wallpaperUrl').value = '';
+  });
+
+  await loadYearCache(calYear);
+  await loadSelectedDay();
+  await renderStreak();
+}
+
+init();
+</script>
+
+<!-- ---------- FIREBASE / GOOGLE AUTH + SYNC + LEADERBOARD ---------- -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import {
+    getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import {
+    getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
+    collection, query, orderBy, limit, where, onSnapshot
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCEz0hmWOuwXQAgeBuDwffC9vjFyAnHKbU",
+    authDomain: "aimnoob.firebaseapp.com",
+    projectId: "aimnoob",
+    storageBucket: "aimnoob.firebasestorage.app",
+    messagingSenderId: "423748955834",
+    appId: "1:423748955834:web:3d178ed72e7d41432cdc83",
+    measurementId: "G-1S7819GM3J"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  window.firebaseApp = app;
+  window.firebaseAuth = auth;
+  window.firebaseDb = db;
+  window.aimAuth = {
+    signIn: () => signInWithPopup(auth, provider).catch(err=>{
+      console.error('Google sign-in error', err);
+      alert('Не удалось войти через Google: ' + (err.code || err.message));
+    }),
+    signOut: () => { stopAutoSync(); return signOut(auth).catch(err=>console.error('Sign-out error', err)); },
+  };
+
+  /* ---------- localStorage <-> Firestore snapshot ---------- */
+  function dumpLocalStorage(){
+    const data = {};
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      data[k] = localStorage.getItem(k);
+    }
+    return data;
+  }
+  function restoreLocalStorage(data){
+    if(!data) return;
+    Object.keys(data).forEach(k=>{ try{ localStorage.setItem(k, data[k]); }catch(e){} });
+  }
+  function currentBestStreak(){
+    return Number(localStorage.getItem('meta:beststreak') || 0);
+  }
+  function currentProfile(){
+    try{ return JSON.parse(localStorage.getItem('profile:data') || '{}'); }catch(e){ return {}; }
+  }
+
+  // компактная сводка по Valorant для публичного профиля (без API-ключа и полного сырого ответа)
+  function currentValoSummary(){
+    try{
+      const raw = JSON.parse(localStorage.getItem('valo:cache') || 'null');
+      if(!raw) return null;
+      const acc = raw.account || {}, mmr = raw.mmr || {}, cur = mmr.current || {}, peak = mmr.peak || {};
+      const matches = (raw.matches || []).slice(0,5).map(m=>{
+        const me = findMeInMatch(m, acc);
+        const teams = m.teams || [];
+        const myTeam = teams.find(t=>t.team_id === me.team_id);
+        const won = myTeam ? !!myTeam.won : null;
+        const stats = me.stats || {};
+        return {
+          won,
+          map: (m.metadata && m.metadata.map && m.metadata.map.name) || '—',
+          agent: (me.agent && me.agent.name) || '—',
+          k: stats.kills ?? null, d: stats.deaths ?? null, a: stats.assists ?? null
+        };
+      });
+      return {
+        riotId: `${acc.name || ''}#${acc.tag || ''}`,
+        rank: (cur.tier && cur.tier.name) || '—',
+        rr: cur.rr ?? null,
+        peak: (peak.tier && peak.tier.name) || '—',
+        updatedAt: raw.fetchedAt || null,
+        matches
+      };
+    }catch(e){ return null; }
+  }
+
+  /* раньше сначала писался большой бэкап-документ 'users' (весь localStorage), и только потом —
+     маленький публичный документ 'leaderboard'. Если бэкап был слишком большим (например, из-за
+     загруженной аватарки/баннера), запись падала с ошибкой ДО того как публичный профиль вообще
+     обновлялся — поэтому у других людей в публичном профиле ничего не появлялось. Теперь пишем
+     публичный документ первым и независимо от бэкапа, чтобы одно не блокировало другое. */
+  async function pushToCloud(user, {silent=false}={}){
+    const profile = currentProfile();
+    let publicOk = false, backupOk = false;
+    try{
+      await setDoc(doc(db,'leaderboard',user.uid), {
+        nick: profile.nick || user.displayName || 'Игрок',
+        avatar: profile.avatar || user.photoURL || '',
+        banner: profile.banner || '',
+        about: profile.about || '',
+        discord: profile.discord || '',
+        twitch: profile.twitch || '',
+        customLabel: profile.customLabel || '',
+        customValue: profile.customValue || '',
+        bestStreak: currentBestStreak(),
+        valo: currentValoSummary(),
+        updatedAt: serverTimestamp()
+      });
+      publicOk = true;
+    }catch(err){
+      console.error('push public profile failed', err);
+      // документ слишком большой (лимит Firestore ~1MB) или другая ошибка записи —
+      // пробуем ещё раз без картинок, чтобы хотя бы ник/статы/валорант дошли до профиля
+      try{
+        await setDoc(doc(db,'leaderboard',user.uid), {
+          nick: profile.nick || user.displayName || 'Игрок',
+          avatar: user.photoURL || '',
+          banner: '',
+          about: profile.about || '',
+          discord: profile.discord || '',
+          twitch: profile.twitch || '',
+          customLabel: profile.customLabel || '',
+          customValue: profile.customValue || '',
+          bestStreak: currentBestStreak(),
+          valo: currentValoSummary(),
+          updatedAt: serverTimestamp()
+        });
+        publicOk = true;
+      }catch(err2){ console.error('push public profile retry failed', err2); }
+    }
+    try{
+      await setDoc(doc(db,'users',user.uid), {
+        data: dumpLocalStorage(),
+        updatedAt: serverTimestamp()
+      });
+      backupOk = true;
+    }catch(err){
+      console.error('push backup failed', err);
+    }
+    if(publicOk && backupOk){
+      setSyncStatus('синхронизировано ' + new Date().toLocaleTimeString('ru-RU'));
+    } else if(publicOk){
+      setSyncStatus('профиль синхронизирован, полный бэкап — нет (слишком большой)');
+    } else {
+      if(!silent) alert('Не удалось сохранить в облако.');
+      setSyncStatus('ошибка синхронизации');
+    }
+  }
+
+  // мост для главного скрипта: любое локальное изменение (через localStorage.setItem) само
+  // подтягивает бэкап в облако, если пользователь вошёл — не только раз в 45 секунд
+  window.aimPushToCloud = function(){
+    if(auth.currentUser) pushToCloud(auth.currentUser, {silent:true});
+  };
+  async function pullFromCloud(user){
+    try{
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if(snap.exists()){
+        restoreLocalStorage(snap.data().data);
+        return true;
+      }
+      return false;
+    }catch(err){
+      console.error('pull from cloud failed', err);
+      alert('Не удалось загрузить из облака: ' + (err.code || err.message));
+      return false;
+    }
+  }
+
+  function setSyncStatus(text){
+    const el = document.getElementById('syncStatus');
+    if(el) el.textContent = text;
+  }
+
+  let autoSyncTimer = null;
+  function startAutoSync(user){
+    stopAutoSync();
+    autoSyncTimer = setInterval(()=> pushToCloud(user, {silent:true}), 45000);
+    document.addEventListener('visibilitychange', onHideSync);
+    window.addEventListener('beforeunload', onHideSync);
+    function onHideSync(){ if(document.visibilityState==='hidden' || true) pushToCloud(user, {silent:true}); }
+    window._aimOnHideSync = onHideSync;
+  }
+  function stopAutoSync(){
+    if(autoSyncTimer){ clearInterval(autoSyncTimer); autoSyncTimer = null; }
+    if(window._aimOnHideSync){
+      document.removeEventListener('visibilitychange', window._aimOnHideSync);
+      window.removeEventListener('beforeunload', window._aimOnHideSync);
+    }
+  }
+
+  async function handleSignedIn(user){
+    const syncCard = document.getElementById('syncCard');
+    if(syncCard) syncCard.style.display = 'flex';
+    setSyncStatus('проверяю облако...');
+    const decidedKey = 'sync:decided:'+user.uid;
+    try{
+      const snap = await getDoc(doc(db,'users',user.uid));
+      if(snap.exists()){
+        let alreadyDecided = false;
+        try{ alreadyDecided = localStorage.getItem(decidedKey) === '1'; }catch(e){}
+        if(!alreadyDecided){
+          const wantsCloud = confirm(
+            'Нашёл сохранённые данные в облаке для этого аккаунта.\n\n' +
+            'ОК — загрузить их сюда (данные этого устройства будут заменены).\n' +
+            'Отмена — оставить данные этого устройства и залить их в облако.'
+          );
+          try{ localStorage.setItem(decidedKey, '1'); }catch(e){}
+          if(wantsCloud){
+            await pullFromCloud(user);
+            alert('Готово! Данные загружены из облака, страница перезагрузится.');
+            location.reload();
+            return;
+          } else {
+            await pushToCloud(user);
+          }
+        } else {
+          await pushToCloud(user, {silent:true});
+        }
+      } else {
+        await pushToCloud(user);
+      }
+    } finally {
+      startAutoSync(user);
+    }
+  }
+
+  function renderAccountUI(user){
+    const signedOut = document.getElementById('accountSignedOut');
+    const signedIn = document.getElementById('accountSignedIn');
+    const lbNotice = document.getElementById('lbSignedOutNotice');
+    if(!signedOut || !signedIn) return;
+    if(user){
+      signedOut.style.display = 'none';
+      signedIn.style.display = 'flex';
+      document.getElementById('accountUserName').textContent = user.displayName || 'Без имени';
+      document.getElementById('accountUserEmail').textContent = user.email || '';
+      const avatarEl = document.getElementById('accountUserAvatar');
+      avatarEl.style.backgroundImage = user.photoURL ? `url(${user.photoURL})` : 'none';
+      if(lbNotice) lbNotice.style.display = 'none';
+
+      try{
+        localStorage.setItem('auth:google', JSON.stringify({
+          uid:user.uid, displayName:user.displayName, email:user.email, photoURL:user.photoURL
+        }));
+      }catch(e){}
+
+      try{
+        const profile = currentProfile();
+        let changed = false;
+        if(!profile.nick && user.displayName){ profile.nick = user.displayName; changed = true; }
+        if(!profile.avatar && user.photoURL){ profile.avatar = user.photoURL; changed = true; }
+        if(changed){
+          localStorage.setItem('profile:data', JSON.stringify(profile));
+          const nickEl = document.getElementById('profileNick');
+          const avatarPreview = document.getElementById('profileAvatar');
+          if(nickEl && !nickEl.value) nickEl.value = profile.nick || '';
+          if(avatarPreview && profile.avatar){
+            avatarPreview.style.backgroundImage = `url(${profile.avatar})`;
+            avatarPreview.textContent = '';
+          }
+        }
+      }catch(e){}
+
+      handleSignedIn(user);
+    } else {
+      signedOut.style.display = 'flex';
+      signedIn.style.display = 'none';
+      const syncCard = document.getElementById('syncCard');
+      if(syncCard) syncCard.style.display = 'none';
+      if(lbNotice) lbNotice.style.display = 'block';
+      stopAutoSync();
+      try{ localStorage.removeItem('auth:google'); }catch(e){}
+    }
+    window.dispatchEvent(new CustomEvent('aimauthchanged', {detail:{user}}));
+  }
+
+  onAuthStateChanged(auth, renderAccountUI);
+
+  document.addEventListener('click', (e)=>{
+    if(e.target.closest('#googleSignInBtn')) window.aimAuth.signIn();
+    if(e.target.closest('#googleSignOutBtn')) window.aimAuth.signOut();
+    if(e.target.closest('#syncPushBtn')){
+      const u = auth.currentUser;
+      if(u){ setSyncStatus('сохраняю...'); pushToCloud(u); }
+    }
+    if(e.target.closest('#syncPullBtn')){
+      const u = auth.currentUser;
+      if(u && confirm('Данные этого устройства будут заменены версией из облака. Продолжить?')){
+        pullFromCloud(u).then(ok=>{ if(ok){ alert('Готово, перезагружаю страницу.'); location.reload(); } });
+      }
+    }
+  });
+
+  /* ---------- LIVE LEADERBOARD (с офлайн-кэшем) ---------- */
+  function renderLbRows(entries, opts){
+    const el = document.getElementById('lbTable');
+    if(!el) return;
+    if(!entries.length){
+      el.innerHTML = '<div class="meta-row"><div class="meta-name">Пока никто не попал в рейтинг — стань первым!</div></div>';
+      return;
+    }
+    const rows = entries.map((d, i)=>{
+      const rank = i+1;
+      const isYou = auth.currentUser && d.uid === auth.currentUser.uid;
+      const rankClass = rank===1 ? 'top1' : rank===2 ? 'top2' : rank===3 ? 'top3' : '';
+      const avatar = d.avatar ? `<img src="${d.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🎯';
+      return `
+        <div class="meta-row lb-clickable${isYou ? ' lb-you' : ''}" data-uid="${d.uid}">
+          <div class="lb-rank ${rankClass}">${rank}</div>
+          <div class="meta-avatar">${avatar}</div>
+          <div class="meta-name">${(d.nick || 'Игрок')}${isYou ? ' <span style="color:var(--accent); font-size:10px;">(ты)</span>' : ''}</div>
+          <div class="meta-wr">${d.bestStreak || 0} дн.</div>
+        </div>`;
+    });
+    if(opts && opts.offline){
+      rows.unshift(`<div class="meta-row"><div class="meta-name" style="color:var(--text-faint); font-size:11px;">📡 офлайн-копия · обновлено ${opts.cachedAt ? new Date(opts.cachedAt).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'}</div></div>`);
+    }
+    el.innerHTML = rows.join('');
+  }
+
+  // мгновенно показываем то, что уже закэшировано локально, ещё до ответа сервера
+  try{
+    const cached = JSON.parse(localStorage.getItem('lb:cache') || 'null');
+    if(cached && Array.isArray(cached.entries)) renderLbRows(cached.entries, {offline:true, cachedAt: cached.cachedAt});
+  }catch(e){}
+
+  const lbQuery = query(collection(db,'leaderboard'), orderBy('bestStreak','desc'), limit(50));
+  onSnapshot(lbQuery, (snapshot)=>{
+    const entries = [];
+    snapshot.forEach(docSnap=>{
+      const d = docSnap.data();
+      entries.push({ uid: docSnap.id, nick: d.nick, bestStreak: d.bestStreak || 0, avatar: d.avatar || null });
+    });
+    renderLbRows(entries, {offline:false});
+    try{ localStorage.setItem('lb:cache', JSON.stringify({entries, cachedAt: Date.now()})); }catch(e){}
+  }, (err)=>{
+    console.error('leaderboard listener error', err);
+    try{
+      const cached = JSON.parse(localStorage.getItem('lb:cache') || 'null');
+      if(cached && Array.isArray(cached.entries)){
+        renderLbRows(cached.entries, {offline:true, cachedAt: cached.cachedAt});
+        return;
+      }
+    }catch(e){}
+    const el = document.getElementById('lbTable');
+    if(el) el.innerHTML = '<div class="meta-row"><div class="meta-name">Нет соединения и нет сохранённой копии лидерборда.</div></div>';
+  });
+
+  if(!auth.currentUser){
+    const lbNotice = document.getElementById('lbSignedOutNotice');
+    if(lbNotice) lbNotice.style.display = 'block';
+  }
+
+  /* ---------- ДРУЗЬЯ ---------- */
+  // одна запись в 'friendEdges' на пару пользователей, id = отсортированные uid через "_"
+  function edgeIdFor(a, b){ return [a,b].sort().join('_'); }
+
+  let friendsUnsub = null;
+  const publicCache = new Map(); // uid -> leaderboard doc data, чтобы не дёргать сеть повторно
+
+  async function fetchPublicProfile(uid, {fresh=false}={}){
+    if(!fresh && publicCache.has(uid)) return publicCache.get(uid);
+    try{
+      const snap = await getDoc(doc(db,'leaderboard',uid));
+      const data = snap.exists() ? snap.data() : null;
+      publicCache.set(uid, data);
+      return data;
+    }catch(e){ console.error('fetchPublicProfile failed', e); return null; }
+  }
+
+  function renderFriendRow(uid, d, {mode}){
+    const avatar = d && d.avatar ? `<img src="${d.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🎯';
+    const nick = (d && d.nick) || 'Игрок';
+    if(mode === 'incoming'){
+      return `<div class="friend-row">
+        <div class="meta-avatar" data-uid="${uid}">${avatar}</div>
+        <div class="friend-row-name" data-uid="${uid}">${nick}<div class="friend-row-sub">хочет добавить в друзья</div></div>
+        <button class="friend-mini-btn accept" data-accept="${uid}">Принять</button>
+        <button class="friend-mini-btn decline" data-decline="${uid}">Отклонить</button>
+      </div>`;
+    }
+    return `<div class="friend-row" data-uid="${uid}">
+      <div class="meta-avatar">${avatar}</div>
+      <div class="friend-row-name">${nick}<div class="friend-row-sub">${(d && d.bestStreak) || 0} дн. лучшая серия</div></div>
+    </div>`;
+  }
+
+  async function renderFriendsUI(myUid, edges){
+    const incoming = edges.filter(e => e.status==='pending' && e.requestedBy !== myUid);
+    const accepted = edges.filter(e => e.status==='accepted');
+
+    const reqWrap = document.getElementById('friendRequestsWrap');
+    const reqTable = document.getElementById('friendRequestsTable');
+    const friendsTable = document.getElementById('friendsTable');
+
+    if(incoming.length){
+      reqWrap.style.display = 'block';
+      const rows = await Promise.all(incoming.map(async e=>{
+        const otherUid = e.users.find(u=>u!==myUid);
+        const d = await fetchPublicProfile(otherUid);
+        return renderFriendRow(otherUid, d, {mode:'incoming'});
+      }));
+      reqTable.innerHTML = rows.join('');
+    } else {
+      reqWrap.style.display = 'none';
+      reqTable.innerHTML = '';
+    }
+
+    if(accepted.length){
+      const rows = await Promise.all(accepted.map(async e=>{
+        const otherUid = e.users.find(u=>u!==myUid);
+        const d = await fetchPublicProfile(otherUid);
+        return renderFriendRow(otherUid, d, {mode:'friend'});
+      }));
+      friendsTable.innerHTML = rows.join('');
+    } else {
+      friendsTable.innerHTML = '<div class="friend-empty">Пока никого — добавляй друзей из лидерборда, открыв чей-то профиль.</div>';
+    }
+  }
+
+  document.addEventListener('click', (e)=>{
+    const acceptUid = e.target.getAttribute && e.target.getAttribute('data-accept');
+    const declineUid = e.target.getAttribute && e.target.getAttribute('data-decline');
+    const me = auth.currentUser;
+    if(acceptUid && me){
+      setDoc(doc(db,'friendEdges', edgeIdFor(me.uid, acceptUid)), {status:'accepted', updatedAt: serverTimestamp()}, {merge:true})
+        .catch(err=>{ console.error(err); alert('Не удалось принять заявку.'); });
+    }
+    if(declineUid && me){
+      deleteDoc(doc(db,'friendEdges', edgeIdFor(me.uid, declineUid)))
+        .catch(err=> console.error(err));
+    }
+  });
+
+  window.aimFriends = {
+    subscribe(uid){
+      this.unsubscribe();
+      const q = query(collection(db,'friendEdges'), where('users','array-contains', uid));
+      friendsUnsub = onSnapshot(q, (snapshot)=>{
+        const edges = [];
+        snapshot.forEach(s=> edges.push({ id:s.id, ...s.data() }));
+        renderFriendsUI(uid, edges);
+      }, err=> console.error('friends listener error', err));
+    },
+    unsubscribe(){
+      if(friendsUnsub){ friendsUnsub(); friendsUnsub = null; }
+    },
+    async sendRequest(toUid){
+      const me = auth.currentUser;
+      if(!me){ alert('Войди через Google, чтобы добавлять друзей.'); return; }
+      if(me.uid === toUid) return;
+      try{
+        await setDoc(doc(db,'friendEdges', edgeIdFor(me.uid, toUid)), {
+          users: [me.uid, toUid].sort(), status:'pending', requestedBy: me.uid, updatedAt: serverTimestamp()
+        }, {merge:true});
+      }catch(err){ console.error(err); alert('Не удалось отправить заявку в друзья.'); }
+    },
+    async removeFriend(otherUid){
+      const me = auth.currentUser;
+      if(!me) return;
+      try{ await deleteDoc(doc(db,'friendEdges', edgeIdFor(me.uid, otherUid))); }
+      catch(err){ console.error(err); }
+    },
+    async getEdgeStatus(otherUid){
+      const me = auth.currentUser;
+      if(!me) return null;
+      try{
+        const snap = await getDoc(doc(db,'friendEdges', edgeIdFor(me.uid, otherUid)));
+        return snap.exists() ? snap.data() : null;
+      }catch(e){ return null; }
+    }
+  };
+
+  /* ---------- ПУБЛИЧНЫЙ ПРОФИЛЬ (модалка при клике по лидерборду/друзьям) ---------- */
+  function ppRenderCondensedMatches(matches){
+    if(!matches || !matches.length) return '<div class="video-sub">Нет данных о последних матчах.</div>';
+    return matches.map(m=>{
+      const mapImg = m.map && m.map !== '—' ? mapImgUrl({name:m.map}) : null;
+      return `
+      <div class="valo-match-row ${m.won===true?'win':m.won===false?'loss':''}">
+        <div class="valo-match-result">${m.won===true?'W':m.won===false?'L':'-'}</div>
+        <div class="valo-match-mapimg"${mapImg ? ` style="background-image:url('${mapImg}');"` : ''}></div>
+        <div class="valo-match-map">${m.map}</div>
+        <div class="valo-match-agent">${m.agent}</div>
+        <div class="valo-match-score">${m.k ?? '-'}/${m.d ?? '-'}/${m.a ?? '-'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  window.openPublicProfile = async function(uid){
+    const backdrop = document.getElementById('ppModalBackdrop');
+    const nameEl = document.getElementById('ppModalName');
+    const metaEl = document.getElementById('ppModalMeta');
+    const avatarEl = document.getElementById('ppModalAvatar');
+    const bannerEl = document.getElementById('ppModalBanner');
+    const actionsEl = document.getElementById('ppModalActions');
+    const aboutEl = document.getElementById('ppModalAbout');
+    const linksEl = document.getElementById('ppModalLinks');
+    const valoWrap = document.getElementById('ppModalValoWrap');
+    const valoStats = document.getElementById('ppModalValoStats');
+    const valoMatches = document.getElementById('ppModalValoMatches');
+
+    nameEl.textContent = 'Загрузка...';
+    metaEl.textContent = '';
+    avatarEl.style.backgroundImage = ''; avatarEl.textContent = '🎯';
+    bannerEl.style.backgroundImage = '';
+    actionsEl.innerHTML = ''; aboutEl.style.display = 'none'; linksEl.innerHTML = '';
+    valoWrap.style.display = 'none';
+    backdrop.classList.add('open');
+
+    const d = await fetchPublicProfile(uid, {fresh:true});
+    if(!d){ nameEl.textContent = 'Профиль не найден'; metaEl.textContent = 'Возможно, он ещё не синхронизировался в облако.'; return; }
+
+    nameEl.textContent = d.nick || 'Игрок';
+    metaEl.textContent = `лучшая серия — ${d.bestStreak || 0} дн.`;
+    if(d.avatar){ avatarEl.style.backgroundImage = `url(${d.avatar})`; avatarEl.textContent=''; }
+    if(d.banner){ bannerEl.style.backgroundImage = `url(${d.banner})`; }
+
+    if(d.about){ aboutEl.style.display = 'block'; aboutEl.textContent = d.about; }
+
+    const links = [];
+    if(d.discord) links.push(`<div class="pp-modal-link">Discord: ${d.discord}</div>`);
+    if(d.twitch){
+      const handle = d.twitch.replace(/^https?:\/\/(www\.)?twitch\.tv\//i,'');
+      links.push(`<a class="pp-modal-link twitch" href="https://twitch.tv/${encodeURIComponent(handle)}" target="_blank" rel="noopener">🟣 Twitch: ${handle}</a>`);
+    }
+    if(d.customLabel && d.customValue) links.push(`<div class="pp-modal-link">${d.customLabel}: ${d.customValue}</div>`);
+    linksEl.innerHTML = links.join('');
+
+    // валорант-сводка
+    if(d.valo){
+      valoWrap.style.display = 'block';
+      valoStats.innerHTML = `
+        <div class="stat"><div class="stat-label">Riot ID</div><div class="stat-value" style="font-size:13px;">${d.valo.riotId || '—'}</div></div>
+        <div class="stat"><div class="stat-label">Ранг</div><div class="stat-value accent" style="font-size:14px;">${d.valo.rank || '—'}${d.valo.rr!=null ? ' · '+d.valo.rr+' RR' : ''}</div></div>
+        <div class="stat"><div class="stat-label">Пик ранга</div><div class="stat-value" style="font-size:13px;">${d.valo.peak || '—'}</div></div>
+      `;
+      valoMatches.innerHTML = ppRenderCondensedMatches(d.valo.matches);
+    }
+
+    // кнопка действия в зависимости от статуса дружбы
+    const me = auth.currentUser;
+    if(!me){
+      actionsEl.innerHTML = `<button class="friend-mini-btn" disabled>Войди, чтобы добавить в друзья</button>`;
+      return;
+    }
+    if(me.uid === uid){
+      actionsEl.innerHTML = `<span class="friend-row-sub">Это ты</span>`;
+      return;
+    }
+    actionsEl.innerHTML = `<button class="friend-mini-btn" disabled>проверяю...</button>`;
+    const edge = await window.aimFriends.getEdgeStatus(uid);
+    if(!edge){
+      actionsEl.innerHTML = `<button class="friend-mini-btn" id="ppAddFriendBtn">+ Добавить в друзья</button>`;
+      document.getElementById('ppAddFriendBtn').addEventListener('click', async ()=>{
+        await window.aimFriends.sendRequest(uid);
+        window.openPublicProfile(uid);
+      });
+    } else if(edge.status === 'accepted'){
+      actionsEl.innerHTML = `<span class="friend-row-sub" style="color:#5fd88a;">В друзьях ✓</span> <button class="friend-mini-btn decline" id="ppRemoveFriendBtn">Удалить</button>`;
+      document.getElementById('ppRemoveFriendBtn').addEventListener('click', async ()=>{
+        if(confirm('Удалить из друзей?')){ await window.aimFriends.removeFriend(uid); window.openPublicProfile(uid); }
+      });
+    } else if(edge.requestedBy === me.uid){
+      actionsEl.innerHTML = `<button class="friend-mini-btn" disabled>Заявка отправлена</button>`;
+    } else {
+      actionsEl.innerHTML = `
+        <button class="friend-mini-btn accept" id="ppAcceptBtn">Принять заявку</button>
+        <button class="friend-mini-btn decline" id="ppDeclineBtn">Отклонить</button>`;
+      document.getElementById('ppAcceptBtn').addEventListener('click', async ()=>{
+        await setDoc(doc(db,'friendEdges', edgeIdFor(me.uid, uid)), {status:'accepted', updatedAt: serverTimestamp()}, {merge:true});
+        window.openPublicProfile(uid);
+      });
+      document.getElementById('ppDeclineBtn').addEventListener('click', async ()=>{
+        await deleteDoc(doc(db,'friendEdges', edgeIdFor(me.uid, uid)));
+        window.openPublicProfile(uid);
+      });
+    }
+  };
+</script>
+</body>
+</html>
