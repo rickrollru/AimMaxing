@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AimMaxing</title>
+<title>AimTracker</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap');
 
@@ -86,6 +86,8 @@
     color:var(--text); padding:6px 10px 20px 10px;
     display:flex; align-items:center; gap:10px;
   }
+  .sidebar-brand{ cursor:pointer; transition:opacity .15s ease; }
+  .sidebar-brand:hover{ opacity:0.8; }
   .sidebar-brand .dot{ width:9px; height:9px; border-radius:50%; background:var(--accent); animation:pulseGlow 2.2s ease-in-out infinite; }
   .side-item{
     display:flex; align-items:center; gap:12px;
@@ -108,7 +110,42 @@
     padding:10px 10px 0 10px; border-top:1px solid var(--border); margin-top:6px;
   }
 
-  /* ---------- MOBILE: bottom tab bar (4 primary + "more" sheet) ---------- */
+  /* ---------- ONBOARDING ---------- */
+  .onboarding-overlay{
+    position:fixed; inset:0; z-index:200;
+    background:rgba(6,4,5,0.72); backdrop-filter:blur(6px);
+    display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .onboarding-overlay.open{ display:flex; animation:softFadeIn .3s ease; }
+  .onboarding-card{
+    max-width:440px; width:100%; text-align:center;
+    background:rgba(var(--panel-rgb), 0.92); backdrop-filter:blur(20px);
+    border:1px solid var(--border); border-radius:22px;
+    padding:38px 32px 32px; box-shadow:0 20px 60px rgba(0,0,0,0.5);
+  }
+  .onboarding-dot{
+    width:14px; height:14px; border-radius:50%; background:var(--accent); margin:0 auto 18px;
+    box-shadow:0 0 24px rgba(var(--accent-rgb),0.7); animation:pulseGlow 2.2s ease-in-out infinite;
+  }
+  .onboarding-title{
+    font-family:'Sora', sans-serif; font-weight:800; font-size:30px; letter-spacing:-0.5px;
+    color:var(--text); margin:0 0 14px 0;
+  }
+  .onboarding-pitch{
+    font-size:13.5px; line-height:1.55; color:var(--text-dim); margin:0 0 28px 0;
+  }
+  .onboarding-actions{ display:flex; flex-direction:column; gap:10px; }
+  .onboarding-btn{
+    display:flex; flex-direction:column; align-items:center; gap:3px;
+    border-radius:14px; padding:14px 18px; cursor:pointer; font-family:'Inter', sans-serif;
+    font-size:14.5px; font-weight:600; border:1px solid var(--border); transition:all .2s ease;
+  }
+  .onboarding-btn span{ font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:400; color:var(--text-faint); }
+  .onboarding-btn.secondary{ background:rgba(255,255,255,0.03); color:var(--text); }
+  .onboarding-btn.secondary:hover{ border-color:var(--text-dim); }
+  .onboarding-btn.primary{ background:var(--accent); color:#11111b; border-color:var(--accent); }
+  .onboarding-btn.primary:hover{ filter:brightness(1.08); transform:translateY(-1px); }
+  .onboarding-btn.primary span{ color:rgba(17,17,27,0.65); }
   .more-trigger{ display:none; }
   @media (max-width:760px){
     .shell{ flex-direction:column; }
@@ -556,6 +593,15 @@
     padding:9px; cursor:pointer; text-transform:uppercase; transition:all .2s ease;
   }
   .add-inline-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .day-override-notice{
+    padding:8px 18px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--accent);
+    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  }
+  .link-btn{
+    background:none; border:none; color:var(--text-faint); text-decoration:underline;
+    cursor:pointer; font-family:inherit; font-size:inherit; padding:0;
+  }
+  .link-btn:hover{ color:var(--accent); }
   .add-form{ display:flex; flex-direction:column; gap:8px; }
   .add-form input{
     background:rgba(0,0,0,0.3); border:1px solid var(--border); border-radius:8px; color:var(--text);
@@ -633,6 +679,77 @@
   .lb-rank.top2{ background:rgba(200,200,200,0.14); border-color:#c8c8c8; color:#dcdcdc; }
   .lb-rank.top3{ background:rgba(224,161,94,0.16); border-color:#e0a15e; color:#e0a15e; }
   .meta-row.lb-you{ background:rgba(var(--accent-rgb),0.08); box-shadow:inset 2px 0 0 var(--accent); }
+  .meta-row.lb-clickable{ cursor:pointer; }
+  .meta-row.lb-clickable:hover{ background:rgba(var(--accent-rgb),0.06); }
+
+  /* ---------- HOME WIDGET (desktop side column) ---------- */
+  @media (min-width:1180px){
+    #view-home .wrap{ max-width:1320px; display:grid; grid-template-columns:900px minmax(260px,1fr); gap:24px; align-items:start; }
+    #view-home .wrap > *:not(#homeWidgetCol){ grid-column:1; }
+    #homeWidgetCol{ grid-column:2; grid-row:1 / span 20; position:sticky; top:24px; display:flex; flex-direction:column; gap:16px; }
+  }
+  #homeWidgetCol{ display:none; }
+  @media (min-width:1180px){ #homeWidgetCol{ display:flex; } }
+  .home-widget{
+    background:rgba(var(--panel-rgb), var(--panel-alpha)); backdrop-filter:blur(14px);
+    border:1px solid var(--border); border-radius:16px; padding:16px;
+  }
+  .home-widget-title{ font-family:'Sora',sans-serif; font-weight:700; font-size:13.5px; margin-bottom:2px; }
+  .home-widget-sub{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin-bottom:12px; }
+  .home-widget-empty{ font-size:12px; color:var(--text-dim); line-height:1.5; }
+  .home-widget-empty a{ color:var(--accent); cursor:pointer; }
+
+  .valo-match-row{ display:flex; align-items:center; gap:10px; padding:8px 4px; border-bottom:1px solid var(--border); font-size:12px; }
+  .valo-match-row:last-child{ border-bottom:none; }
+  .valo-match-result{ width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11px; background:rgba(255,255,255,0.06); flex-shrink:0; }
+  .valo-match-row.win .valo-match-result{ background:rgba(80,200,120,0.18); color:#5fd88a; }
+  .valo-match-row.loss .valo-match-result{ background:rgba(255,70,85,0.18); color:var(--accent); }
+  .valo-match-map{ flex:1; color:var(--text-dim); }
+  .valo-match-agent{ color:var(--text-faint); font-family:'IBM Plex Mono',monospace; font-size:11px; }
+  .valo-match-score{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); width:52px; text-align:right; flex-shrink:0; }
+
+  /* ---------- FRIENDS ---------- */
+  .friend-row{ display:flex; align-items:center; gap:10px; padding:10px 4px; border-bottom:1px solid var(--border); }
+  .friend-row:last-child{ border-bottom:none; }
+  .friend-row .meta-avatar{ cursor:pointer; }
+  .friend-row-name{ flex:1; font-size:13px; font-weight:500; cursor:pointer; }
+  .friend-row-sub{ font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-faint); }
+  .friend-mini-btn{
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; padding:6px 10px; border-radius:8px;
+    border:1px solid var(--border); background:rgba(255,255,255,0.04); color:var(--text); cursor:pointer;
+  }
+  .friend-mini-btn:hover{ border-color:var(--accent); color:var(--accent); }
+  .friend-mini-btn.accept{ background:rgba(80,200,120,0.14); border-color:rgba(80,200,120,0.4); color:#5fd88a; }
+  .friend-mini-btn.decline{ background:rgba(255,70,85,0.1); border-color:var(--border); }
+  .friend-empty{ font-size:12px; color:var(--text-faint); padding:6px 4px; }
+
+  /* ---------- PUBLIC PROFILE MODAL ---------- */
+  .pp-modal-backdrop{
+    position:fixed; inset:0; background:rgba(6,4,5,0.72); backdrop-filter:blur(6px);
+    display:none; align-items:flex-start; justify-content:center; z-index:500; padding:40px 16px; overflow-y:auto;
+  }
+  .pp-modal-backdrop.open{ display:flex; }
+  .pp-modal{
+    background:var(--bg-base); border:1px solid var(--border); border-radius:18px; max-width:520px; width:100%;
+    animation: popIn .2s ease; overflow:hidden;
+  }
+  .pp-modal-banner{ height:110px; background:linear-gradient(135deg, rgba(var(--accent-rgb),0.25), rgba(var(--accent-rgb),0.05)); background-size:cover; background-position:center; position:relative; }
+  .pp-modal-close{
+    position:absolute; top:12px; right:12px; width:30px; height:30px; border-radius:50%;
+    background:rgba(0,0,0,0.45); border:1px solid rgba(255,255,255,0.15); color:#fff; cursor:pointer; font-size:16px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .pp-modal-body{ padding:0 22px 22px; margin-top:-38px; }
+  .pp-modal-avatar{
+    width:76px; height:76px; border-radius:16px; background:var(--bg-base) center/cover; border:3px solid var(--bg-base);
+    display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 4px 16px rgba(0,0,0,0.4);
+  }
+  .pp-modal-name{ font-family:'Sora',sans-serif; font-weight:700; font-size:19px; margin-top:10px; }
+  .pp-modal-actions{ display:flex; gap:8px; margin:14px 0; flex-wrap:wrap; }
+  .pp-modal-about{ font-size:13px; color:var(--text-dim); line-height:1.5; margin-bottom:14px; }
+  .pp-modal-links{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+  .pp-modal-link{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-dim); background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:6px 10px; }
+  .pp-modal-link.twitch{ color:#a97bff; border-color:rgba(169,123,255,0.35); }
   .meta-legend{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--text-faint); margin:10px 2px 0; }
 
   .map-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px,1fr)); gap:12px; }
@@ -696,6 +813,19 @@
   .timer-today{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-faint); margin-top:16px; }
   .session-log{ margin-top:18px; }
   .session-row{ display:flex; justify-content:space-between; font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--text-dim); padding:8px 4px; border-bottom:1px solid var(--border); }
+  .valo-match-row{
+    display:flex; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid var(--border);
+    font-size:12.5px; border-radius:8px;
+  }
+  .valo-match-row:last-child{ border-bottom:none; }
+  .valo-match-row.win{ background:rgba(143,214,160,0.06); }
+  .valo-match-row.loss{ background:rgba(224,108,117,0.06); }
+  .valo-match-result{ font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:11px; width:26px; flex-shrink:0; }
+  .valo-match-row.win .valo-match-result{ color:#8fd6a0; }
+  .valo-match-row.loss .valo-match-result{ color:#e06c75; }
+  .valo-match-map{ flex:1; color:var(--text); }
+  .valo-match-agent{ color:var(--text-faint); font-family:'IBM Plex Mono', monospace; font-size:11px; width:80px; flex-shrink:0; }
+  .valo-match-score{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--text-dim); width:60px; text-align:right; flex-shrink:0; }
   .session-row:last-child{ border-bottom:none; }
   .clear-sessions-btn{
     font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:1px; text-transform:uppercase;
@@ -743,11 +873,33 @@
 <div class="body-bg" id="bodyBg"></div>
 <div class="decor-layer" id="decorLayer"></div>
 
+<div class="onboarding-overlay" id="onboardingOverlay">
+  <div class="onboarding-card">
+    <div class="onboarding-dot"></div>
+    <h1 class="onboarding-title">AimTracker</h1>
+    <p class="onboarding-pitch">
+      Трекер тренировок для Valorant: чек-листы на утро и вечер, Kovaak-плейлисты,
+      гайды по картам и агентам, мета с винрейтом/пикрейтом, таймер сессий и календарь прогресса —
+      всё в одном месте, чтобы реально дойти до цели.
+    </p>
+    <div class="onboarding-actions">
+      <button class="onboarding-btn secondary" id="onboardOfflineBtn">
+        Продолжить офлайн
+        <span>без аккаунта, данные хранятся только в этом браузере</span>
+      </button>
+      <button class="onboarding-btn primary" id="onboardSigninBtn">
+        Войти в аккаунт
+        <span>синхронизация между устройствами, лидерборд</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="shell">
   <nav class="sidebar">
-    <div class="sidebar-brand">
+    <div class="sidebar-brand" id="brandHome">
       <svg class="crown" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8zm2.5 13h13v1.5h-13V21z"/></svg>
-      <span class="brand-text">AimMaxing</span>
+      <span class="brand-text">AimTracker</span>
     </div>
 
     <button class="side-item active" data-view="home">
@@ -797,7 +949,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.34 1.87l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.7 1.7 0 00-1.87-.34 1.7 1.7 0 00-1 1.56V21a2 2 0 11-4 0v-.09a1.7 1.7 0 00-1-1.55 1.7 1.7 0 00-1.87.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.7 1.7 0 004.6 15a1.7 1.7 0 00-1.56-1H3a2 2 0 110-4h.09A1.7 1.7 0 004.6 9a1.7 1.7 0 00-.33-1.87l-.06-.06a2 2 0 112.83-2.83l.06.06A1.7 1.7 0 009 4.6a1.7 1.7 0 001-1.56V3a2 2 0 114 0v.09a1.7 1.7 0 001 1.56 1.7 1.7 0 001.87-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.7 1.7 0 0019.4 9a1.7 1.7 0 001.56 1H21a2 2 0 110 4h-.09a1.7 1.7 0 00-1.51 1z"/></svg>
       <span>Настройки</span>
     </button>
-    <div class="sidebar-foot">AimMaxing · твой трекер прогресса</div>
+    <div class="sidebar-foot">AimTracker · твой трекер прогресса</div>
 
     <button class="side-item more-trigger" id="moreNavBtn">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.6" fill="currentColor" stroke="none"/></svg>
@@ -812,13 +964,35 @@
     <div class="more-sheet-grid" id="moreSheetGrid"></div>
   </div>
 
+  <div class="pp-modal-backdrop" id="ppModalBackdrop">
+    <div class="pp-modal" id="ppModal">
+      <div class="pp-modal-banner" id="ppModalBanner">
+        <button class="pp-modal-close" id="ppModalClose">✕</button>
+      </div>
+      <div class="pp-modal-body" id="ppModalBody">
+        <div class="pp-modal-avatar" id="ppModalAvatar">🎯</div>
+        <div class="pp-modal-name" id="ppModalName">—</div>
+        <div class="video-sub" id="ppModalMeta">—</div>
+        <div class="pp-modal-actions" id="ppModalActions"></div>
+        <div class="pp-modal-about" id="ppModalAbout" style="display:none;"></div>
+        <div class="pp-modal-links" id="ppModalLinks"></div>
+        <div id="ppModalValoWrap" style="display:none;">
+          <div class="section-label" style="margin-top:6px; margin-bottom:8px;">Valorant</div>
+          <div class="stats-row" id="ppModalValoStats" style="margin-bottom:10px;"></div>
+          <div class="section-label" style="margin-bottom:8px;">Последние матчи</div>
+          <div id="ppModalValoMatches"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <main class="content">
 
     <section id="view-home" class="view active">
       <div class="wrap">
         <div class="statusbar">
           <div class="eyebrow">‖ личный трекер</div>
-          <h1>AimMaxing</h1>
+          <h1>AimTracker</h1>
           <div class="stats-row">
             <div class="stat">
               <div class="stat-label">Текущий ранг</div>
@@ -844,6 +1018,7 @@
           <div class="day-nav-date" id="dayNavDate">—</div>
           <button class="nav-btn" id="nextDay">›</button>
           <button class="today-btn hidden" id="jumpToday">Сегодня</button>
+          <button class="today-btn" id="shareDayBtn">Поделиться</button>
         </div>
         <div class="duty-grid" id="morningGrid"></div>
 
@@ -855,6 +1030,19 @@
           <textarea class="day-note" id="dayNote" placeholder="Что чувствуешь по поводу этого дня — эмоции, мысли, что зашло, что нет..."></textarea>
         </div>
         <footer>отмечай честно — статистика только для тебя</footer>
+
+        <div id="homeWidgetCol">
+          <div class="home-widget" id="homeWidgetValo">
+            <div class="home-widget-title">Последние матчи</div>
+            <div class="home-widget-sub">Valorant · competitive</div>
+            <div id="homeWidgetValoBody"><div class="home-widget-empty">Привяжи Valorant в <a data-go-settings-valo="1">настройках</a>, чтобы видеть последние матчи здесь.</div></div>
+          </div>
+          <div class="home-widget" id="homeWidgetFriends">
+            <div class="home-widget-title">Друзья — лучшие серии</div>
+            <div class="home-widget-sub">топ по твоему списку друзей</div>
+            <div id="homeWidgetFriendsBody"><div class="home-widget-empty">Добавь друзей на вкладке «Профиль» — их серии появятся здесь.</div></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -868,7 +1056,7 @@
               <div class="account-sub">Вход через Google — нужен для будущего общего рейтинга по сериям.</div>
             </div>
             <button class="gsi-btn" id="googleSignInBtn">
-              <svg viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.36-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+              <svg viewBox="0 0 48 48" fill="currentColor" style="color:var(--accent);"><path d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.9-2.26 5.36-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/><path d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
               Войти через Google
             </button>
           </div>
@@ -917,12 +1105,85 @@
               <div>
                 <div class="profile-field-label">Discord</div>
                 <input class="profile-input" id="profileDiscord" placeholder="username#0000">
+                <div class="profile-field-label" style="margin-top:14px;">Twitch</div>
+                <input class="profile-input" id="profileTwitch" placeholder="twitch.tv/твой_канал">
                 <div class="profile-field-label" style="margin-top:14px;">Дата начала трекинга</div>
                 <input class="profile-input" id="profileStartDate" type="date">
               </div>
             </div>
+            <div class="profile-grid" style="margin-top:0;">
+              <div>
+                <div class="profile-field-label">Своё поле — название</div>
+                <input class="profile-input" id="profileCustomLabel" placeholder="например: YouTube, команда, сетап...">
+              </div>
+              <div>
+                <div class="profile-field-label">Своё поле — значение</div>
+                <input class="profile-input" id="profileCustomValue" placeholder="то, что хочешь показать в профиле">
+              </div>
+            </div>
           </div>
         </div>
+
+        <div class="profile-card" id="friendsCard" style="display:none;">
+          <div class="profile-body" style="padding-top:22px;">
+            <div class="eyebrow">‖ друзья</div>
+            <h1 style="font-size:18px; margin:4px 0 14px;">Друзья</h1>
+
+            <div id="friendRequestsWrap" style="display:none;">
+              <div class="section-label" style="margin-top:0; margin-bottom:6px;">Заявки в друзья</div>
+              <div class="meta-table" id="friendRequestsTable"></div>
+            </div>
+
+            <div class="section-label" style="margin-top:18px; margin-bottom:6px;">Твои друзья</div>
+            <div class="meta-table" id="friendsTable"><div class="friend-empty">Пока никого — добавляй друзей из лидерборда, открыв чей-то профиль.</div></div>
+          </div>
+        </div>
+        <div class="account-card" id="valoLinkPrompt" style="display:none;">
+          <div class="account-signed-out" style="width:100%;">
+            <div class="account-copy">
+              <div class="eyebrow">‖ valorant</div>
+              <div class="account-title">Привяжи Valorant профиль</div>
+              <div class="account-sub">Ранг, RR и последние матчи прямо здесь, в профиле.</div>
+            </div>
+            <button class="file-btn" id="valoLinkBtn" style="cursor:pointer;">Привязать →</button>
+          </div>
+        </div>
+
+        <div class="profile-card" id="valoStatsCard" style="display:none;">
+          <div class="profile-body" style="padding-top:22px;">
+            <div class="profile-avatar-wrap" style="margin-top:0;">
+              <div class="profile-avatar" id="valoCardArt" style="border-radius:14px;">🎯</div>
+              <div class="profile-name-row">
+                <div style="font-family:'Sora',sans-serif; font-weight:700; font-size:18px;" id="valoNickDisplay">—</div>
+                <div class="video-sub" id="valoLevelDisplay">—</div>
+              </div>
+              <div style="margin-left:auto; display:flex; gap:8px; align-items:center;">
+                <button class="file-btn" id="valoRefreshBtn" style="cursor:pointer;">Обновить</button>
+              </div>
+            </div>
+            <div class="stats-row" style="margin-top:18px;">
+              <div class="stat">
+                <div class="stat-label">Ранг</div>
+                <div class="stat-value accent" id="valoRankDisplay" style="font-size:16px;">—</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">RR</div>
+                <div class="stat-value" id="valoRrDisplay">—</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Пик ранга</div>
+                <div class="stat-value" id="valoPeakDisplay" style="font-size:14px;">—</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Обновлено</div>
+                <div class="stat-value" id="valoUpdatedDisplay" style="font-size:12px; color:var(--text-faint);">—</div>
+              </div>
+            </div>
+            <div class="section-label" style="margin-top:18px; margin-bottom:8px;">Последние матчи</div>
+            <div id="valoMatchList"></div>
+          </div>
+        </div>
+
         <div class="statusbar">
           <div class="eyebrow">‖ прогресс</div>
           <h1>Твоя серия</h1>
@@ -992,6 +1253,9 @@
     <section id="view-meta" class="view">
       <div class="wrap">
         <div class="section-label" style="margin-top:0;">Мета — винрейт и пикрейт агентов</div>
+        <div class="video-sub" style="margin:-6px 0 12px;">
+          Это статичный снепшот тир-листа (не живая подгрузка — у HenrikDev и подобных сервисов нет публичного API агрегированной статистики по агентам, который можно безопасно дёргать прямо из браузера). Обновляю вручную по актуальным тир-листам сообщества. Зато вкладка «Профиль» тянет твою личную статистику и последние матчи вживую через HenrikDev API.
+        </div>
         <div class="meta-filters">
           <div class="filter-chips" id="roleFilters">
             <button class="chip active" data-role="All">Все роли</button>
@@ -1066,7 +1330,7 @@
           <div class="cal-grid" id="calGrid"></div>
           <div class="legend">
             <div class="legend-item"><div class="legend-swatch" style="background:transparent;"></div> ничего</div>
-            <div class="legend-item"><div class="legend-swatch" style="background:rgba(137,180,250,0.4);"></div> часть пунктов</div>
+            <div class="legend-item"><div class="legend-swatch" style="background:rgba(255,70,85,0.35);"></div> часть пунктов</div>
             <div class="legend-item"><div class="legend-swatch" style="background:#ff4655;"></div> всё выполнено</div>
             <div class="legend-item"><div class="legend-swatch" style="border-style:dashed; border-color:#ff4655;"></div> сегодня</div>
           </div>
@@ -1148,10 +1412,70 @@
           <button class="reset-btn" id="resetTheme">Сбросить тему по умолчанию</button>
         </div>
 
+        <div class="section-label" id="valoSettingsAnchor">Valorant — привязка аккаунта</div>
+        <div class="settings-panel">
+          <div class="settings-row-desc" style="margin-bottom:10px;">
+            Данные берутся через сторонний сервис HenrikDev API (community-проект, не от Riot). Нужен бесплатный ключ:
+            зайди на <a href="https://api.henrikdev.xyz/dashboard/api-keys" target="_blank" rel="noopener" style="color:var(--accent);">страницу выдачи ключей HenrikDev</a>,
+            войди туда через Discord и создай ключ (Basic — бесплатно и без ожидания). Ключ хранится только в этом браузере, никуда не отправляется, кроме HenrikDev API.
+          </div>
+          <div class="settings-row">
+            <div><div class="settings-row-label">Riot ID</div><div class="settings-row-desc">Имя#Тег, например Player#EUW1</div></div>
+            <div class="settings-control"><input type="text" class="settings-input" id="valoRiotId" placeholder="Имя#Тег"></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div><div class="settings-row-label">Регион</div></div>
+            <div class="settings-control">
+              <select class="settings-input" id="valoRegion">
+                <option value="eu">EU</option>
+                <option value="na">NA</option>
+                <option value="ap">AP</option>
+                <option value="kr">KR</option>
+                <option value="latam">LATAM</option>
+                <option value="br">BR</option>
+              </select>
+            </div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div><div class="settings-row-label">API-ключ HenrikDev</div></div>
+            <div class="settings-control"><input type="password" class="settings-input" id="valoApiKey" placeholder="HDEV-..."></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Сохранить и проверить</div>
+              <div class="settings-row-desc" id="valoStatus">не подключено</div>
+            </div>
+            <div class="settings-control"><button class="file-btn" id="valoConnectBtn" style="cursor:pointer;">Подключить</button></div>
+          </div>
+        </div>
+
         <div class="section-label">Порядок разделов</div>
         <div class="settings-panel">
           <div class="settings-row-desc" style="margin-bottom:6px;">меняй местами стрелками — порядок применится и в боковой панели, и в нижней на телефоне</div>
           <div id="navOrderList"></div>
+        </div>
+
+        <div class="section-label">Поделиться тренировкой</div>
+        <div class="settings-panel">
+          <div class="settings-row-desc" style="margin-bottom:2px;">только список заданий (утро/вечер и Kovaak-плейлисты) — без твоего прогресса, рангов и заметок. Можно прислать файл в чат, друг импортирует и получает такой же чек-лист</div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Отправить тренировку</div>
+              <div class="settings-row-desc">сохранить .json, чтобы скинуть другу</div>
+            </div>
+            <div class="settings-control"><button class="file-btn" id="exportWorkoutBtn" style="cursor:pointer;">Экспорт</button></div>
+          </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Взять тренировку у друга</div>
+              <div class="settings-row-desc">заменит твои текущие задания и плейлисты</div>
+            </div>
+            <div class="settings-control"><label class="file-btn">Импорт<input type="file" id="importWorkoutFile" accept="application/json" style="display:none;"></label></div>
+          </div>
         </div>
 
         <div class="section-label">Данные</div>
@@ -1171,6 +1495,14 @@
             </div>
             <div class="settings-control"><label class="file-btn">Импорт<input type="file" id="importFile" accept="application/json" style="display:none;"></label></div>
           </div>
+          <div class="settings-divider"></div>
+          <div class="settings-row">
+            <div>
+              <div class="settings-row-label">Автобэкапы</div>
+              <div class="settings-row-desc">при любом изменении сам сохраняет снепшот (хранит последние 5) — если что-то сломается, можно откатиться</div>
+            </div>
+          </div>
+          <div id="backupList" style="margin-top:6px;"></div>
         </div>
       </div>
     </section>
@@ -1179,6 +1511,82 @@
 </div>
 
 <script>
+/* ---------- AUTO-BACKUP ENGINE ---------- */
+const BACKUP_PREFIX = 'backup:';
+const BACKUP_KEEP = 5;
+(function(){
+  const origSetItem = localStorage.setItem.bind(localStorage);
+  let timer = null;
+  window.__scheduleBackup = function(){
+    clearTimeout(timer);
+    timer = setTimeout(()=>{
+      backupNow();
+      if(typeof renderBackupList === 'function') renderBackupList();
+      if(window.aimPushToCloud) window.aimPushToCloud();
+    }, 2500);
+  };
+  localStorage.setItem = function(key, value){
+    origSetItem(key, value);
+    if(!String(key).startsWith(BACKUP_PREFIX) && key !== 'valo:lastfetch'){
+      window.__scheduleBackup();
+    }
+  };
+})();
+function backupNow(){
+  try{
+    const snapshot = {};
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k.startsWith(BACKUP_PREFIX)) continue;
+      snapshot[k] = localStorage.getItem(k);
+    }
+    if(Object.keys(snapshot).length === 0) return;
+    localStorage.setItem(BACKUP_PREFIX + Date.now(), JSON.stringify(snapshot));
+    pruneBackups();
+  }catch(e){ console.error('backup failed', e); }
+}
+function listBackups(){
+  const keys = [];
+  for(let i=0;i<localStorage.length;i++){
+    const k = localStorage.key(i);
+    if(k.startsWith(BACKUP_PREFIX)) keys.push(k);
+  }
+  return keys.sort((a,b)=> Number(b.slice(BACKUP_PREFIX.length)) - Number(a.slice(BACKUP_PREFIX.length)));
+}
+function pruneBackups(){
+  const keys = listBackups();
+  keys.slice(BACKUP_KEEP).forEach(k=> localStorage.removeItem(k));
+}
+function restoreBackup(key){
+  try{
+    const snapshot = JSON.parse(localStorage.getItem(key));
+    if(!snapshot) return;
+    if(!confirm('Откатить все данные к этому снепшоту? Текущее состояние будет заменено.')) return;
+    Object.keys(snapshot).forEach(k=>{
+      if(k.startsWith(BACKUP_PREFIX)) return;
+      localStorage.setItem(k, snapshot[k]);
+    });
+    location.reload();
+  }catch(e){ alert('Не удалось прочитать этот бэкап.'); }
+}
+function renderBackupList(){
+  const el = document.getElementById('backupList');
+  if(!el) return;
+  const keys = listBackups();
+  if(keys.length===0){ el.innerHTML = `<div class="video-sub">Бэкапов пока нет — появятся после первого изменения.</div>`; return; }
+  el.innerHTML = keys.map(k=>{
+    const ts = Number(k.slice(BACKUP_PREFIX.length));
+    const label = new Date(ts).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'});
+    return `<div class="settings-row" style="padding:8px 0;">
+      <div class="settings-row-desc" style="font-size:11.5px;">${label}</div>
+      <button class="file-btn" style="cursor:pointer;" data-restore="${k}">Восстановить</button>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('[data-restore]').forEach(btn=>{
+    btn.addEventListener('click', ()=> restoreBackup(btn.getAttribute('data-restore')));
+  });
+}
+
 /* ---------- GENERIC LOCAL-STORAGE LIST STORE ---------- */
 function loadList(key, fallback){
   try{ const raw = localStorage.getItem(key); if(raw) return JSON.parse(raw); }catch(e){}
@@ -1266,13 +1674,19 @@ const ROLE_TIPS = {
   Agent:'Изучи актуальные способности агента в игре — это недавно добавленный агент, детальный гайд по роли скоро появится.',
 };
 const MAPS = [
-  {id:'summit', name:'Summit'},
-  {id:'sunset', name:'Sunset'},
-  {id:'breeze', name:'Breeze'},
-  {id:'haven', name:'Haven'},
-  {id:'lotus', name:'Lotus'},
-  {id:'split', name:'Split'},
-  {id:'ascent', name:'Ascent'},
+  {id:'summit', name:'Summit', pool:true},
+  {id:'sunset', name:'Sunset', pool:true},
+  {id:'breeze', name:'Breeze', pool:true},
+  {id:'haven', name:'Haven', pool:true},
+  {id:'lotus', name:'Lotus', pool:true},
+  {id:'split', name:'Split', pool:true},
+  {id:'ascent', name:'Ascent', pool:true},
+  {id:'bind', name:'Bind', pool:false},
+  {id:'icebox', name:'Icebox', pool:false},
+  {id:'fracture', name:'Fracture', pool:false},
+  {id:'pearl', name:'Pearl', pool:false},
+  {id:'abyss', name:'Abyss', pool:false},
+  {id:'corrode', name:'Corrode', pool:false},
 ];
 const MAP_TIPS = {
   summit:'Новая карта в пуле — фокус на контроле мида и ранней информации, пока комьюнити ещё не выучило все углы.',
@@ -1282,6 +1696,12 @@ const MAP_TIPS = {
   lotus:'Три сайта с вращающимися дверями — постоянно проверяй двери за спиной, инфа важнее чистого урона.',
   split:'Вертикальная карта с канатами — контроль мида и вышек решает, много места для флангов через верх.',
   ascent:'Большой мид-корт и механические двери — держи мид под контролем, двери можно намертво закрыть.',
+  bind:'Нет мида — только два длинных пути и телепорты. Ротации через телепорт решают, держи их под контролем.',
+  icebox:'Очень вертикальная карта с канатами и зиплайнами — много крыш и высоких позиций, цени вертикальный контроль.',
+  fracture:'Четырёхсторонняя карта — атакующие заходят с двух сторон одновременно, защите тяжело держать оба фланга.',
+  pearl:'Плотный мид с двумя точками входа на сайты — компактная карта, где решает контроль связок мид-сайт.',
+  abyss:'Карта без перил — можно упасть вниз и погибнуть. Много вертикальности, но без страховки на краях.',
+  corrode:'Тесные коридоры средневекового городка — много close-range стычек и мало длинных сайтлайнов.',
 };
 
 /* ---------- ПОПРАВКА НА КАРТУ ----------
@@ -1289,8 +1709,8 @@ const MAP_TIPS = {
    поэтому винрейт/пикрейт агента реально отличается от карты к карте, а не одинаковый везде.
    Ниже — поправки к базовому винрейту (WR, п.п.) и множитель пикрейта, подобранные по роли
    агента и характеру карты (open sightlines → дальнобойные дуэлянты/сентинелы; несколько сайтов
-   → сеть контроллеров/инициаторов; тайтовые карты без мида → близкий бой). Summit — новая карта,
-   статистика по ней ещё не накопилась, поэтому поправка нулевая по всем агентам. */
+   → сеть контроллеров/инициаторов; тайтовые карты без мида → близкий бой). Карты вне текущего
+   пула (Bind, Icebox, Fracture, Pearl, Abyss, Corrode) размечены по тем же принципам их планировки. */
 const MAP_AGENT_DELTA = {
   ascent:{ // большой мид-корт, механические двери — решает контроль мида
     sova:1.4, fade:1.2, skye:0.8, killjoy:0.9, chamber:0.7, jett:0.6, clove:0.3,
@@ -1317,6 +1737,30 @@ const MAP_AGENT_DELTA = {
     chamber:-1.0, jett:-0.6, viper:-0.5, skye:-0.3
   },
   summit:{}, // новая карта — данных по патчу 13.00 пока недостаточно, поправка 0
+  bind:{ // нет мида, только телепорты — держат сайты близко, ценятся смоки и дуэлянты ближнего боя
+    viper:1.2, raze:1.3, brimstone:1.0, reyna:0.8, phoenix:0.6, skye:0.5, killjoy:0.4,
+    jett:-0.3, chamber:-0.9, sova:-0.5
+  },
+  icebox:{ // очень вертикальная карта, зиплайны и крыши — сентинелы и близкий бой в узостях
+    killjoy:1.4, cypher:0.9, sova:0.7, raze:0.9, fade:0.6, breach:0.5,
+    chamber:-0.6, jett:-0.4, viper:0.3
+  },
+  fracture:{ // четырёхсторонняя карта, атака с двух флангов — инициаторы и стражи держат тыл
+    breach:1.3, skye:1.1, fade:1.0, killjoy:1.2, raze:0.8, sova:0.6,
+    jett:-0.5, chamber:-1.1, viper:-0.3
+  },
+  pearl:{ // компактный мид, связки мид-сайт — контроллеры и info-агенты решают темп
+    viper:1.1, astra:0.9, fade:1.0, sova:0.8, killjoy:0.7, chamber:0.4,
+    raze:-0.4, jett:-0.3, reyna:-0.5
+  },
+  abyss:{ // без перил, можно упасть — вертикальность без страховки, цена точной утили
+    gekko:0.9, sova:0.8, fade:0.7, killjoy:0.6, viper:0.5,
+    jett:-0.6, raze:-0.5, chamber:-0.4
+  },
+  corrode:{ // тесные коридоры, close-range — дуэлянты и стражи ближнего боя
+    raze:1.1, neon:0.9, reyna:0.8, killjoy:0.9, vyse:0.7,
+    chamber:-1.0, jett:-0.5, viper:-0.3
+  },
 };
 function getAgentMapStat(agent, mapId){
   const d = (MAP_AGENT_DELTA[mapId] && MAP_AGENT_DELTA[mapId][agent.id]) || 0;
@@ -1372,10 +1816,19 @@ let START_DATE = getStartDate();
 function todayKey(date){ const d=date||new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
 function daysBetween(a,b){ return Math.round((startOfDay(b).getTime() - startOfDay(a).getTime()) / 86400000); }
-function totalTasks(){ return morningTasks.length + eveningTasks.length; }
-function doneCount(state){ return morningTasks.filter(t=>state[t.id]).length + eveningTasks.filter(t=>state[t.id]).length; }
-function fillPctOf(state){ const d=doneCount(state); return d>0 ? Math.round((d/totalTasks())*100) : 0; }
-function isFull(state){ return doneCount(state) === totalTasks() && totalTasks()>0; }
+function effectiveTasksFor(state, period){
+  const ov = state['_ovr_'+period];
+  return (ov && Array.isArray(ov)) ? ov : (period==='morning' ? morningTasks : eveningTasks);
+}
+function doneCount(state){
+  const m = effectiveTasksFor(state,'morning'), e = effectiveTasksFor(state,'evening');
+  return m.filter(t=>state[t.id]).length + e.filter(t=>state[t.id]).length;
+}
+function totalTasksForState(state){
+  return effectiveTasksFor(state,'morning').length + effectiveTasksFor(state,'evening').length;
+}
+function fillPctOf(state){ const d=doneCount(state); const tt=totalTasksForState(state); return d>0 ? Math.round((d/tt)*100) : 0; }
+function isFull(state){ const tt=totalTasksForState(state); return tt>0 && doneCount(state)===tt; }
 
 async function getDayState(key){
   try{ const raw = localStorage.getItem('day:'+key); if(raw) return JSON.parse(raw); }catch(e){}
@@ -1399,10 +1852,21 @@ let selectedState = {};
 let calYear = TODAY.getFullYear();
 let yearCache = {};
 
-function taskListKey(list){ return list===morningTasks ? 'tasks:morning' : 'tasks:evening'; }
+function taskListKey(period){ return period==='morning' ? 'tasks:morning' : 'tasks:evening'; }
+async function persistDayOverride(state){
+  const key = todayKey(selectedDate);
+  await setDayState(key, state);
+  yearCache[key] = {...state};
+}
+function escapeAttr(s){ return (s||'').replace(/"/g,'&quot;'); }
 
-function renderTasks(containerId, tasks, state){
+function renderTasks(containerId, period, state){
   const container = document.getElementById(containerId);
+  const globalTasks = period==='morning' ? morningTasks : eveningTasks;
+  const overrideKey = '_ovr_'+period;
+  const hasOverride = Array.isArray(state[overrideKey]);
+  const tasks = hasOverride ? state[overrideKey] : globalTasks;
+
   container.innerHTML = tasks.map(t => `
     <div class="task ${state[t.id] ? 'done':''}" data-id="${t.id}">
       <div class="checkbox"></div>
@@ -1415,7 +1879,9 @@ function renderTasks(containerId, tasks, state){
         <div class="icon-btn danger del-task" title="Удалить">✕</div>
       </div>
     </div>
-  `).join('') + `<div class="add-row"><button class="add-inline-btn add-task-btn">+ Добавить задание</button><div class="add-task-form-wrap"></div></div>`;
+  `).join('')
+  + (hasOverride ? `<div class="day-override-notice">только для этого дня · <button class="link-btn reset-day-tasks">сбросить к общим</button></div>` : '')
+  + `<div class="add-row"><button class="add-inline-btn add-task-btn">+ Добавить задание</button><div class="add-task-form-wrap"></div></div>`;
 
   container.querySelectorAll('.task').forEach(el=>{
     el.addEventListener('click', async (ev)=>{
@@ -1433,14 +1899,20 @@ function renderTasks(containerId, tasks, state){
   });
 
   container.querySelectorAll('.del-task').forEach(btn=>{
-    btn.addEventListener('click', (ev)=>{
+    btn.addEventListener('click', async (ev)=>{
       ev.stopPropagation();
       const el = btn.closest('.task');
       const id = el.getAttribute('data-id');
-      const idx = tasks.findIndex(t=>t.id===id);
-      if(idx>-1){ tasks.splice(idx,1); saveList(taskListKey(tasks), tasks); }
-      renderTasks(containerId, tasks, state);
-      updateCounts();
+      if(hasOverride){
+        const idx = state[overrideKey].findIndex(t=>t.id===id);
+        if(idx>-1) state[overrideKey].splice(idx,1);
+        await persistDayOverride(state);
+      } else {
+        const idx = globalTasks.findIndex(t=>t.id===id);
+        if(idx>-1){ globalTasks.splice(idx,1); saveList(taskListKey(period), globalTasks); }
+      }
+      renderTasks(containerId, period, state);
+      updateCounts(); renderCalendar(); renderStreak();
     });
   });
 
@@ -1452,23 +1924,38 @@ function renderTasks(containerId, tasks, state){
       const t = tasks.find(x=>x.id===id);
       el.innerHTML = `
         <div class="task-edit-row">
-          <input class="edit-name" value="${t.name.replace(/"/g,'&quot;')}" placeholder="Название">
-          <input class="edit-meta" value="${t.meta.replace(/"/g,'&quot;')}" placeholder="Описание">
+          <input class="edit-name" value="${escapeAttr(t.name)}" placeholder="Название">
+          <input class="edit-meta" value="${escapeAttr(t.meta)}" placeholder="Описание">
           <div class="add-form-btns">
-            <button class="save-btn save-task">Сохранить</button>
+            ${hasOverride
+              ? `<button class="save-btn save-task-day">Сохранить</button>`
+              : `<button class="save-btn save-task-all">Сохранить везде</button><button class="save-btn save-task-day">Только сегодня</button>`
+            }
             <button class="cancel-btn cancel-task">Отмена</button>
           </div>
         </div>`;
-      el.querySelector('.save-task').addEventListener('click', (e)=>{
+      const saveAllBtn = el.querySelector('.save-task-all');
+      if(saveAllBtn) saveAllBtn.addEventListener('click', (e)=>{
         e.stopPropagation();
         t.name = el.querySelector('.edit-name').value.trim() || t.name;
         t.meta = el.querySelector('.edit-meta').value.trim();
-        saveList(taskListKey(tasks), tasks);
-        renderTasks(containerId, tasks, state);
+        saveList(taskListKey(period), globalTasks);
+        renderTasks(containerId, period, state);
+      });
+      el.querySelector('.save-task-day').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        const name = el.querySelector('.edit-name').value.trim() || t.name;
+        const meta = el.querySelector('.edit-meta').value.trim();
+        if(!hasOverride) state[overrideKey] = globalTasks.map(x=>({...x}));
+        const ovTask = state[overrideKey].find(x=>x.id===id);
+        if(ovTask){ ovTask.name = name; ovTask.meta = meta; }
+        await persistDayOverride(state);
+        renderTasks(containerId, period, state);
+        updateCounts(); renderCalendar(); renderStreak();
       });
       el.querySelector('.cancel-task').addEventListener('click', (e)=>{
         e.stopPropagation();
-        renderTasks(containerId, tasks, state);
+        renderTasks(containerId, period, state);
       });
     });
   });
@@ -1481,23 +1968,42 @@ function renderTasks(containerId, tasks, state){
         <input class="new-task-name" placeholder="Название задания">
         <input class="new-task-meta" placeholder="Описание (время, детали)">
         <div class="add-form-btns">
-          <button class="save-btn confirm-add-task">Добавить</button>
+          <button class="save-btn confirm-add-all">Добавить везде</button>
+          <button class="save-btn confirm-add-day">Только сегодня</button>
           <button class="cancel-btn cancel-add-task">Отмена</button>
         </div>
       </div>`;
     addBtn.style.display='none';
-    wrap.querySelector('.confirm-add-task').addEventListener('click', ()=>{
+    wrap.querySelector('.confirm-add-all').addEventListener('click', ()=>{
       const name = wrap.querySelector('.new-task-name').value.trim();
       const meta = wrap.querySelector('.new-task-meta').value.trim();
       if(!name) return;
-      tasks.push({id: uid('t'), name, meta});
-      saveList(taskListKey(tasks), tasks);
-      renderTasks(containerId, tasks, state);
+      globalTasks.push({id: uid('t'), name, meta});
+      saveList(taskListKey(period), globalTasks);
+      renderTasks(containerId, period, state);
       updateCounts();
+    });
+    wrap.querySelector('.confirm-add-day').addEventListener('click', async ()=>{
+      const name = wrap.querySelector('.new-task-name').value.trim();
+      const meta = wrap.querySelector('.new-task-meta').value.trim();
+      if(!name) return;
+      if(!state[overrideKey]) state[overrideKey] = globalTasks.map(x=>({...x}));
+      state[overrideKey].push({id: uid('t'), name, meta});
+      await persistDayOverride(state);
+      renderTasks(containerId, period, state);
+      updateCounts(); renderCalendar(); renderStreak();
     });
     wrap.querySelector('.cancel-add-task').addEventListener('click', ()=>{
       wrap.innerHTML=''; addBtn.style.display='';
     });
+  });
+
+  const resetBtn = container.querySelector('.reset-day-tasks');
+  if(resetBtn) resetBtn.addEventListener('click', async ()=>{
+    delete state[overrideKey];
+    await persistDayOverride(state);
+    renderTasks(containerId, period, state);
+    updateCounts(); renderCalendar(); renderStreak();
   });
 }
 
@@ -1513,10 +2019,12 @@ function buildPanel(gridEl, title, count, listId){
 }
 
 function updateCounts(){
-  const mDone = morningTasks.filter(t=>selectedState[t.id]).length;
-  const eDone = eveningTasks.filter(t=>selectedState[t.id]).length;
-  document.getElementById('morningList-count').textContent = mDone+'/'+morningTasks.length;
-  document.getElementById('eveningList-count').textContent = eDone+'/'+eveningTasks.length;
+  const mTasks = effectiveTasksFor(selectedState,'morning');
+  const eTasks = effectiveTasksFor(selectedState,'evening');
+  const mDone = mTasks.filter(t=>selectedState[t.id]).length;
+  const eDone = eTasks.filter(t=>selectedState[t.id]).length;
+  document.getElementById('morningList-count').textContent = mDone+'/'+mTasks.length;
+  document.getElementById('eveningList-count').textContent = eDone+'/'+eTasks.length;
 }
 
 function renderLoadout(){
@@ -1751,8 +2259,8 @@ async function loadSelectedDay(){
   document.getElementById('dayNavDate').textContent = fmtDate(selectedDate);
   document.getElementById('jumpToday').classList.toggle('hidden', key===TODAY_KEY);
   document.getElementById('dayNote').value = selectedState._note || '';
-  renderTasks('morningList', morningTasks, selectedState);
-  renderTasks('eveningList', eveningTasks, selectedState);
+  renderTasks('morningList', 'morning', selectedState);
+  renderTasks('eveningList', 'evening', selectedState);
   updateCounts();
   if(selectedDate.getFullYear() !== calYear){
     calYear = selectedDate.getFullYear();
@@ -1914,6 +2422,7 @@ function renderAgentsPane(){
       return `
       <div class="map-card" data-id="${m.id}" style="${img ? `background-image:linear-gradient(180deg, rgba(11,7,9,0.15), rgba(11,7,9,0.85)), url('${img}'); background-size:cover; background-position:center;` : ''}">
         <div class="map-card-name">${m.name}</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:9px; letter-spacing:1px; margin-top:3px; color:${m.pool ? 'var(--accent)' : 'rgba(255,255,255,0.55)'};">${m.pool ? 'В ПУЛЕ' : 'вне пула'}</div>
       </div>`;
     }).join('')}</div>`;
     el.querySelectorAll('.map-card').forEach(card=>{
@@ -2148,13 +2657,16 @@ function setupAddSong(){
 }
 
 /* ---------- PROFILE ---------- */
-function loadProfile(){ return loadList('profile:data', {nick:'', avatar:'', banner:'', about:'', discord:''}); }
-function saveProfile(p){ saveList('profile:data', p); }
+function loadProfile(){ return loadList('profile:data', {nick:'', avatar:'', banner:'', about:'', discord:'', twitch:'', customLabel:'', customValue:''}); }
+function saveProfile(p){ saveList('profile:data', p); try{ if(window.aimPushToCloud) window.aimPushToCloud(); }catch(e){} }
 function setupProfile(){
   const profile = loadProfile();
   const nick = document.getElementById('profileNick');
   const about = document.getElementById('profileAbout');
   const discord = document.getElementById('profileDiscord');
+  const twitch = document.getElementById('profileTwitch');
+  const customLabel = document.getElementById('profileCustomLabel');
+  const customValue = document.getElementById('profileCustomValue');
   const startDate = document.getElementById('profileStartDate');
   const avatarEl = document.getElementById('profileAvatar');
   const bannerEl = document.getElementById('profileBanner');
@@ -2162,6 +2674,9 @@ function setupProfile(){
   nick.value = profile.nick || '';
   about.value = profile.about || '';
   discord.value = profile.discord || '';
+  twitch.value = profile.twitch || '';
+  customLabel.value = profile.customLabel || '';
+  customValue.value = profile.customValue || '';
   startDate.value = todayKey(START_DATE);
   if(profile.avatar){ avatarEl.style.backgroundImage = `url(${profile.avatar})`; avatarEl.textContent=''; }
   if(profile.banner){ bannerEl.style.backgroundImage = `url(${profile.banner})`; }
@@ -2169,12 +2684,24 @@ function setupProfile(){
   let saveTimeout;
   function persist(){
     profile.nick = nick.value; profile.about = about.value; profile.discord = discord.value;
+    profile.twitch = twitch.value; profile.customLabel = customLabel.value; profile.customValue = customValue.value;
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(()=> saveProfile(profile), 400);
   }
   nick.addEventListener('input', persist);
   about.addEventListener('input', persist);
   discord.addEventListener('input', persist);
+  twitch.addEventListener('input', persist);
+  customLabel.addEventListener('input', persist);
+  customValue.addEventListener('input', persist);
+
+  document.querySelectorAll('[data-go-settings-valo]').forEach(el=> el.addEventListener('click', ()=>{
+    switchView('settings');
+    setTimeout(()=>{
+      const anchor = document.getElementById('valoSettingsAnchor');
+      if(anchor) anchor.scrollIntoView({behavior:'smooth', block:'start'});
+    }, 80);
+  }));
 
   document.getElementById('avatarFile').addEventListener('change', e=>{
     const file = e.target.files[0]; if(!file) return;
@@ -2196,6 +2723,212 @@ function setupProfile(){
     START_DATE = getStartDate();
     renderHeaderStats();
   });
+}
+
+/* ---------- VALORANT ACCOUNT (HenrikDev API — сторонний community-сервис, не Riot) ---------- */
+function loadValoConfig(){ return loadList('valo:config', {riotId:'', region:'eu', apiKey:''}); }
+function saveValoConfig(cfg){ saveList('valo:config', cfg); }
+const VALO_API_BASE = 'https://api.henrikdev.xyz';
+
+async function valoFetch(path, apiKey){
+  const url = `${VALO_API_BASE}${path}${path.includes('?') ? '&' : '?'}api_key=${encodeURIComponent(apiKey)}`;
+  const res = await fetch(url, { headers:{ 'Accept':'application/json' } });
+  const json = await res.json().catch(()=>null);
+  if(!res.ok || !json || json.status >= 400){
+    const msg = (json && (json.errors?.[0]?.message || json.message)) || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  return json;
+}
+
+function setupValoIntegration(){
+  const cfg = loadValoConfig();
+  const riotInput = document.getElementById('valoRiotId');
+  const regionSel = document.getElementById('valoRegion');
+  const keyInput = document.getElementById('valoApiKey');
+  const statusEl = document.getElementById('valoStatus');
+  const connectBtn = document.getElementById('valoConnectBtn');
+  const refreshBtn = document.getElementById('valoRefreshBtn');
+  const linkPrompt = document.getElementById('valoLinkPrompt');
+  const linkBtn = document.getElementById('valoLinkBtn');
+
+  riotInput.value = cfg.riotId || '';
+  regionSel.value = cfg.region || 'eu';
+  keyInput.value = cfg.apiKey || '';
+  if(cfg.riotId && cfg.apiKey) statusEl.textContent = 'сохранено — обнови статистику на вкладке Профиль';
+
+  const isLinked = !!(cfg.riotId && cfg.apiKey);
+  if(linkPrompt) linkPrompt.style.display = isLinked ? 'none' : 'flex';
+
+  if(linkBtn){
+    linkBtn.addEventListener('click', ()=>{
+      switchView('settings');
+      setTimeout(()=>{
+        const anchor = document.getElementById('valoSettingsAnchor');
+        if(anchor) anchor.scrollIntoView({behavior:'smooth', block:'start'});
+        riotInput.focus();
+      }, 80);
+    });
+  }
+
+  connectBtn.addEventListener('click', async ()=>{
+    const riotId = riotInput.value.trim();
+    const region = regionSel.value;
+    const apiKey = keyInput.value.trim();
+    if(!riotId.includes('#')){ statusEl.textContent = 'укажи Riot ID в формате Имя#Тег'; return; }
+    if(!apiKey){ statusEl.textContent = 'нужен API-ключ HenrikDev'; return; }
+    saveValoConfig({riotId, region, apiKey});
+    statusEl.textContent = 'проверяю...';
+    connectBtn.disabled = true;
+    try{
+      await refreshValoStats(true);
+      statusEl.textContent = 'подключено ✓';
+      if(linkPrompt) linkPrompt.style.display = 'none';
+    }catch(err){
+      statusEl.textContent = 'ошибка: ' + err.message;
+    } finally {
+      connectBtn.disabled = false;
+    }
+  });
+
+  refreshBtn.addEventListener('click', ()=> refreshValoStats(true));
+
+  if(cfg.riotId && cfg.apiKey){
+    const lastFetch = Number(localStorage.getItem('valo:lastfetch') || 0);
+    if(Date.now() - lastFetch > 10*60*1000){
+      refreshValoStats(false);
+    } else {
+      renderValoFromCache();
+    }
+    setInterval(()=> refreshValoStats(false), 10*60*1000);
+  }
+}
+
+function renderValoFromCache(){
+  const cached = loadList('valo:cache', null);
+  if(cached) renderValoStats(cached);
+}
+
+async function refreshValoStats(userInitiated){
+  const cfg = loadValoConfig();
+  if(!cfg.riotId || !cfg.apiKey) return;
+  const [name, tag] = cfg.riotId.split('#');
+  const card = document.getElementById('valoStatsCard');
+  const refreshBtn = document.getElementById('valoRefreshBtn');
+  if(refreshBtn){ refreshBtn.textContent = 'Обновляю...'; refreshBtn.disabled = true; }
+  try{
+    const [accountRes, mmrRes, matchesRes] = await Promise.all([
+      valoFetch(`/valorant/v2/account/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`, cfg.apiKey),
+      valoFetch(`/valorant/v3/mmr/${cfg.region}/pc/${encodeURIComponent(name)}/${encodeURIComponent(tag)}`, cfg.apiKey),
+      valoFetch(`/valorant/v4/matches/${cfg.region}/pc/${encodeURIComponent(name)}/${encodeURIComponent(tag)}?mode=competitive&size=5`, cfg.apiKey).catch(()=>null),
+    ]);
+    const data = { account: accountRes.data, mmr: mmrRes.data, matches: matchesRes ? matchesRes.data : [], fetchedAt: Date.now() };
+    saveList('valo:cache', data);
+    try{ localStorage.setItem('valo:lastfetch', String(Date.now())); }catch(e){}
+    renderValoStats(data);
+    if(card) card.style.display = '';
+  }catch(err){
+    console.error('valo fetch failed', err);
+    if(userInitiated) alert('Не удалось получить статистику: ' + err.message + '\n\nПроверь Riot ID, регион и ключ в Настройках.');
+  } finally {
+    if(refreshBtn){ refreshBtn.textContent = 'Обновить'; refreshBtn.disabled = false; }
+  }
+}
+
+function renderValoStats(data){
+  const card = document.getElementById('valoStatsCard');
+  if(!card || !data) return;
+  card.style.display = '';
+  const acc = data.account || {};
+  const mmr = data.mmr || {};
+  const cur = mmr.current || {};
+  const peak = mmr.peak || {};
+
+  document.getElementById('valoNickDisplay').textContent = `${acc.name || '—'}#${acc.tag || ''}`;
+  document.getElementById('valoLevelDisplay').textContent = acc.account_level ? `Уровень ${acc.account_level}` : '';
+  const artEl = document.getElementById('valoCardArt');
+  const cardArtUrl = acc.card && (acc.card.small || acc.card.large || (typeof acc.card === 'string' ? `https://media.valorant-api.com/playercards/${acc.card}/smallart.png` : null));
+  if(cardArtUrl){ artEl.style.backgroundImage = `url(${cardArtUrl})`; artEl.style.backgroundSize='cover'; artEl.textContent=''; }
+
+  document.getElementById('valoRankDisplay').textContent = (cur.tier && cur.tier.name) || '—';
+  document.getElementById('valoRrDisplay').textContent = cur.rr != null ? `${cur.rr} RR` : '—';
+  document.getElementById('valoPeakDisplay').textContent = (peak.tier && peak.tier.name) || '—';
+  document.getElementById('valoUpdatedDisplay').textContent = new Date(data.fetchedAt).toLocaleString('ru-RU', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+
+  renderValoMatchesInto('valoMatchList', data);
+  renderValoMatchesInto('homeWidgetValoBody', data, {compact:true, limit:5});
+}
+
+/* строит HTML для списка последних матчей из объекта data ({account, matches}) — используется
+   и на вкладке Профиль, и в виджете на Главной, и в модалке чужого публичного профиля */
+function buildValoMatchesHtml(data, opts){
+  opts = opts || {};
+  const matches = (data.matches || []).slice(0, opts.limit || 10);
+  if(matches.length === 0) return `<div class="video-sub">Нет данных о последних матчах.</div>`;
+  return matches.map(m=>{
+    const me = (m.players || []).find(p => p.account && p.account.name === (data.account && data.account.name)) || {};
+    const myTeamId = me.team_id;
+    const teams = m.teams || [];
+    const myTeam = teams.find(t=>t.team_id === myTeamId);
+    const won = myTeam ? !!myTeam.won : null;
+    const mapName = (m.metadata && m.metadata.map && m.metadata.map.name) || '—';
+    const agentName = (me.agent && me.agent.name) || '—';
+    const stats = me.stats || {};
+    return `
+      <div class="valo-match-row ${won===true?'win':won===false?'loss':''}">
+        <div class="valo-match-result">${won===true?'W':won===false?'L':'-'}</div>
+        <div class="valo-match-map">${mapName}</div>
+        ${opts.compact ? '' : `<div class="valo-match-agent">${agentName}</div>`}
+        <div class="valo-match-score">${stats.kills ?? '-'}/${stats.deaths ?? '-'}/${stats.assists ?? '-'}</div>
+      </div>`;
+  }).join('');
+}
+function renderValoMatchesInto(elId, data, opts){
+  const el = document.getElementById(elId);
+  if(!el || !data) return;
+  el.innerHTML = buildValoMatchesHtml(data, opts);
+}
+/* виджет на главной — рисуется из локального кэша при загрузке страницы, ещё до фетча по таймеру */
+function initHomeValoWidget(){
+  const cfg = loadValoConfig();
+  if(!cfg.riotId || !cfg.apiKey) return; // остаётся дефолтная подсказка "привяжи в настройках"
+  const cached = loadList('valo:cache', null);
+  if(cached) renderValoMatchesInto('homeWidgetValoBody', cached, {compact:true, limit:5});
+}
+
+/* ---------- ДРУЗЬЯ + ПУБЛИЧНЫЙ ПРОФИЛЬ (логика Firestore живёт в модуле ниже, здесь — вся разметка/UI) ---------- */
+function setupFriendsUI(){
+  window.addEventListener('aimauthchanged', (e)=>{
+    const user = e.detail && e.detail.user;
+    const card = document.getElementById('friendsCard');
+    if(user){
+      if(card) card.style.display = 'flex';
+      if(window.aimFriends) window.aimFriends.subscribe(user.uid);
+    } else {
+      if(card) card.style.display = 'none';
+      if(window.aimFriends) window.aimFriends.unsubscribe();
+      document.getElementById('friendsTable').innerHTML = '<div class="friend-empty">Войди через Google, чтобы добавлять друзей.</div>';
+      document.getElementById('friendRequestsWrap').style.display = 'none';
+    }
+  });
+
+  // клик по строке лидерборда — открыть публичный профиль
+  document.getElementById('lbTable').addEventListener('click', (e)=>{
+    const row = e.target.closest('.meta-row[data-uid]');
+    if(row && window.openPublicProfile) window.openPublicProfile(row.getAttribute('data-uid'));
+  });
+  document.getElementById('friendsTable').addEventListener('click', (e)=>{
+    const row = e.target.closest('[data-uid]');
+    if(row && !e.target.closest('button') && window.openPublicProfile) window.openPublicProfile(row.getAttribute('data-uid'));
+  });
+
+  document.getElementById('ppModalClose').addEventListener('click', closePublicProfile);
+  document.getElementById('ppModalBackdrop').addEventListener('click', (e)=>{
+    if(e.target.id === 'ppModalBackdrop') closePublicProfile();
+  });
+}
+function closePublicProfile(){
+  document.getElementById('ppModalBackdrop').classList.remove('open');
 }
 
 /* ---------- FLOATING DECOR ---------- */
@@ -2225,6 +2958,37 @@ function applyDecorSetting(){
 }
 
 /* ---------- EXPORT / IMPORT ---------- */
+/* ---------- SHARE WORKOUT (tasks + kovaak only, no personal progress) ---------- */
+function exportWorkout(){
+  const payload = {
+    type: 'aimtracker-workout',
+    version: 1,
+    morningTasks: morningTasks,
+    eveningTasks: eveningTasks,
+    loadout: loadout
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aimtracker-workout.json';
+  a.click();
+}
+function importWorkout(file){
+  const reader = new FileReader();
+  reader.onload = e=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(data.type !== 'aimtracker-workout'){ alert('Это не файл тренировки AimTracker.'); return; }
+      if(!confirm('Заменить твои текущие задания и Kovaak-плейлисты на присланные? Прогресс по дням и заметки не пострадают.')) return;
+      if(Array.isArray(data.morningTasks)) saveList('tasks:morning', data.morningTasks);
+      if(Array.isArray(data.eveningTasks)) saveList('tasks:evening', data.eveningTasks);
+      if(Array.isArray(data.loadout)) saveList('kovaak:list', data.loadout);
+      location.reload();
+    }catch(err){ alert('Не удалось прочитать файл тренировки.'); }
+  };
+  reader.readAsText(file);
+}
+
 function exportData(){
   const data = {};
   for(let i=0;i<localStorage.length;i++){
@@ -2234,7 +2998,7 @@ function exportData(){
   const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'aimmaxing-backup.json';
+  a.download = 'aimtracker-backup.json';
   a.click();
 }
 function importData(file){
@@ -2249,7 +3013,57 @@ function importData(file){
   reader.readAsText(file);
 }
 
-/* ---------- VIEW SWITCHING ---------- */
+/* ---------- ONBOARDING (once per browser) ---------- */
+function initOnboarding(){
+  let seen = false;
+  try{ seen = localStorage.getItem('onboarding:seen') === '1'; }catch(e){}
+  const overlay = document.getElementById('onboardingOverlay');
+  if(seen){ overlay.classList.remove('open'); return; }
+  overlay.classList.add('open');
+
+  function dismiss(){
+    try{ localStorage.setItem('onboarding:seen', '1'); }catch(e){}
+    overlay.classList.remove('open');
+  }
+  document.getElementById('onboardOfflineBtn').addEventListener('click', dismiss);
+  document.getElementById('onboardSigninBtn').addEventListener('click', ()=>{
+    dismiss();
+    switchView('settings');
+    setTimeout(()=>{
+      if(window.aimAuth && window.aimAuth.signIn) window.aimAuth.signIn();
+    }, 200);
+  });
+}
+
+/* ---------- SHARE DAY ---------- */
+function buildShareText(date, state){
+  const m = effectiveTasksFor(state,'morning');
+  const e = effectiveTasksFor(state,'evening');
+  const lines = [];
+  lines.push(`Тренировка · ${fmtDate(date)}`);
+  lines.push('');
+  lines.push('Утро:');
+  m.forEach(t=> lines.push(`${state[t.id] ? '✅' : '⬜'} ${t.name}${t.meta ? ' — '+t.meta : ''}`));
+  lines.push('');
+  lines.push('Вечер:');
+  e.forEach(t=> lines.push(`${state[t.id] ? '✅' : '⬜'} ${t.name}${t.meta ? ' — '+t.meta : ''}`));
+  lines.push('');
+  const done = doneCount(state), total = totalTasksForState(state);
+  lines.push(`Выполнено: ${done}/${total}`);
+  return lines.join('\n');
+}
+async function shareCurrentDay(){
+  const text = buildShareText(selectedDate, selectedState);
+  if(navigator.share){
+    try{ await navigator.share({ title:'Моя тренировка', text }); return; }catch(e){ /* пользователь закрыл шторку — просто выходим */ return; }
+  }
+  try{
+    await navigator.clipboard.writeText(text);
+    alert('Тренировка скопирована в буфер обмена — вставь другу в чат.');
+  }catch(e){
+    prompt('Скопируй текст вручную:', text);
+  }
+}
 function switchView(view){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
   document.getElementById('view-'+view).classList.add('active');
@@ -2391,11 +3205,17 @@ function resizeImageFile(file, maxW=1600, cb){
 }
 
 async function init(){
+  initOnboarding();
+
   buildPanel(document.getElementById('morningGrid'), 'Утро', morningTasks.length, 'morningList');
   buildPanel(document.getElementById('eveningGrid'), 'Вечер', eveningTasks.length, 'eveningList');
 
+  document.getElementById('brandHome').addEventListener('click', ()=> switchView('home'));
+  document.getElementById('shareDayBtn').addEventListener('click', shareCurrentDay);
+
   applyNavOrder();
   renderNavOrderSettings();
+  document.getElementById('brandHome').addEventListener('click', ()=> switchView('home'));
   document.getElementById('moreNavBtn').addEventListener('click', openMoreSheet);
   document.getElementById('moreSheetBackdrop').addEventListener('click', closeMoreSheet);
 
@@ -2451,6 +3271,11 @@ async function init(){
   renderPlaylist();
   setupAddSong();
   setupProfile();
+  setupValoIntegration();
+  initHomeValoWidget();
+  setupFriendsUI();
+  renderBackupList();
+  backupNow();
   buildDecorLayer();
   applyDecorSetting();
   document.getElementById('decorToggle').addEventListener('change', e=>{
@@ -2458,6 +3283,11 @@ async function init(){
     applyDecorSetting();
   });
   document.getElementById('exportBtn').addEventListener('click', exportData);
+  document.getElementById('exportWorkoutBtn').addEventListener('click', exportWorkout);
+  document.getElementById('importWorkoutFile').addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(file) importWorkout(file);
+  });
   document.getElementById('importFile').addEventListener('change', e=>{
     const file = e.target.files[0];
     if(file) importData(file);
@@ -2519,8 +3349,8 @@ init();
     getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import {
-    getFirestore, doc, getDoc, setDoc, serverTimestamp,
-    collection, query, orderBy, limit, onSnapshot
+    getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp,
+    collection, query, orderBy, limit, where, onSnapshot
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -2569,6 +3399,36 @@ init();
     try{ return JSON.parse(localStorage.getItem('profile:data') || '{}'); }catch(e){ return {}; }
   }
 
+  // компактная сводка по Valorant для публичного профиля (без API-ключа и полного сырого ответа)
+  function currentValoSummary(){
+    try{
+      const raw = JSON.parse(localStorage.getItem('valo:cache') || 'null');
+      if(!raw) return null;
+      const acc = raw.account || {}, mmr = raw.mmr || {}, cur = mmr.current || {}, peak = mmr.peak || {};
+      const matches = (raw.matches || []).slice(0,5).map(m=>{
+        const me = (m.players || []).find(p => p.account && p.account.name === acc.name) || {};
+        const teams = m.teams || [];
+        const myTeam = teams.find(t=>t.team_id === me.team_id);
+        const won = myTeam ? !!myTeam.won : null;
+        const stats = me.stats || {};
+        return {
+          won,
+          map: (m.metadata && m.metadata.map && m.metadata.map.name) || '—',
+          agent: (me.agent && me.agent.name) || '—',
+          k: stats.kills ?? null, d: stats.deaths ?? null, a: stats.assists ?? null
+        };
+      });
+      return {
+        riotId: `${acc.name || ''}#${acc.tag || ''}`,
+        rank: (cur.tier && cur.tier.name) || '—',
+        rr: cur.rr ?? null,
+        peak: (peak.tier && peak.tier.name) || '—',
+        updatedAt: raw.fetchedAt || null,
+        matches
+      };
+    }catch(e){ return null; }
+  }
+
   async function pushToCloud(user, {silent=false}={}){
     const profile = currentProfile();
     try{
@@ -2579,7 +3439,14 @@ init();
       await setDoc(doc(db,'leaderboard',user.uid), {
         nick: profile.nick || user.displayName || 'Игрок',
         avatar: profile.avatar && profile.avatar.startsWith('data:') ? '' : (profile.avatar || user.photoURL || ''),
+        banner: profile.banner && profile.banner.startsWith('data:') ? '' : (profile.banner || ''),
+        about: profile.about || '',
+        discord: profile.discord || '',
+        twitch: profile.twitch || '',
+        customLabel: profile.customLabel || '',
+        customValue: profile.customValue || '',
         bestStreak: currentBestStreak(),
+        valo: currentValoSummary(),
         updatedAt: serverTimestamp()
       });
       setSyncStatus('синхронизировано ' + new Date().toLocaleTimeString('ru-RU'));
@@ -2589,6 +3456,12 @@ init();
       setSyncStatus('ошибка синхронизации');
     }
   }
+
+  // мост для главного скрипта: любое локальное изменение (через localStorage.setItem) само
+  // подтягивает бэкап в облако, если пользователь вошёл — не только раз в 45 секунд
+  window.aimPushToCloud = function(){
+    if(auth.currentUser) pushToCloud(auth.currentUser, {silent:true});
+  };
   async function pullFromCloud(user){
     try{
       const snap = await getDoc(doc(db,'users',user.uid));
@@ -2630,21 +3503,29 @@ init();
     const syncCard = document.getElementById('syncCard');
     if(syncCard) syncCard.style.display = 'flex';
     setSyncStatus('проверяю облако...');
+    const decidedKey = 'sync:decided:'+user.uid;
     try{
       const snap = await getDoc(doc(db,'users',user.uid));
       if(snap.exists()){
-        const wantsCloud = confirm(
-          'Нашёл сохранённые данные в облаке для этого аккаунта.\n\n' +
-          'ОК — загрузить их сюда (данные этого устройства будут заменены).\n' +
-          'Отмена — оставить данные этого устройства и залить их в облако.'
-        );
-        if(wantsCloud){
-          await pullFromCloud(user);
-          alert('Готово! Данные загружены из облака, страница перезагрузится.');
-          location.reload();
-          return;
+        let alreadyDecided = false;
+        try{ alreadyDecided = localStorage.getItem(decidedKey) === '1'; }catch(e){}
+        if(!alreadyDecided){
+          const wantsCloud = confirm(
+            'Нашёл сохранённые данные в облаке для этого аккаунта.\n\n' +
+            'ОК — загрузить их сюда (данные этого устройства будут заменены).\n' +
+            'Отмена — оставить данные этого устройства и залить их в облако.'
+          );
+          try{ localStorage.setItem(decidedKey, '1'); }catch(e){}
+          if(wantsCloud){
+            await pullFromCloud(user);
+            alert('Готово! Данные загружены из облака, страница перезагрузится.');
+            location.reload();
+            return;
+          } else {
+            await pushToCloud(user);
+          }
         } else {
-          await pushToCloud(user);
+          await pushToCloud(user, {silent:true});
         }
       } else {
         await pushToCloud(user);
@@ -2721,38 +3602,316 @@ init();
     }
   });
 
-  /* ---------- LIVE LEADERBOARD ---------- */
-  const lbQuery = query(collection(db,'leaderboard'), orderBy('bestStreak','desc'), limit(50));
-  onSnapshot(lbQuery, (snapshot)=>{
+  /* ---------- LIVE LEADERBOARD (с офлайн-кэшем) ---------- */
+  function renderLbRows(entries, opts){
     const el = document.getElementById('lbTable');
     if(!el) return;
-    const rows = [];
-    let rank = 0;
-    snapshot.forEach(docSnap=>{
-      rank++;
-      const d = docSnap.data();
-      const isYou = auth.currentUser && docSnap.id === auth.currentUser.uid;
+    if(!entries.length){
+      el.innerHTML = '<div class="meta-row"><div class="meta-name">Пока никто не попал в рейтинг — стань первым!</div></div>';
+      return;
+    }
+    const rows = entries.map((d, i)=>{
+      const rank = i+1;
+      const isYou = auth.currentUser && d.uid === auth.currentUser.uid;
       const rankClass = rank===1 ? 'top1' : rank===2 ? 'top2' : rank===3 ? 'top3' : '';
       const avatar = d.avatar ? `<img src="${d.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🎯';
-      rows.push(`
-        <div class="meta-row${isYou ? ' lb-you' : ''}">
+      return `
+        <div class="meta-row lb-clickable${isYou ? ' lb-you' : ''}" data-uid="${d.uid}">
           <div class="lb-rank ${rankClass}">${rank}</div>
           <div class="meta-avatar">${avatar}</div>
           <div class="meta-name">${(d.nick || 'Игрок')}${isYou ? ' <span style="color:var(--accent); font-size:10px;">(ты)</span>' : ''}</div>
           <div class="meta-wr">${d.bestStreak || 0} дн.</div>
-        </div>`);
+        </div>`;
     });
-    el.innerHTML = rows.length ? rows.join('') : '<div class="meta-row"><div class="meta-name">Пока никто не попал в рейтинг — стань первым!</div></div>';
+    if(opts && opts.offline){
+      rows.unshift(`<div class="meta-row"><div class="meta-name" style="color:var(--text-faint); font-size:11px;">📡 офлайн-копия · обновлено ${opts.cachedAt ? new Date(opts.cachedAt).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'}</div></div>`);
+    }
+    el.innerHTML = rows.join('');
+  }
+
+  // мгновенно показываем то, что уже закэшировано локально, ещё до ответа сервера
+  try{
+    const cached = JSON.parse(localStorage.getItem('lb:cache') || 'null');
+    if(cached && Array.isArray(cached.entries)) renderLbRows(cached.entries, {offline:true, cachedAt: cached.cachedAt});
+  }catch(e){}
+
+  const lbQuery = query(collection(db,'leaderboard'), orderBy('bestStreak','desc'), limit(50));
+  onSnapshot(lbQuery, (snapshot)=>{
+    const entries = [];
+    snapshot.forEach(docSnap=>{
+      const d = docSnap.data();
+      entries.push({ uid: docSnap.id, nick: d.nick, bestStreak: d.bestStreak || 0, avatar: d.avatar || null });
+    });
+    renderLbRows(entries, {offline:false});
+    try{ localStorage.setItem('lb:cache', JSON.stringify({entries, cachedAt: Date.now()})); }catch(e){}
   }, (err)=>{
     console.error('leaderboard listener error', err);
+    try{
+      const cached = JSON.parse(localStorage.getItem('lb:cache') || 'null');
+      if(cached && Array.isArray(cached.entries)){
+        renderLbRows(cached.entries, {offline:true, cachedAt: cached.cachedAt});
+        return;
+      }
+    }catch(e){}
     const el = document.getElementById('lbTable');
-    if(el) el.innerHTML = '<div class="meta-row"><div class="meta-name">Не удалось загрузить лидерборд (проверь правила доступа Firestore).</div></div>';
+    if(el) el.innerHTML = '<div class="meta-row"><div class="meta-name">Нет соединения и нет сохранённой копии лидерборда.</div></div>';
   });
 
   if(!auth.currentUser){
     const lbNotice = document.getElementById('lbSignedOutNotice');
     if(lbNotice) lbNotice.style.display = 'block';
   }
+
+  /* ---------- ДРУЗЬЯ ---------- */
+  // одна запись в 'friendEdges' на пару пользователей, id = отсортированные uid через "_"
+  function edgeIdFor(a, b){ return [a,b].sort().join('_'); }
+
+  let friendsUnsub = null;
+  const publicCache = new Map(); // uid -> leaderboard doc data, чтобы не дёргать сеть повторно
+
+  async function fetchPublicProfile(uid, {fresh=false}={}){
+    if(!fresh && publicCache.has(uid)) return publicCache.get(uid);
+    try{
+      const snap = await getDoc(doc(db,'leaderboard',uid));
+      const data = snap.exists() ? snap.data() : null;
+      publicCache.set(uid, data);
+      return data;
+    }catch(e){ console.error('fetchPublicProfile failed', e); return null; }
+  }
+
+  function renderFriendRow(uid, d, {mode}){
+    const avatar = d && d.avatar ? `<img src="${d.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🎯';
+    const nick = (d && d.nick) || 'Игрок';
+    if(mode === 'incoming'){
+      return `<div class="friend-row">
+        <div class="meta-avatar" data-uid="${uid}">${avatar}</div>
+        <div class="friend-row-name" data-uid="${uid}">${nick}<div class="friend-row-sub">хочет добавить в друзья</div></div>
+        <button class="friend-mini-btn accept" data-accept="${uid}">Принять</button>
+        <button class="friend-mini-btn decline" data-decline="${uid}">Отклонить</button>
+      </div>`;
+    }
+    return `<div class="friend-row" data-uid="${uid}">
+      <div class="meta-avatar">${avatar}</div>
+      <div class="friend-row-name">${nick}<div class="friend-row-sub">${(d && d.bestStreak) || 0} дн. лучшая серия</div></div>
+    </div>`;
+  }
+
+  async function renderFriendsUI(myUid, edges){
+    const incoming = edges.filter(e => e.status==='pending' && e.requestedBy !== myUid);
+    const accepted = edges.filter(e => e.status==='accepted');
+
+    const reqWrap = document.getElementById('friendRequestsWrap');
+    const reqTable = document.getElementById('friendRequestsTable');
+    const friendsTable = document.getElementById('friendsTable');
+
+    if(incoming.length){
+      reqWrap.style.display = 'block';
+      const rows = await Promise.all(incoming.map(async e=>{
+        const otherUid = e.users.find(u=>u!==myUid);
+        const d = await fetchPublicProfile(otherUid);
+        return renderFriendRow(otherUid, d, {mode:'incoming'});
+      }));
+      reqTable.innerHTML = rows.join('');
+    } else {
+      reqWrap.style.display = 'none';
+      reqTable.innerHTML = '';
+    }
+
+    if(accepted.length){
+      const rows = await Promise.all(accepted.map(async e=>{
+        const otherUid = e.users.find(u=>u!==myUid);
+        const d = await fetchPublicProfile(otherUid);
+        return renderFriendRow(otherUid, d, {mode:'friend'});
+      }));
+      friendsTable.innerHTML = rows.join('');
+    } else {
+      friendsTable.innerHTML = '<div class="friend-empty">Пока никого — добавляй друзей из лидерборда, открыв чей-то профиль.</div>';
+    }
+
+    renderHomeFriendsWidget(myUid, accepted);
+  }
+
+  async function renderHomeFriendsWidget(myUid, accepted){
+    const el = document.getElementById('homeWidgetFriendsBody');
+    if(!el) return;
+    if(!accepted.length){
+      el.innerHTML = '<div class="home-widget-empty">Добавь друзей на вкладке «Профиль» — их серии появятся здесь.</div>';
+      return;
+    }
+    const rows = await Promise.all(accepted.map(async e=>{
+      const otherUid = e.users.find(u=>u!==myUid);
+      const d = await fetchPublicProfile(otherUid);
+      return { uid: otherUid, nick: (d && d.nick) || 'Игрок', bestStreak: (d && d.bestStreak) || 0, avatar: d && d.avatar };
+    }));
+    rows.sort((a,b)=> b.bestStreak - a.bestStreak);
+    el.innerHTML = rows.slice(0,6).map(r=>{
+      const avatar = r.avatar ? `<img src="${r.avatar}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">` : '🎯';
+      return `<div class="friend-row" data-uid="${r.uid}" style="cursor:pointer;">
+        <div class="meta-avatar" style="width:26px;height:26px;font-size:13px;">${avatar}</div>
+        <div class="friend-row-name" style="font-size:12px;">${r.nick}</div>
+        <div class="meta-wr" style="width:auto;">${r.bestStreak} дн.</div>
+      </div>`;
+    }).join('');
+    el.querySelectorAll('[data-uid]').forEach(row=>{
+      row.addEventListener('click', ()=> window.openPublicProfile(row.getAttribute('data-uid')));
+    });
+  }
+
+  document.addEventListener('click', (e)=>{
+    const acceptUid = e.target.getAttribute && e.target.getAttribute('data-accept');
+    const declineUid = e.target.getAttribute && e.target.getAttribute('data-decline');
+    const me = auth.currentUser;
+    if(acceptUid && me){
+      setDoc(doc(db,'friendEdges', edgeIdFor(me.uid, acceptUid)), {status:'accepted', updatedAt: serverTimestamp()}, {merge:true})
+        .catch(err=>{ console.error(err); alert('Не удалось принять заявку.'); });
+    }
+    if(declineUid && me){
+      deleteDoc(doc(db,'friendEdges', edgeIdFor(me.uid, declineUid)))
+        .catch(err=> console.error(err));
+    }
+  });
+
+  window.aimFriends = {
+    subscribe(uid){
+      this.unsubscribe();
+      const q = query(collection(db,'friendEdges'), where('users','array-contains', uid));
+      friendsUnsub = onSnapshot(q, (snapshot)=>{
+        const edges = [];
+        snapshot.forEach(s=> edges.push({ id:s.id, ...s.data() }));
+        renderFriendsUI(uid, edges);
+      }, err=> console.error('friends listener error', err));
+    },
+    unsubscribe(){
+      if(friendsUnsub){ friendsUnsub(); friendsUnsub = null; }
+    },
+    async sendRequest(toUid){
+      const me = auth.currentUser;
+      if(!me){ alert('Войди через Google, чтобы добавлять друзей.'); return; }
+      if(me.uid === toUid) return;
+      try{
+        await setDoc(doc(db,'friendEdges', edgeIdFor(me.uid, toUid)), {
+          users: [me.uid, toUid].sort(), status:'pending', requestedBy: me.uid, updatedAt: serverTimestamp()
+        }, {merge:true});
+      }catch(err){ console.error(err); alert('Не удалось отправить заявку в друзья.'); }
+    },
+    async removeFriend(otherUid){
+      const me = auth.currentUser;
+      if(!me) return;
+      try{ await deleteDoc(doc(db,'friendEdges', edgeIdFor(me.uid, otherUid))); }
+      catch(err){ console.error(err); }
+    },
+    async getEdgeStatus(otherUid){
+      const me = auth.currentUser;
+      if(!me) return null;
+      try{
+        const snap = await getDoc(doc(db,'friendEdges', edgeIdFor(me.uid, otherUid)));
+        return snap.exists() ? snap.data() : null;
+      }catch(e){ return null; }
+    }
+  };
+
+  /* ---------- ПУБЛИЧНЫЙ ПРОФИЛЬ (модалка при клике по лидерборду/друзьям) ---------- */
+  function ppRenderCondensedMatches(matches){
+    if(!matches || !matches.length) return '<div class="video-sub">Нет данных о последних матчах.</div>';
+    return matches.map(m=>`
+      <div class="valo-match-row ${m.won===true?'win':m.won===false?'loss':''}">
+        <div class="valo-match-result">${m.won===true?'W':m.won===false?'L':'-'}</div>
+        <div class="valo-match-map">${m.map}</div>
+        <div class="valo-match-agent">${m.agent}</div>
+        <div class="valo-match-score">${m.k ?? '-'}/${m.d ?? '-'}/${m.a ?? '-'}</div>
+      </div>`).join('');
+  }
+
+  window.openPublicProfile = async function(uid){
+    const backdrop = document.getElementById('ppModalBackdrop');
+    const nameEl = document.getElementById('ppModalName');
+    const metaEl = document.getElementById('ppModalMeta');
+    const avatarEl = document.getElementById('ppModalAvatar');
+    const bannerEl = document.getElementById('ppModalBanner');
+    const actionsEl = document.getElementById('ppModalActions');
+    const aboutEl = document.getElementById('ppModalAbout');
+    const linksEl = document.getElementById('ppModalLinks');
+    const valoWrap = document.getElementById('ppModalValoWrap');
+    const valoStats = document.getElementById('ppModalValoStats');
+    const valoMatches = document.getElementById('ppModalValoMatches');
+
+    nameEl.textContent = 'Загрузка...';
+    metaEl.textContent = '';
+    avatarEl.style.backgroundImage = ''; avatarEl.textContent = '🎯';
+    bannerEl.style.backgroundImage = '';
+    actionsEl.innerHTML = ''; aboutEl.style.display = 'none'; linksEl.innerHTML = '';
+    valoWrap.style.display = 'none';
+    backdrop.classList.add('open');
+
+    const d = await fetchPublicProfile(uid, {fresh:true});
+    if(!d){ nameEl.textContent = 'Профиль не найден'; metaEl.textContent = 'Возможно, он ещё не синхронизировался в облако.'; return; }
+
+    nameEl.textContent = d.nick || 'Игрок';
+    metaEl.textContent = `лучшая серия — ${d.bestStreak || 0} дн.`;
+    if(d.avatar){ avatarEl.style.backgroundImage = `url(${d.avatar})`; avatarEl.textContent=''; }
+    if(d.banner){ bannerEl.style.backgroundImage = `url(${d.banner})`; }
+
+    if(d.about){ aboutEl.style.display = 'block'; aboutEl.textContent = d.about; }
+
+    const links = [];
+    if(d.discord) links.push(`<div class="pp-modal-link">Discord: ${d.discord}</div>`);
+    if(d.twitch){
+      const handle = d.twitch.replace(/^https?:\/\/(www\.)?twitch\.tv\//i,'');
+      links.push(`<a class="pp-modal-link twitch" href="https://twitch.tv/${encodeURIComponent(handle)}" target="_blank" rel="noopener">🟣 Twitch: ${handle}</a>`);
+    }
+    if(d.customLabel && d.customValue) links.push(`<div class="pp-modal-link">${d.customLabel}: ${d.customValue}</div>`);
+    linksEl.innerHTML = links.join('');
+
+    // валорант-сводка
+    if(d.valo){
+      valoWrap.style.display = 'block';
+      valoStats.innerHTML = `
+        <div class="stat"><div class="stat-label">Riot ID</div><div class="stat-value" style="font-size:13px;">${d.valo.riotId || '—'}</div></div>
+        <div class="stat"><div class="stat-label">Ранг</div><div class="stat-value accent" style="font-size:14px;">${d.valo.rank || '—'}${d.valo.rr!=null ? ' · '+d.valo.rr+' RR' : ''}</div></div>
+        <div class="stat"><div class="stat-label">Пик ранга</div><div class="stat-value" style="font-size:13px;">${d.valo.peak || '—'}</div></div>
+      `;
+      valoMatches.innerHTML = ppRenderCondensedMatches(d.valo.matches);
+    }
+
+    // кнопка действия в зависимости от статуса дружбы
+    const me = auth.currentUser;
+    if(!me){
+      actionsEl.innerHTML = `<button class="friend-mini-btn" disabled>Войди, чтобы добавить в друзья</button>`;
+      return;
+    }
+    if(me.uid === uid){
+      actionsEl.innerHTML = `<span class="friend-row-sub">Это ты</span>`;
+      return;
+    }
+    actionsEl.innerHTML = `<button class="friend-mini-btn" disabled>проверяю...</button>`;
+    const edge = await window.aimFriends.getEdgeStatus(uid);
+    if(!edge){
+      actionsEl.innerHTML = `<button class="friend-mini-btn" id="ppAddFriendBtn">+ Добавить в друзья</button>`;
+      document.getElementById('ppAddFriendBtn').addEventListener('click', async ()=>{
+        await window.aimFriends.sendRequest(uid);
+        window.openPublicProfile(uid);
+      });
+    } else if(edge.status === 'accepted'){
+      actionsEl.innerHTML = `<span class="friend-row-sub" style="color:#5fd88a;">В друзьях ✓</span> <button class="friend-mini-btn decline" id="ppRemoveFriendBtn">Удалить</button>`;
+      document.getElementById('ppRemoveFriendBtn').addEventListener('click', async ()=>{
+        if(confirm('Удалить из друзей?')){ await window.aimFriends.removeFriend(uid); window.openPublicProfile(uid); }
+      });
+    } else if(edge.requestedBy === me.uid){
+      actionsEl.innerHTML = `<button class="friend-mini-btn" disabled>Заявка отправлена</button>`;
+    } else {
+      actionsEl.innerHTML = `
+        <button class="friend-mini-btn accept" id="ppAcceptBtn">Принять заявку</button>
+        <button class="friend-mini-btn decline" id="ppDeclineBtn">Отклонить</button>`;
+      document.getElementById('ppAcceptBtn').addEventListener('click', async ()=>{
+        await setDoc(doc(db,'friendEdges', edgeIdFor(me.uid, uid)), {status:'accepted', updatedAt: serverTimestamp()}, {merge:true});
+        window.openPublicProfile(uid);
+      });
+      document.getElementById('ppDeclineBtn').addEventListener('click', async ()=>{
+        await deleteDoc(doc(db,'friendEdges', edgeIdFor(me.uid, uid)));
+        window.openPublicProfile(uid);
+      });
+    }
+  };
 </script>
 </body>
 </html>
