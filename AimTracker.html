@@ -80,6 +80,30 @@
     padding:22px 14px;
     display:flex; flex-direction:column; gap:4px;
     position:sticky; top:0; height:100vh;
+    transition:width .22s ease, padding .22s ease;
+  }
+  /* ---------- SIDEBAR COLLAPSE TOGGLE (desktop only) ---------- */
+  .sidebar-toggle{
+    position:absolute; top:24px; right:-12px; width:24px; height:24px; border-radius:50%;
+    background:var(--bg-base); border:1px solid var(--border); color:var(--text-dim);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; z-index:5;
+    transition:border-color .2s ease, color .2s ease, box-shadow .2s ease;
+  }
+  .sidebar-toggle svg{ width:13px; height:13px; transition:transform .22s ease; }
+  .sidebar-toggle:hover{ border-color:var(--accent); color:var(--accent); box-shadow:0 0 10px rgba(var(--accent-rgb),0.25); }
+  .sidebar.collapsed .sidebar-toggle svg{ transform:rotate(180deg); }
+  @media (max-width:760px){ .sidebar-toggle{ display:none; } }
+
+  /* только десктоп — на мобильной раскладке сайдбар превращается в нижнюю панель (см. медиа-запрос
+     ниже) и правило схлопывания там не нужно и не должно перебивать её ширину */
+  @media (min-width:761px){
+    .sidebar.collapsed{ width:72px; padding-left:10px; padding-right:10px; }
+    .sidebar.collapsed .brand-text,
+    .sidebar.collapsed .side-item span,
+    .sidebar.collapsed .sidebar-foot{ display:none; }
+    .sidebar.collapsed .sidebar-brand{ justify-content:center; padding-left:0; padding-right:0; }
+    .sidebar.collapsed .side-item{ justify-content:center; padding-left:0; padding-right:0; }
+    .sidebar.collapsed .side-item:hover{ transform:none; }
   }
   .sidebar-brand{
     font-family:'Sora', sans-serif; font-weight:800; font-size:15px; letter-spacing:0.5px;
@@ -684,9 +708,13 @@
 
   /* ---------- HOME WIDGET (desktop side column) ---------- */
   @media (min-width:1180px){
-    #view-home .wrap{ max-width:1320px; display:grid; grid-template-columns:900px minmax(260px,1fr); gap:24px; align-items:start; }
-    #view-home .wrap > *:not(#homeWidgetCol){ grid-column:1; }
-    #homeWidgetCol{ grid-column:2; grid-row:1 / span 20; position:sticky; top:24px; display:flex; flex-direction:column; gap:16px; }
+    /* было grid-template-columns:900px minmax(260px,1fr) — фиксированные 900px не сжимались,
+       из-за чего на многих разрешениях (особенно с открытым сайдбаром) сетка была шире контейнера,
+       overflow-x:hidden на body обрезал лишнее и правая колонка съезжала/наезжала на левую.
+       minmax(0,1fr) даёт основной колонке сжиматься, а виджету — фиксированный разумный максимум. */
+    #view-home .wrap{ max-width:1320px; display:grid; grid-template-columns:minmax(0,900px) minmax(260px,340px); gap:24px; align-items:start; }
+    #view-home .wrap > *:not(#homeWidgetCol){ grid-column:1; grid-row:auto; min-width:0; }
+    #homeWidgetCol{ grid-column:2; grid-row:1 / -1; position:sticky; top:24px; align-self:start; display:flex; flex-direction:column; gap:16px; min-width:0; }
   }
   #homeWidgetCol{ display:none; }
   @media (min-width:1180px){ #homeWidgetCol{ display:flex; } }
@@ -704,7 +732,8 @@
   .valo-match-result{ width:20px; height:20px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:11px; background:rgba(255,255,255,0.06); flex-shrink:0; }
   .valo-match-row.win .valo-match-result{ background:rgba(80,200,120,0.18); color:#5fd88a; }
   .valo-match-row.loss .valo-match-result{ background:rgba(255,70,85,0.18); color:var(--accent); }
-  .valo-match-map{ flex:1; color:var(--text-dim); }
+  .valo-match-mapimg{ width:34px; height:24px; border-radius:6px; background:rgba(255,255,255,0.06) center/cover; flex-shrink:0; }
+  .valo-match-map{ flex:1; color:var(--text-dim); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .valo-match-agent{ color:var(--text-faint); font-family:'IBM Plex Mono',monospace; font-size:11px; }
   .valo-match-score{ font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); width:52px; text-align:right; flex-shrink:0; }
 
@@ -897,6 +926,9 @@
 
 <div class="shell">
   <nav class="sidebar">
+    <button class="sidebar-toggle" id="sidebarToggle" type="button" title="Свернуть меню" aria-label="Свернуть меню">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
     <div class="sidebar-brand" id="brandHome">
       <svg class="crown" viewBox="0 0 24 24" fill="currentColor"><path d="M3 8l4 3 5-6 5 6 4-3-2 11H5L3 8zm2.5 13h13v1.5h-13V21z"/></svg>
       <span class="brand-text">AimTracker</span>
@@ -2306,7 +2338,7 @@ function agentImgUrl(agent){
 let MAP_IMAGES = {};
 async function loadMapImages(){
   try{
-    const cached = localStorage.getItem('maps:imgcache');
+    const cached = localStorage.getItem('maps:imgcache:v2');
     if(cached){
       const parsed = JSON.parse(cached);
       if(parsed && parsed.ts && (Date.now()-parsed.ts < 14*24*3600*1000) && parsed.data){
@@ -2316,7 +2348,10 @@ async function loadMapImages(){
     }
   }catch(e){}
   try{
-    const res = await fetch('https://valorant-api.com/v1/maps?language=ru-RU');
+    /* важно: язык здесь должен совпадать с тем, в каком приходят названия карт из матчей
+       HenrikDev API (они всегда на английском, например "Ascent") — иначе картинка не найдётся
+       по ключу и там будет пусто, даже если название карты отображается */
+    const res = await fetch('https://valorant-api.com/v1/maps?language=en-US');
     const json = await res.json();
     const map = {};
     (json.data||[]).forEach(m=>{
@@ -2324,7 +2359,7 @@ async function loadMapImages(){
       map[key] = { splash:m.splash, listView:m.listViewIcon, listViewFallback:m.listViewIconTall };
     });
     MAP_IMAGES = map;
-    try{ localStorage.setItem('maps:imgcache', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
+    try{ localStorage.setItem('maps:imgcache:v2', JSON.stringify({ts:Date.now(), data:map})); }catch(e){}
   }catch(e){ console.warn('map image fetch failed', e); }
 }
 function mapImgUrl(m){
@@ -2712,7 +2747,7 @@ function setupProfile(){
   });
   document.getElementById('bannerFile').addEventListener('change', e=>{
     const file = e.target.files[0]; if(!file) return;
-    resizeImageFile(file, 1600, dataUrl=>{
+    resizeImageFile(file, 960, dataUrl=>{
       profile.banner = dataUrl; saveProfile(profile);
       bannerEl.style.backgroundImage = `url(${dataUrl})`;
     });
@@ -2859,14 +2894,34 @@ function renderValoStats(data){
   renderValoMatchesInto('homeWidgetValoBody', data, {compact:true, limit:5});
 }
 
+/* находит игрока (себя) внутри списка players матча — раньше сравнивалось по несуществующему
+   полю p.account.name (в матчах игроки лежат плоско: {puuid,name,tag,...}), из-за чего "я" не
+   находился никогда и статы всегда были пустые. Сравниваем по puuid, с фоллбэком на name+tag. */
+function findMeInMatch(m, acc){
+  const players = m.players || [];
+  if(acc && acc.puuid){
+    const byPuuid = players.find(p => p.puuid === acc.puuid);
+    if(byPuuid) return byPuuid;
+  }
+  if(acc && acc.name){
+    const byName = players.find(p =>
+      (p.name||'').toLowerCase() === (acc.name||'').toLowerCase() &&
+      (p.tag||'').toLowerCase() === (acc.tag||'').toLowerCase()
+    );
+    if(byName) return byName;
+  }
+  return {};
+}
+
 /* строит HTML для списка последних матчей из объекта data ({account, matches}) — используется
    и на вкладке Профиль, и в виджете на Главной, и в модалке чужого публичного профиля */
 function buildValoMatchesHtml(data, opts){
   opts = opts || {};
   const matches = (data.matches || []).slice(0, opts.limit || 10);
   if(matches.length === 0) return `<div class="video-sub">Нет данных о последних матчах.</div>`;
+  const acc = data.account || {};
   return matches.map(m=>{
-    const me = (m.players || []).find(p => p.account && p.account.name === (data.account && data.account.name)) || {};
+    const me = findMeInMatch(m, acc);
     const myTeamId = me.team_id;
     const teams = m.teams || [];
     const myTeam = teams.find(t=>t.team_id === myTeamId);
@@ -2874,9 +2929,11 @@ function buildValoMatchesHtml(data, opts){
     const mapName = (m.metadata && m.metadata.map && m.metadata.map.name) || '—';
     const agentName = (me.agent && me.agent.name) || '—';
     const stats = me.stats || {};
+    const mapImg = mapName !== '—' ? mapImgUrl({name:mapName}) : null;
     return `
       <div class="valo-match-row ${won===true?'win':won===false?'loss':''}">
         <div class="valo-match-result">${won===true?'W':won===false?'L':'-'}</div>
+        <div class="valo-match-mapimg"${mapImg ? ` style="background-image:url('${mapImg}');"` : ''}></div>
         <div class="valo-match-map">${mapName}</div>
         ${opts.compact ? '' : `<div class="valo-match-agent">${agentName}</div>`}
         <div class="valo-match-score">${stats.kills ?? '-'}/${stats.deaths ?? '-'}/${stats.assists ?? '-'}</div>
@@ -3120,6 +3177,32 @@ function closeMoreSheet(){
   document.getElementById('moreSheetBackdrop').classList.remove('open');
 }
 
+/* ---------- SIDEBAR COLLAPSE (desктоп) ---------- */
+function setupSidebarCollapse(){
+  const sidebar = document.querySelector('.sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  if(!sidebar || !toggle) return;
+  // подписи как title, чтобы в свёрнутом виде по наведению на иконку было понятно, что это за пункт
+  sidebar.querySelectorAll('.side-item span').forEach(span=>{
+    const item = span.closest('.side-item');
+    if(item && !item.title) item.title = span.textContent.trim();
+  });
+  const KEY = 'ui:sidebarCollapsed';
+  let collapsed = false;
+  try{ collapsed = localStorage.getItem(KEY) === '1'; }catch(e){}
+  const apply = ()=>{
+    sidebar.classList.toggle('collapsed', collapsed);
+    toggle.setAttribute('aria-label', collapsed ? 'Развернуть меню' : 'Свернуть меню');
+    toggle.title = collapsed ? 'Развернуть меню' : 'Свернуть меню';
+  };
+  apply();
+  toggle.addEventListener('click', ()=>{
+    collapsed = !collapsed;
+    try{ localStorage.setItem(KEY, collapsed ? '1' : '0'); }catch(e){}
+    apply();
+  });
+}
+
 function applyNavOrder(){
   const order = getNavOrder();
   const nav = document.querySelector('.sidebar');
@@ -3215,6 +3298,7 @@ async function init(){
 
   applyNavOrder();
   renderNavOrderSettings();
+  setupSidebarCollapse();
   document.getElementById('brandHome').addEventListener('click', ()=> switchView('home'));
   document.getElementById('moreNavBtn').addEventListener('click', openMoreSheet);
   document.getElementById('moreSheetBackdrop').addEventListener('click', closeMoreSheet);
@@ -3406,7 +3490,7 @@ init();
       if(!raw) return null;
       const acc = raw.account || {}, mmr = raw.mmr || {}, cur = mmr.current || {}, peak = mmr.peak || {};
       const matches = (raw.matches || []).slice(0,5).map(m=>{
-        const me = (m.players || []).find(p => p.account && p.account.name === acc.name) || {};
+        const me = findMeInMatch(m, acc);
         const teams = m.teams || [];
         const myTeam = teams.find(t=>t.team_id === me.team_id);
         const won = myTeam ? !!myTeam.won : null;
@@ -3429,17 +3513,19 @@ init();
     }catch(e){ return null; }
   }
 
+  /* раньше сначала писался большой бэкап-документ 'users' (весь localStorage), и только потом —
+     маленький публичный документ 'leaderboard'. Если бэкап был слишком большим (например, из-за
+     загруженной аватарки/баннера), запись падала с ошибкой ДО того как публичный профиль вообще
+     обновлялся — поэтому у других людей в публичном профиле ничего не появлялось. Теперь пишем
+     публичный документ первым и независимо от бэкапа, чтобы одно не блокировало другое. */
   async function pushToCloud(user, {silent=false}={}){
     const profile = currentProfile();
+    let publicOk = false, backupOk = false;
     try{
-      await setDoc(doc(db,'users',user.uid), {
-        data: dumpLocalStorage(),
-        updatedAt: serverTimestamp()
-      });
       await setDoc(doc(db,'leaderboard',user.uid), {
         nick: profile.nick || user.displayName || 'Игрок',
-        avatar: profile.avatar && profile.avatar.startsWith('data:') ? '' : (profile.avatar || user.photoURL || ''),
-        banner: profile.banner && profile.banner.startsWith('data:') ? '' : (profile.banner || ''),
+        avatar: profile.avatar || user.photoURL || '',
+        banner: profile.banner || '',
         about: profile.about || '',
         discord: profile.discord || '',
         twitch: profile.twitch || '',
@@ -3449,10 +3535,43 @@ init();
         valo: currentValoSummary(),
         updatedAt: serverTimestamp()
       });
-      setSyncStatus('синхронизировано ' + new Date().toLocaleTimeString('ru-RU'));
+      publicOk = true;
     }catch(err){
-      console.error('push to cloud failed', err);
-      if(!silent) alert('Не удалось сохранить в облако: ' + (err.code || err.message));
+      console.error('push public profile failed', err);
+      // документ слишком большой (лимит Firestore ~1MB) или другая ошибка записи —
+      // пробуем ещё раз без картинок, чтобы хотя бы ник/статы/валорант дошли до профиля
+      try{
+        await setDoc(doc(db,'leaderboard',user.uid), {
+          nick: profile.nick || user.displayName || 'Игрок',
+          avatar: user.photoURL || '',
+          banner: '',
+          about: profile.about || '',
+          discord: profile.discord || '',
+          twitch: profile.twitch || '',
+          customLabel: profile.customLabel || '',
+          customValue: profile.customValue || '',
+          bestStreak: currentBestStreak(),
+          valo: currentValoSummary(),
+          updatedAt: serverTimestamp()
+        });
+        publicOk = true;
+      }catch(err2){ console.error('push public profile retry failed', err2); }
+    }
+    try{
+      await setDoc(doc(db,'users',user.uid), {
+        data: dumpLocalStorage(),
+        updatedAt: serverTimestamp()
+      });
+      backupOk = true;
+    }catch(err){
+      console.error('push backup failed', err);
+    }
+    if(publicOk && backupOk){
+      setSyncStatus('синхронизировано ' + new Date().toLocaleTimeString('ru-RU'));
+    } else if(publicOk){
+      setSyncStatus('профиль синхронизирован, полный бэкап — нет (слишком большой)');
+    } else {
+      if(!silent) alert('Не удалось сохранить в облако.');
       setSyncStatus('ошибка синхронизации');
     }
   }
@@ -3813,13 +3932,17 @@ init();
   /* ---------- ПУБЛИЧНЫЙ ПРОФИЛЬ (модалка при клике по лидерборду/друзьям) ---------- */
   function ppRenderCondensedMatches(matches){
     if(!matches || !matches.length) return '<div class="video-sub">Нет данных о последних матчах.</div>';
-    return matches.map(m=>`
+    return matches.map(m=>{
+      const mapImg = m.map && m.map !== '—' ? mapImgUrl({name:m.map}) : null;
+      return `
       <div class="valo-match-row ${m.won===true?'win':m.won===false?'loss':''}">
         <div class="valo-match-result">${m.won===true?'W':m.won===false?'L':'-'}</div>
+        <div class="valo-match-mapimg"${mapImg ? ` style="background-image:url('${mapImg}');"` : ''}></div>
         <div class="valo-match-map">${m.map}</div>
         <div class="valo-match-agent">${m.agent}</div>
         <div class="valo-match-score">${m.k ?? '-'}/${m.d ?? '-'}/${m.a ?? '-'}</div>
-      </div>`).join('');
+      </div>`;
+    }).join('');
   }
 
   window.openPublicProfile = async function(uid){
